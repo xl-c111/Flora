@@ -1,0 +1,109 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Occasion {
+  BIRTHDAY
+  ANNIVERSARY
+  WEDDING
+  GRADUATION
+  VALENTINES_DAY
+  MOTHERS_DAY
+  FATHERS_DAY
+  CHRISTMAS
+  EASTER
+  SYMPATHY
+  CONGRATULATIONS
+  GET_WELL_SOON
+  JUST_BECAUSE
+}
+
+enum Season {
+  SPRING
+  SUMMER
+  FALL
+  WINTER
+  ALL_SEASON
+}
+
+enum Mood {
+  ROMANTIC
+  CHEERFUL
+  ELEGANT
+  PEACEFUL
+  VIBRANT
+  SOPHISTICATED
+  WHIMSICAL
+  CLASSIC
+}
+
+enum Color {
+  RED
+  PINK
+  WHITE
+  YELLOW
+  ORANGE
+  PURPLE
+  BLUE
+  GREEN
+  MIXED
+  PASTEL
+}
+
+enum ProductType {
+  BOUQUET
+  ARRANGEMENT
+  PLANT
+  SUCCULENT
+  ORCHID
+  ROSE
+  LILY
+  TULIP
+  SUNFLOWER
+  MIXED_FLOWERS
+}
+
+enum PriceRange {
+  UNDER_25
+  RANGE_25_50
+  RANGE_50_75
+  RANGE_75_100
+  OVER_100
+}
+
+model Product {
+  id          String      @id @default(cuid())
+  name        String
+  description String
+  price       Float
+  priceRange  PriceRange
+  imageUrl    String?
+  inStock     Boolean     @default(true)
+  occasions   Occasion[]
+  seasons     Season[]
+  moods       Mood[]
+  colors      Color[]
+  type        ProductType
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("products")
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("categories")
+}
