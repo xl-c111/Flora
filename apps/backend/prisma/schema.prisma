@@ -1,15 +1,27 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// ============================================
+// 🎓 FLORA FLOWER SHOP - PRISMA SCHEMA
+// ============================================
+// Complete e-commerce schema with MVP-first enum approach
+// Supports products, collections, users, orders, and delivery
 
+// ============================================
+// 🎓 GENERATOR: Creates TypeScript Types
+// ============================================
 generator client {
   provider = "prisma-client-js"
 }
 
+// ============================================
+// 🎓 DATASOURCE: Database Connection
+// ============================================
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
+// ============================================
+// 🎓 PRODUCT FILTER ENUMS
+// ============================================
 enum Occasion {
   BIRTHDAY
   ANNIVERSARY
@@ -24,6 +36,8 @@ enum Occasion {
   CONGRATULATIONS
   GET_WELL_SOON
   JUST_BECAUSE
+  HOUSEWARMING
+  THANK_YOU
 }
 
 enum Season {
@@ -43,6 +57,8 @@ enum Mood {
   SOPHISTICATED
   WHIMSICAL
   CLASSIC
+  MODERN
+  RUSTIC
 }
 
 enum Color {
@@ -56,6 +72,8 @@ enum Color {
   GREEN
   MIXED
   PASTEL
+  BURGUNDY
+  LAVENDER
 }
 
 enum ProductType {
@@ -69,41 +87,222 @@ enum ProductType {
   TULIP
   SUNFLOWER
   MIXED_FLOWERS
+  DRIED_FLOWERS
+  ARTIFICIAL
 }
 
 enum PriceRange {
-  UNDER_25
-  RANGE_25_50
-  RANGE_50_75
-  RANGE_75_100
-  OVER_100
+  UNDER_25      // Under $25
+  RANGE_25_50   // $25-$50
+  RANGE_50_75   // $50-$75
+  RANGE_75_100  // $75-$100
+  OVER_100      // Over $100
 }
 
+// ============================================
+// 🎓 E-COMMERCE ENUMS
+// ============================================
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum DeliveryType {
+  STANDARD
+  EXPRESS
+  SAME_DAY
+  PICKUP
+}
+
+enum UserRole {
+  CUSTOMER
+  ADMIN
+  STAFF
+}
+
+// ============================================
+// 🎓 PRODUCT & CATALOG MODELS
+// ============================================
 model Product {
   id          String      @id @default(cuid())
   name        String
   description String
-  price       Float
+  priceCents  Int         // Store price in cents (e.g., 2599 = $25.99)
   priceRange  PriceRange
   imageUrl    String?
   inStock     Boolean     @default(true)
-  occasions   Occasion[]
-  seasons     Season[]
-  moods       Mood[]
-  colors      Color[]
-  type        ProductType
+  stockCount  Int         @default(0)
+
+  // Filter facets using enum arrays
+  occasions   Occasion[]  // Can be for multiple occasions
+  seasons     Season[]    // Available in multiple seasons
+  moods       Mood[]      // Conveys multiple moods
+  colors      Color[]     // Contains multiple colors
+  type        ProductType // Single product type
+
+  // Relationships
+  collections     CollectionProduct[]
+  orderItems      OrderItem[]
+
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
   @@map("products")
 }
 
+model Collection {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String?
+  imageUrl    String?
+  isActive    Boolean   @default(true)
+  discountPercent Int?  // Optional discount for collection (e.g., 15 = 15% off)
+
+  products    CollectionProduct[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("collections")
+}
+
+model CollectionProduct {
+  id           String     @id @default(cuid())
+  collectionId String
+  productId    String
+  position     Int        // For ordering products within collection
+
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  product      Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([collectionId, productId])
+  @@map("collection_products")
+}
+
 model Category {
   id          String    @id @default(cuid())
   name        String    @unique
   description String?
+  imageUrl    String?
+  isActive    Boolean   @default(true)
+
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
   @@map("categories")
+}
+
+// ============================================
+// 🎓 USER & AUTH MODELS
+// ============================================
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  firstName String
+  lastName  String
+  phone     String?
+  role      UserRole @default(CUSTOMER)
+
+  // Relationships
+  addresses Address[]
+  orders    Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Address {
+  id          String  @id @default(cuid())
+  userId      String
+  label       String? // e.g., "Home", "Work", "Mom's House"
+  firstName   String
+  lastName    String
+  company     String?
+  street1     String
+  street2     String?
+  city        String
+  state       String
+  zipCode     String
+  country     String  @default("US")
+  phone       String?
+  isDefault   Boolean @default(false)
+
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders      Order[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("addresses")
+}
+
+// ============================================
+// 🎓 ORDER & CHECKOUT MODELS
+// ============================================
+model Order {
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique // Human-friendly order number
+  userId          String
+  status          OrderStatus @default(PENDING)
+
+  // Pricing
+  subtotalCents   Int         // Subtotal in cents
+  shippingCents   Int         // Shipping cost in cents
+  taxCents        Int         // Tax amount in cents
+  discountCents   Int         @default(0) // Discount amount in cents
+  totalCents      Int         // Final total in cents
+
+  // Delivery details
+  deliveryType    DeliveryType
+  deliveryDate    DateTime?   // Requested delivery date
+  deliveryNotes   String?     // Special delivery instructions
+
+  // Address (snapshot at time of order)
+  shippingAddressId String
+  shippingAddress   Address @relation(fields: [shippingAddressId], references: [id])
+
+  // Relationships
+  user        User        @relation(fields: [userId], references: [id])
+  items       OrderItem[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id            String  @id @default(cuid())
+  orderId       String
+  productId     String
+  quantity      Int
+  priceCents    Int     // Price at time of order (for historical accuracy)
+
+  order         Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product       Product @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
+}
+
+model DeliveryRule {
+  id              String       @id @default(cuid())
+  deliveryType    DeliveryType
+  zipCode         String       // Delivery area
+  baseCostCents   Int          // Base delivery cost in cents
+  freeThresholdCents Int?      // Free delivery if order over this amount
+  maxDeliveryDays Int          // Maximum delivery days
+  isActive        Boolean      @default(true)
+
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@unique([deliveryType, zipCode])
+  @@map("delivery_rules")
 }

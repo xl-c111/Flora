@@ -6,10 +6,11 @@ interface Product {
   id: string;
   name: string;
   description: string;
-  price: number;
+  priceCents: number; // Changed from price to priceCents
   priceRange: string;
   imageUrl?: string;
   inStock: boolean;
+  stockCount: number; // Added stockCount
   occasions: string[];
   seasons: string[];
   moods: string[];
@@ -63,7 +64,8 @@ function App() {
     }
   };
 
-  const formatPrice = (price: number) => `$${price.toFixed(2)}`;
+  const formatPrice = (priceCents: number) =>
+    `$${(priceCents / 100).toFixed(2)}`;
 
   const formatEnumValue = (value: string) => {
     return value
@@ -132,7 +134,9 @@ function App() {
                   <div className="product-info">
                     <h4>{product.name}</h4>
                     <p className="description">{product.description}</p>
-                    <div className="price">{formatPrice(product.price)}</div>
+                    <div className="price">
+                      {formatPrice(product.priceCents)}
+                    </div>
                     <div className="product-meta">
                       <span className="type">
                         {formatEnumValue(product.type)}
