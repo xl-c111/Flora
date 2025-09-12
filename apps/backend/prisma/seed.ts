@@ -1,123 +1,141 @@
-import { PrismaClient, Occasion, Season, Mood, Color, ProductType, PriceRange } from '@prisma/client';
+import {
+  PrismaClient,
+  Occasion,
+  Season,
+  Mood,
+  Color,
+  ProductType,
+  PriceRange,
+} from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 const sampleProducts = [
   {
-    name: "Red Rose Bouquet",
-    description: "Classic red roses perfect for romantic occasions",
+    name: 'Red Rose Bouquet',
+    description: 'Classic red roses perfect for romantic occasions',
     price: 45.99,
     priceRange: PriceRange.RANGE_25_50,
-    imageUrl: "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=400",
-    occasions: [Occasion.VALENTINES_DAY, Occasion.ANNIVERSARY, Occasion.ROMANTIC],
+    imageUrl: 'https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=400',
+    occasions: [Occasion.VALENTINES_DAY, Occasion.ANNIVERSARY],
     seasons: [Season.ALL_SEASON],
-    moods: [Mood.ROMANTIC, Mood.CLASSIC],
+    moods: [Mood.ROMANTIC],
     colors: [Color.RED],
-    type: ProductType.BOUQUET
+    type: ProductType.BOUQUET,
   },
   {
-    name: "Spring Tulip Arrangement",
-    description: "Beautiful mixed tulips in a ceramic vase",
-    price: 32.50,
+    name: 'Spring Tulip Arrangement',
+    description: 'Beautiful mixed tulips in a ceramic vase',
+    price: 32.5,
     priceRange: PriceRange.RANGE_25_50,
-    imageUrl: "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?w=400",
+    imageUrl:
+      'https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?w=400',
     occasions: [Occasion.MOTHERS_DAY, Occasion.BIRTHDAY, Occasion.JUST_BECAUSE],
     seasons: [Season.SPRING],
     moods: [Mood.CHEERFUL, Mood.VIBRANT],
     colors: [Color.MIXED, Color.PASTEL],
-    type: ProductType.TULIP
+    type: ProductType.TULIP,
   },
   {
-    name: "White Orchid Plant",
-    description: "Elegant white orchid in decorative pot",
-    price: 68.00,
+    name: 'White Orchid Plant',
+    description: 'Elegant white orchid in decorative pot',
+    price: 68.0,
     priceRange: PriceRange.RANGE_50_75,
-    imageUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400",
+    imageUrl:
+      'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400',
     occasions: [Occasion.CONGRATULATIONS, Occasion.JUST_BECAUSE],
     seasons: [Season.ALL_SEASON],
     moods: [Mood.ELEGANT, Mood.SOPHISTICATED],
     colors: [Color.WHITE],
-    type: ProductType.ORCHID
+    type: ProductType.ORCHID,
   },
   {
-    name: "Sunflower Happiness Bouquet",
-    description: "Bright sunflowers to bring joy and warmth",
+    name: 'Sunflower Happiness Bouquet',
+    description: 'Bright sunflowers to bring joy and warmth',
     price: 38.75,
     priceRange: PriceRange.RANGE_25_50,
-    imageUrl: "https://images.unsplash.com/photo-1597848212624-e8717d946f37?w=400",
-    occasions: [Occasion.GET_WELL_SOON, Occasion.CONGRATULATIONS, Occasion.BIRTHDAY],
+    imageUrl:
+      'https://images.unsplash.com/photo-1597848212624-e8717d946f37?w=400',
+    occasions: [
+      Occasion.GET_WELL_SOON,
+      Occasion.CONGRATULATIONS,
+      Occasion.BIRTHDAY,
+    ],
     seasons: [Season.SUMMER, Season.FALL],
     moods: [Mood.CHEERFUL, Mood.VIBRANT],
     colors: [Color.YELLOW],
-    type: ProductType.SUNFLOWER
+    type: ProductType.SUNFLOWER,
   },
   {
-    name: "Succulent Garden",
-    description: "Mix of beautiful succulents in a modern planter",
+    name: 'Succulent Garden',
+    description: 'Mix of beautiful succulents in a modern planter',
     price: 25.99,
     priceRange: PriceRange.UNDER_25,
-    imageUrl: "https://images.unsplash.com/photo-1519336056116-bc0f1771dec8?w=400",
+    imageUrl:
+      'https://images.unsplash.com/photo-1519336056116-bc0f1771dec8?w=400',
     occasions: [Occasion.JUST_BECAUSE],
     seasons: [Season.ALL_SEASON],
     moods: [Mood.PEACEFUL, Mood.SOPHISTICATED],
     colors: [Color.GREEN],
-    type: ProductType.SUCCULENT
+    type: ProductType.SUCCULENT,
   },
   {
-    name: "Pink Lily Arrangement",
-    description: "Graceful pink lilies in an elegant vase",
-    price: 55.00,
+    name: 'Pink Lily Arrangement',
+    description: 'Graceful pink lilies in an elegant vase',
+    price: 55.0,
     priceRange: PriceRange.RANGE_50_75,
-    imageUrl: "https://images.unsplash.com/photo-1563770660941-20978e870e26?w=400",
+    imageUrl:
+      'https://images.unsplash.com/photo-1563770660941-20978e870e26?w=400',
     occasions: [Occasion.MOTHERS_DAY, Occasion.SYMPATHY, Occasion.ANNIVERSARY],
     seasons: [Season.SPRING, Season.SUMMER],
     moods: [Mood.ELEGANT, Mood.PEACEFUL],
     colors: [Color.PINK],
-    type: ProductType.LILY
+    type: ProductType.LILY,
   },
   {
-    name: "Premium Mixed Bouquet",
-    description: "Luxurious arrangement with premium seasonal flowers",
-    price: 125.00,
+    name: 'Premium Mixed Bouquet',
+    description: 'Luxurious arrangement with premium seasonal flowers',
+    price: 125.0,
     priceRange: PriceRange.OVER_100,
-    imageUrl: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400",
+    imageUrl: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400',
     occasions: [Occasion.WEDDING, Occasion.ANNIVERSARY, Occasion.GRADUATION],
     seasons: [Season.ALL_SEASON],
     moods: [Mood.SOPHISTICATED, Mood.ELEGANT],
     colors: [Color.MIXED],
-    type: ProductType.MIXED_FLOWERS
+    type: ProductType.MIXED_FLOWERS,
   },
   {
-    name: "Peace Plant",
-    description: "Low-maintenance peace lily plant",
-    price: 42.50,
+    name: 'Peace Plant',
+    description: 'Low-maintenance peace lily plant',
+    price: 42.5,
     priceRange: PriceRange.RANGE_25_50,
-    imageUrl: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400",
+    imageUrl:
+      'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400',
     occasions: [Occasion.SYMPATHY, Occasion.JUST_BECAUSE],
     seasons: [Season.ALL_SEASON],
     moods: [Mood.PEACEFUL, Mood.ELEGANT],
     colors: [Color.WHITE, Color.GREEN],
-    type: ProductType.PLANT
-  }
+    type: ProductType.PLANT,
+  },
 ];
 
 const categories = [
   {
-    name: "Bouquets",
-    description: "Hand-crafted flower bouquets for any occasion"
+    name: 'Bouquets',
+    description: 'Hand-crafted flower bouquets for any occasion',
   },
   {
-    name: "Plants",
-    description: "Beautiful plants for home and office"
+    name: 'Plants',
+    description: 'Beautiful plants for home and office',
   },
   {
-    name: "Arrangements",
-    description: "Elegant flower arrangements in vases"
+    name: 'Arrangements',
+    description: 'Elegant flower arrangements in vases',
   },
   {
-    name: "Seasonal",
-    description: "Seasonal flowers and plants"
-  }
+    name: 'Seasonal',
+    description: 'Seasonal flowers and plants',
+  },
 ];
 
 async function main() {
@@ -131,7 +149,7 @@ async function main() {
   console.log('📂 Creating categories...');
   for (const category of categories) {
     await prisma.category.create({
-      data: category
+      data: category,
     });
   }
 
@@ -139,12 +157,14 @@ async function main() {
   console.log('🌺 Creating products...');
   for (const product of sampleProducts) {
     await prisma.product.create({
-      data: product
+      data: product,
     });
   }
 
   console.log('✅ Seeding completed successfully!');
-  console.log(`📊 Created ${categories.length} categories and ${sampleProducts.length} products`);
+  console.log(
+    `📊 Created ${categories.length} categories and ${sampleProducts.length} products`
+  );
 }
 
 main()

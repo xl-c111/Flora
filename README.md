@@ -28,40 +28,66 @@ flora-holberton-demo-project/
 
 ## 📋 Prerequisites
 
-- **Node.js** 18+ 
+- **Node.js** 18+
 - **pnpm** 8+
 - **Docker** and **Docker Compose**
 
 ## 🚀 Quick Start
 
 ### 1. Install dependencies
+
 ```bash
 pnpm install:all
 ```
 
-### 2. Start the database
+### 2. Set up environment files
+
+Copy the example environment files to create your local configuration:
+
+```bash
+cp apps/backend/.env.example apps/backend/.env
+cp apps/frontend/.env.example apps/frontend/.env
+```
+
+### 3. Start the database
+
 ```bash
 pnpm start:db
 ```
 
-### 3. Set up the database schema and seed data
+### 4. Set up the database schema and seed data
+
 ```bash
 pnpm db:setup
 ```
 
-### 4. Start the development servers
+### 5. Start the development servers
+
+#### For fullstack:
 ```bash
 pnpm dev
 ```
-
 This will start:
+
 - **Backend API**: http://localhost:3001
 - **Frontend**: http://localhost:5173
 - **PostgreSQL**: localhost:5432
 
+#### For the Backend only:
+```bash
+pnpm --filter backtend dev
+```
+
+#### For the frontend only:
+```bash
+pnpm --filter frontend dev
+```
+
+
 ## 📊 Database Schema
 
 ### Product Enums (Filters)
+
 - **Occasions**: Birthday, Anniversary, Wedding, Valentine's Day, Mother's Day, etc.
 - **Seasons**: Spring, Summer, Fall, Winter, All Season
 - **Moods**: Romantic, Cheerful, Elegant, Peaceful, Vibrant, etc.
@@ -70,26 +96,31 @@ This will start:
 - **Price Ranges**: Under $25, $25-50, $50-75, $75-100, Over $100
 
 ### Models
+
 - **Product**: Main product entity with all filter properties
 - **Category**: Product categories (Bouquets, Plants, Arrangements, Seasonal)
 
 ## 🎯 API Endpoints
 
 ### Products
+
 - `GET /api/products` - Get products (with filtering)
 - `GET /api/products/:id` - Get single product
 - `GET /api/products/filters/options` - Get all filter options
 
-### Categories  
+### Categories
+
 - `GET /api/categories` - Get all categories
 - `GET /api/categories/:id` - Get single category
 
 ### Health
+
 - `GET /api/health` - Health check
 
 ## 📱 Available Scripts
 
 ### Root Scripts
+
 - `pnpm dev` - Start both frontend and backend in development mode
 - `pnpm build` - Build both applications for production
 - `pnpm db:setup` - Generate Prisma client, push schema, and seed database
@@ -99,6 +130,7 @@ This will start:
 - `pnpm stop:db` - Stop PostgreSQL container
 
 ### Backend Scripts (from /apps/backend)
+
 - `pnpm dev` - Start backend in development mode
 - `pnpm build` - Build backend for production
 - `pnpm db:generate` - Generate Prisma client
@@ -106,6 +138,7 @@ This will start:
 - `pnpm db:migrate` - Run database migrations
 
 ### Frontend Scripts (from /apps/frontend)
+
 - `pnpm dev` - Start frontend development server
 - `pnpm build` - Build frontend for production
 - `pnpm preview` - Preview production build
@@ -113,6 +146,7 @@ This will start:
 ## 🔧 Environment Variables
 
 ### Backend (.env)
+
 ```bash
 DATABASE_URL="postgresql://flora_user:flora_password@localhost:5432/flora_db"
 PORT=3001
@@ -120,6 +154,7 @@ NODE_ENV=development
 ```
 
 ### Frontend (.env)
+
 ```bash
 VITE_API_URL=http://localhost:3001/api
 ```
@@ -127,6 +162,7 @@ VITE_API_URL=http://localhost:3001/api
 ## 🌱 Sample Data
 
 The seed script creates:
+
 - **8 sample products** including roses, tulips, orchids, sunflowers, succulents, etc.
 - **4 categories** (Bouquets, Plants, Arrangements, Seasonal)
 - Products with realistic **prices**, **descriptions**, and **filter tags**
@@ -135,6 +171,7 @@ The seed script creates:
 ## 🔍 Features
 
 ### Backend Features
+
 - **RESTful API** with Express.js
 - **Type-safe database** queries with Prisma
 - **Advanced filtering** by occasion, season, mood, color, type, price range
@@ -143,7 +180,8 @@ The seed script creates:
 - **Health check endpoint**
 - **Error handling middleware**
 
-### Frontend Features  
+### Frontend Features
+
 - **Modern React 19** with TypeScript
 - **Responsive design** with CSS Grid
 - **Product catalog** with filtering capabilities
@@ -154,6 +192,7 @@ The seed script creates:
 ## 🐳 Docker Services
 
 The `docker-compose.yml` provides:
+
 - **PostgreSQL 15** database
 - **Persistent volume** for data
 - **Health checks**
@@ -162,8 +201,9 @@ The `docker-compose.yml` provides:
 ## 👥 Team
 
 Created by the Holberton team:
+
 - **Anthony**
-- **Bevan** 
+- **Bevan**
 - **Xiaoling**
 - **Lily**
 

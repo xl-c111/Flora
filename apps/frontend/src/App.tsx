@@ -41,11 +41,22 @@ function App() {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      // Simple fetch without the API service for now since backend isn't running
-      setError('Backend API is not running. Start the database and backend to see products.');
-      setProducts([]);
+      setError(null);
+
+      const apiUrl =
+        import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+      const response = await fetch(`${apiUrl}/products`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data: ProductResponse = await response.json();
+      setProducts(data.products);
     } catch (err) {
-      setError('Failed to fetch products. Please make sure the backend is running.');
+      setError(
+        'Backend API is not running. Start the database and backend to see products.'
+      );
       console.error('Error fetching products:', err);
     } finally {
       setLoading(false);
@@ -55,7 +66,10 @@ function App() {
   const formatPrice = (price: number) => `$${price.toFixed(2)}`;
 
   const formatEnumValue = (value: string) => {
-    return value.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+    return value
+      .replace(/_/g, ' ')
+      .toLowerCase()
+      .replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
   if (loading) {
@@ -93,19 +107,24 @@ function App() {
 
         <section className="products">
           <h3>Our Products ({products.length})</h3>
-          
+
           {products.length === 0 ? (
             <div className="no-products">
               <p>No products found. Make sure to seed the database!</p>
-              <p>Run: <code>pnpm db:seed</code></p>
+              <p>
+                Run: <code>pnpm db:seed</code>
+              </p>
             </div>
           ) : (
             <div className="product-grid">
               {products.map((product) => (
-                <div key={product.id} className="product-card">
+                <div
+                  key={product.id}
+                  className="product-card"
+                >
                   {product.imageUrl && (
-                    <img 
-                      src={product.imageUrl} 
+                    <img
+                      src={product.imageUrl}
                       alt={product.name}
                       className="product-image"
                     />
@@ -115,17 +134,27 @@ function App() {
                     <p className="description">{product.description}</p>
                     <div className="price">{formatPrice(product.price)}</div>
                     <div className="product-meta">
-                      <span className="type">{formatEnumValue(product.type)}</span>
-                      {!product.inStock && <span className="out-of-stock">Out of Stock</span>}
+                      <span className="type">
+                        {formatEnumValue(product.type)}
+                      </span>
+                      {!product.inStock && (
+                        <span className="out-of-stock">Out of Stock</span>
+                      )}
                     </div>
                     <div className="tags">
-                      {product.occasions.slice(0, 2).map(occasion => (
-                        <span key={occasion} className="tag occasion">
+                      {product.occasions.slice(0, 2).map((occasion) => (
+                        <span
+                          key={occasion}
+                          className="tag occasion"
+                        >
                           {formatEnumValue(occasion)}
                         </span>
                       ))}
-                      {product.colors.slice(0, 2).map(color => (
-                        <span key={color} className="tag color">
+                      {product.colors.slice(0, 2).map((color) => (
+                        <span
+                          key={color}
+                          className="tag color"
+                        >
                           {formatEnumValue(color)}
                         </span>
                       ))}
@@ -139,7 +168,10 @@ function App() {
       </main>
 
       <footer className="footer">
-        <p>&copy; 2024 Flora - Holberton Demo Project by Anthony, Bevan, Xiaoling, and Lily</p>
+        <p>
+          &copy; 2024 Flora - Holberton Demo Project by Anthony, Bevan,
+          Xiaoling, and Lily
+        </p>
       </footer>
     </div>
   );
