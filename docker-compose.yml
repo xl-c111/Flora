@@ -10,14 +10,53 @@ services:
       POSTGRES_PASSWORD: flora_password
       POSTGRES_DB: flora_db
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U flora_user -d flora_db"]
+      test: ['CMD-SHELL', 'pg_isready -U flora_user -d flora_db']
       interval: 30s
       timeout: 10s
       retries: 3
+    networks:
+      - flora-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+    container_name: flora-backend
+    restart: unless-stopped
+    ports:
+      - '3001:3001'
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://flora_user:flora_password@postgres:5432/flora_db
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - flora-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+    container_name: flora-frontend
+    restart: unless-stopped
+    ports:
+      - '5173:5173'
+    environment:
+      - NODE_ENV=production
+      - VITE_API_URL=http://localhost:3001
+    depends_on:
+      - backend
+    networks:
+      - flora-network
 
 volumes:
   postgres_data:
+
+networks:
+  flora-network:
+    driver: bridge
