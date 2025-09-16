@@ -10,12 +10,77 @@ This is a **monorepo** using **pnpm workspaces** with the following structure:
 
 ```
 flora-holberton-demo-project/
+│
 ├── apps/
-│   ├── backend/          # Express API + Prisma ORM
-│   └── frontend/         # React + TypeScript UI
-├── docker-compose.yml    # PostgreSQL database
-├── pnpm-workspace.yaml   # pnpm monorepo config
-└── package.json          # Root package with dev scripts
+│   ├── frontend/                          # Frontend (React/Next.js + Tailwind)
+│   │   ├── Dockerfile                     # Container definition for frontend
+│   │   ├── package.json                   # Frontend dependencies & scripts
+│   │   ├── next.config.js                 # Next.js config (rewrites, proxy)
+│   │   ├── public/                        # Static assets (logos, images, icons)
+│   │   └── src/
+│   │       ├── pages/                     # Next.js page routes
+│   │       │   ├── index.js               # Homepage: browse flowers
+│   │       │   ├── product/[id].js        # Product detail page (popup/modal)
+│   │       │   ├── checkout.js            # Checkout page (Stripe payment)
+│   │       │   ├── login.js               # Login page (Auth0)
+│   │       │   └── api/                   # (Optional) API routes if needed
+│   │       ├── components/                # Reusable UI components
+│   │       │   ├── Navbar.js              # Top navigation bar
+│   │       │   ├── Footer.js              # Page footer
+│   │       │   ├── FilterBar.js           # Filters (price, color, mood)
+│   │       │   ├── ProductCard.js         # Individual flower card
+│   │       │   ├── CalendarPicker.js      # Date & spontaneous delivery picker
+│   │       │   └── Modal.js               # Generic modal popup
+│   │       ├── styles/                    # Styling
+│   │       │   └── globals.css            # Global CSS (integrates Tailwind)
+│   │       ├── utils/                     # Frontend helpers (e.g., fetch API)
+│   │       │   └── apiClient.js           # Wrapper for backend API calls
+│   │       └── hooks/                     # Custom React hooks
+│   │           └── useAuth.js             # Hook to manage Auth0 login state
+│   │
+│   └── backend/                           # Backend (Node.js + Express)
+│       ├── Dockerfile                     # Container definition for backend
+│       ├── package.json                   # Backend dependencies & scripts
+│       ├── prisma/
+│       │   ├── schema.prisma              # Prisma schema (tables & relations)
+│       │   └── migrations/                # Auto-generated migration files
+│       └── src/
+│           ├── index.js                   # Entry point, starts Express server
+│           ├── routes/                    # API route definitions
+│           │   ├── auth.routes.js         # Endpoints for Auth0 login
+│           │   ├── product.routes.js      # Endpoints for product browsing/search
+│           │   ├── order.routes.js        # Endpoints for purchase & subscriptions
+│           │   ├── delivery.routes.js     # Endpoints for delivery status
+│           │   └── email.routes.js        # Endpoints for testing email sending
+│           ├── controllers/               # Route handler functions
+│           │   ├── auth.controller.js
+│           │   ├── product.controller.js
+│           │   ├── order.controller.js
+│           │   ├── delivery.controller.js
+│           │   └── email.controller.js
+│           ├── services/                  # Business logic
+│           │   ├── auth.service.js        # Auth0 integration
+│           │   ├── product.service.js     # Product queries (via Prisma)
+│           │   ├── order.service.js       # Stripe checkout & subscriptions
+│           │   ├── delivery.service.js    # Mock delivery updates
+│           │   └── email.service.js       # Nodemailer / SendGrid integration
+│           ├── config/                    # Configurations
+│           │   ├── auth0.js               # Auth0 setup
+│           │   ├── stripe.js              # Stripe API setup
+│           │   ├── email.js               # Nodemailer/SendGrid setup
+│           │   └── db.js                  # Prisma client for PostgreSQL
+│           ├── utils/                     # Utilities (logging, validation, etc.)
+│           │   └── logger.js              # Simple request/response logger
+│           └── jobs/                      # Background jobs / cron tasks
+│               └── delivery.cron.js       # Simulated delivery status updates
+│
+├── docker-compose.yml                     # Defines services: frontend, backend, postgres
+├── package.json                           # Root scripts (pnpm workspaces, build/dev)
+├── pnpm-workspace.yaml                    # Defines workspaces (frontend, backend)
+├── pnpm-lock.yaml                         # Locked dependency versions
+├── README.md                              # Project documentation
+└── .gitignore                             # Files/folders to ignore in git
+
 ```
 
 ## 🛠️ Tech Stack
