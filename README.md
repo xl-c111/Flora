@@ -12,47 +12,49 @@ This is a **monorepo** using **pnpm workspaces** with the following structure:
 flora-holberton-demo-project/
 │
 ├── apps/
-│   ├── frontend/                          # Frontend (React/Next.js + Tailwind)
+│   ├── frontend/                          # Next.js + Tailwind frontend
 │   │   ├── Dockerfile                     # Container definition for frontend
 │   │   ├── package.json                   # Frontend dependencies & scripts
-│   │   ├── next.config.js                 # Next.js config (rewrites, proxy)
+│   │   ├── next.config.js                 # Next.js config (rewrites, proxy to backend)
 │   │   ├── public/                        # Static assets (logos, images, icons)
 │   │   └── src/
 │   │       ├── pages/                     # Next.js page routes
-│   │       │   ├── index.js               # Homepage: browse flowers
-│   │       │   ├── product/[id].js        # Product detail page (popup/modal)
-│   │       │   ├── checkout.js            # Checkout page (Stripe payment)
-│   │       │   ├── login.js               # Login page (Auth0)
-│   │       │   └── api/                   # (Optional) API routes if needed
+│   │       │   ├── index.js               # Homepage (browse flowers)
+│   │       │   ├── product/[id].js        # Product detail page
+│   │       │   ├── checkout.js            # Checkout page (Stripe)
+│   │       │   ├── login.js               # Login (Auth0)
+│   │       │   └── history.js             # Purchase history page
 │   │       ├── components/                # Reusable UI components
-│   │       │   ├── Navbar.js              # Top navigation bar
-│   │       │   ├── Footer.js              # Page footer
-│   │       │   ├── FilterBar.js           # Filters (price, color, mood)
-│   │       │   ├── ProductCard.js         # Individual flower card
-│   │       │   ├── CalendarPicker.js      # Date & spontaneous delivery picker
-│   │       │   └── Modal.js               # Generic modal popup
-│   │       ├── styles/                    # Styling
-│   │       │   └── globals.css            # Global CSS (integrates Tailwind)
-│   │       ├── utils/                     # Frontend helpers (e.g., fetch API)
+│   │       │   ├── Navbar.js
+│   │       │   ├── Footer.js
+│   │       │   ├── FilterBar.js           # Search & filter options
+│   │       │   ├── ProductCard.js         # Flower product card
+│   │       │   ├── CalendarPicker.js      # Subscription calendar
+│   │       │   ├── Modal.js               # Popup for product details
+│   │       │   ├── VoiceInput.js          # Voice-to-text input
+│   │       │   └── ChatWithAI.js          # OpenAI chat/recommendations
+│   │       ├── styles/                    # Tailwind/global styles
+│   │       │   └── globals.css
+│   │       ├── utils/
 │   │       │   └── apiClient.js           # Wrapper for backend API calls
-│   │       └── hooks/                     # Custom React hooks
-│   │           └── useAuth.js             # Hook to manage Auth0 login state
+│   │       └── hooks/
+│   │           └── useAuth.js             # Manage Auth0 login state
 │   │
-│   └── backend/                           # Backend (Node.js + Express)
+│   └── backend/                           # Node.js + Express backend
 │       ├── Dockerfile                     # Container definition for backend
 │       ├── package.json                   # Backend dependencies & scripts
 │       ├── prisma/
-│       │   ├── schema.prisma              # Prisma schema (tables & relations)
-│       │   └── migrations/                # Auto-generated migration files
+│       │   ├── schema.prisma              # Database schema for PostgreSQL
+│       │   └── migrations/                # Prisma migration files
 │       └── src/
-│           ├── index.js                   # Entry point, starts Express server
-│           ├── routes/                    # API route definitions
-│           │   ├── auth.routes.js         # Endpoints for Auth0 login
-│           │   ├── product.routes.js      # Endpoints for product browsing/search
-│           │   ├── order.routes.js        # Endpoints for purchase & subscriptions
-│           │   ├── delivery.routes.js     # Endpoints for delivery status
-│           │   └── email.routes.js        # Endpoints for testing email sending
-│           ├── controllers/               # Route handler functions
+│           ├── index.js                   # Entry point (Express server)
+│           ├── routes/                    # API endpoints
+│           │   ├── auth.routes.js         # Auth0 endpoints
+│           │   ├── product.routes.js      # Products, filters, search
+│           │   ├── order.routes.js        # Checkout & subscriptions
+│           │   ├── delivery.routes.js     # Delivery tracking
+│           │   └── email.routes.js        # Email notifications
+│           ├── controllers/               # Route handlers
 │           │   ├── auth.controller.js
 │           │   ├── product.controller.js
 │           │   ├── order.controller.js
@@ -60,26 +62,26 @@ flora-holberton-demo-project/
 │           │   └── email.controller.js
 │           ├── services/                  # Business logic
 │           │   ├── auth.service.js        # Auth0 integration
-│           │   ├── product.service.js     # Product queries (via Prisma)
-│           │   ├── order.service.js       # Stripe checkout & subscriptions
-│           │   ├── delivery.service.js    # Mock delivery updates
-│           │   └── email.service.js       # Nodemailer / SendGrid integration
-│           ├── config/                    # Configurations
+│           │   ├── product.service.js     # Product DB queries
+│           │   ├── order.service.js       # Stripe payment + subscriptions
+│           │   ├── delivery.service.js    # Simulated delivery status
+│           │   └── email.service.js       # Nodemailer/SendGrid
+│           ├── config/                    # Configuration files
 │           │   ├── auth0.js               # Auth0 setup
 │           │   ├── stripe.js              # Stripe API setup
-│           │   ├── email.js               # Nodemailer/SendGrid setup
+│           │   ├── email.js               # Email setup
 │           │   └── db.js                  # Prisma client for PostgreSQL
-│           ├── utils/                     # Utilities (logging, validation, etc.)
-│           │   └── logger.js              # Simple request/response logger
-│           └── jobs/                      # Background jobs / cron tasks
-│               └── delivery.cron.js       # Simulated delivery status updates
+│           ├── utils/
+│           │   └── logger.js              # Logging utility
+│           └── jobs/
+│               └── delivery.cron.js       # Background job to simulate delivery
 │
-├── docker-compose.yml                     # Defines services: frontend, backend, postgres
-├── package.json                           # Root scripts (pnpm workspaces, build/dev)
-├── pnpm-workspace.yaml                    # Defines workspaces (frontend, backend)
-├── pnpm-lock.yaml                         # Locked dependency versions
+├── docker-compose.yml                     # Orchestrates frontend, backend, postgres
+├── package.json                           # Root scripts for monorepo
+├── pnpm-workspace.yaml                    # Defines frontend + backend workspaces
+├── pnpm-lock.yaml                         # Locks dependency versions (auto-generated)
 ├── README.md                              # Project documentation
-└── .gitignore                             # Files/folders to ignore in git
+└── .gitignore                             # Files ignored by Git
 
 ```
 
