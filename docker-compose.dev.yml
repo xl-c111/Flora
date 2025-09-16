@@ -1,0 +1,23 @@
+# Development override - use this for local development
+version: '3.8'
+
+services:
+  backend:
+    working_dir: /app/apps/backend
+    command: ['pnpm', 'dev'] # Hot reload enabled
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://flora_user:flora_password@postgres:5432/flora_db
+    volumes:
+      - ./apps/backend:/app/apps/backend
+      - /app/apps/backend/node_modules
+
+  frontend:
+    working_dir: /app/apps/frontend
+    command: ['pnpm', 'dev', '--host', '0.0.0.0'] # Vite dev server
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://localhost:3001/api
+    volumes:
+      - ./apps/frontend:/app/apps/frontend
+      - /app/apps/frontend/node_modules

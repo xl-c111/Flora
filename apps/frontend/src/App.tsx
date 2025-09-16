@@ -46,6 +46,10 @@ function App() {
 
       const apiUrl =
         import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+
+      console.log('🔍 API URL:', apiUrl);
+      console.log('🔍 Full URL:', `${apiUrl}/products`);
+
       const response = await fetch(`${apiUrl}/products`);
 
       if (!response.ok) {
@@ -53,12 +57,13 @@ function App() {
       }
 
       const data: ProductResponse = await response.json();
+      console.log('✅ Data received:', data);
       setProducts(data.products);
     } catch (err) {
+      console.error('❌ Error details:', err);
       setError(
-        'Backend API is not running. Start the database and backend to see products.'
+        `Failed to connect to API. Check console for details. Backend should be running on http://localhost:3001`
       );
-      console.error('Error fetching products:', err);
     } finally {
       setLoading(false);
     }
