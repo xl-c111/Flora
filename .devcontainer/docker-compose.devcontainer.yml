@@ -1,0 +1,55 @@
+# Dev Container specific Docker Compose
+# This extends your existing docker-compose files for Dev Container use
+
+services:
+  devcontainer:
+    image: mcr.microsoft.com/devcontainers/typescript-node:18
+    working_dir: /workspace
+    command: sleep infinity
+
+    # Mount workspace
+    volumes:
+      - ..:/workspace:cached
+      - /var/run/docker.sock:/var/run/docker-host.sock
+
+    # Environment for development
+    environment:
+      - NODE_ENV=development
+      - DOCKER_HOST=unix:///var/run/docker-host.sock
+
+    # Connect to existing network to communicate with other services
+    networks:
+      - default
+
+    # Depends on your existing services
+    depends_on:
+      - postgres
+
+    # Install pnpm and global tools
+    user: node
+
+  # Override existing services to work with dev container
+  postgres:
+    # Ensure database is accessible from dev container
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_DB: flora_db
+      POSTGRES_USER: flora_user
+      POSTGRES_PASSWORD: flora_password
+
+  # Optional: override backend for dev container development
+  backend:
+    # Comment out if you want to run backend from dev container
+    profiles:
+      - backend-external
+
+  # Optional: override frontend for dev container development
+  frontend:
+    # Comment out if you want to run frontend from dev container
+    profiles:
+      - frontend-external
+
+networks:
+  default:
+    name: flora_network
