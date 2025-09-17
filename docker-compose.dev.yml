@@ -1,23 +1,32 @@
-# Development override - use this for local development
-version: '3.8'
+# Development environment overrides
+# Run with: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
 
 services:
   backend:
-    working_dir: /app/apps/backend
-    command: ['pnpm', 'dev'] # Hot reload enabled
     environment:
       - NODE_ENV=development
+      - PORT=3001
       - DATABASE_URL=postgresql://flora_user:flora_password@postgres:5432/flora_db
+    command: ['pnpm', 'dev']
     volumes:
+      # Mount source code for hot reload
       - ./apps/backend:/app/apps/backend
+      # Anonymous volume for node_modules to prevent conflicts
       - /app/apps/backend/node_modules
+    working_dir: /app/apps/backend
 
   frontend:
-    working_dir: /app/apps/frontend
-    command: ['pnpm', 'dev', '--host', '0.0.0.0'] # Vite dev server
     environment:
       - NODE_ENV=development
       - VITE_API_URL=http://localhost:3001/api
+    command: ['pnpm', 'dev', '--host', '0.0.0.0']
     volumes:
+      # Mount source code for hot reload
       - ./apps/frontend:/app/apps/frontend
+      # Anonymous volume for node_modules to prevent conflicts
       - /app/apps/frontend/node_modules
+    working_dir: /app/apps/frontend
+
+  postgres:
+    # Development database optimizations
+    command: postgres -c log_statement=all -c log_destination=stderr
