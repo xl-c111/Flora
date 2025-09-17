@@ -1,71 +1,153 @@
-export enum Occasion {
-  BIRTHDAY = "BIRTHDAY",
-  ANNIVERSARY = "ANNIVERSARY",
-  WEDDING = "WEDDING",
-  GRADUATION = "GRADUATION",
-  VALENTINES_DAY = "VALENTINES_DAY",
-  MOTHERS_DAY = "MOTHERS_DAY",
-  FATHERS_DAY = "FATHERS_DAY",
-  CHRISTMAS = "CHRISTMAS",
-  EASTER = "EASTER",
-  SYMPATHY = "SYMPATHY",
-  CONGRATULATIONS = "CONGRATULATIONS",
-  GET_WELL_SOON = "GET_WELL_SOON",
-  JUST_BECAUSE = "JUST_BECAUSE"
+// ============================================
+// 🌸 FLORA MARKETPLACE TYPES
+// ============================================
+
+export type Occasion =
+  | 'BIRTHDAY'
+  | 'ANNIVERSARY'
+  | 'WEDDING'
+  | 'GRADUATION'
+  | 'VALENTINES_DAY'
+  | 'MOTHERS_DAY'
+  | 'FATHERS_DAY'
+  | 'CHRISTMAS'
+  | 'EASTER'
+  | 'SYMPATHY'
+  | 'CONGRATULATIONS'
+  | 'GET_WELL_SOON'
+  | 'JUST_BECAUSE';
+
+export type Season = 'SPRING' | 'SUMMER' | 'FALL' | 'WINTER' | 'ALL_SEASON';
+
+export type Mood =
+  | 'ROMANTIC'
+  | 'CHEERFUL'
+  | 'ELEGANT'
+  | 'PEACEFUL'
+  | 'VIBRANT'
+  | 'SOPHISTICATED'
+  | 'WHIMSICAL'
+  | 'CLASSIC';
+
+export type Color =
+  | 'RED'
+  | 'PINK'
+  | 'WHITE'
+  | 'YELLOW'
+  | 'ORANGE'
+  | 'PURPLE'
+  | 'BLUE'
+  | 'GREEN'
+  | 'MIXED'
+  | 'PASTEL';
+
+export type ProductType =
+  | 'BOUQUET'
+  | 'ARRANGEMENT'
+  | 'PLANT'
+  | 'SUCCULENT'
+  | 'ORCHID'
+  | 'ROSE'
+  | 'LILY'
+  | 'TULIP'
+  | 'SUNFLOWER'
+  | 'MIXED_FLOWERS';
+
+export type PriceRange =
+  | 'UNDER_25'
+  | 'RANGE_25_50'
+  | 'RANGE_50_75'
+  | 'RANGE_75_100'
+  | 'OVER_100';
+
+// ============================================
+// 🚚 DELIVERY TYPES
+// ============================================
+
+export type DeliveryType = 'STANDARD' | 'EXPRESS' | 'SAME_DAY' | 'PICKUP';
+
+export interface DeliveryWindow {
+  id: string;
+  name: string;
+  startTime: string;
+  endTime: string;
+  additionalCostCents: number;
+  isAvailable: boolean;
 }
 
-export enum Season {
-  SPRING = "SPRING",
-  SUMMER = "SUMMER",
-  FALL = "FALL",
-  WINTER = "WINTER",
-  ALL_SEASON = "ALL_SEASON"
+export interface DeliveryZone {
+  id: string;
+  name: string;
+  description?: string;
+  zipCodes: string[];
+  cities: string[];
+  standardCostCents: number;
+  expressCostCents?: number;
+  sameDayCostCents?: number;
+  standardDeliveryDays: number;
+  expressDeliveryDays: number;
+  sameDayAvailable: boolean;
+  sameDayCutoffHour?: number;
+  freeDeliveryThreshold?: number;
+  weekendDelivery: boolean;
+  holidayDelivery: boolean;
+  deliveryWindows: DeliveryWindow[];
 }
 
-export enum Mood {
-  ROMANTIC = "ROMANTIC",
-  CHEERFUL = "CHEERFUL",
-  ELEGANT = "ELEGANT",
-  PEACEFUL = "PEACEFUL",
-  VIBRANT = "VIBRANT",
-  SOPHISTICATED = "SOPHISTICATED",
-  WHIMSICAL = "WHIMSICAL",
-  CLASSIC = "CLASSIC"
+export interface DeliveryMethod {
+  id: string;
+  name: string;
+  description: string;
+  deliveryType: DeliveryType;
+  baseCostCents: number;
+  estimatedDays: number;
+  trackingAvailable: boolean;
+  signatureRequired: boolean;
+  insuranceIncluded: boolean;
 }
 
-export enum Color {
-  RED = "RED",
-  PINK = "PINK",
-  WHITE = "WHITE",
-  YELLOW = "YELLOW",
-  ORANGE = "ORANGE",
-  PURPLE = "PURPLE",
-  BLUE = "BLUE",
-  GREEN = "GREEN",
-  MIXED = "MIXED",
-  PASTEL = "PASTEL"
+export interface ShippingOption {
+  method: DeliveryMethod;
+  costCents: number;
+  finalCostCents: number; // After discounts/free shipping
+  estimatedDelivery: string; // ISO date string
+  isFree: boolean;
+  deliveryWindow?: DeliveryWindow;
 }
 
-export enum ProductType {
-  BOUQUET = "BOUQUET",
-  ARRANGEMENT = "ARRANGEMENT",
-  PLANT = "PLANT",
-  SUCCULENT = "SUCCULENT",
-  ORCHID = "ORCHID",
-  ROSE = "ROSE",
-  LILY = "LILY",
-  TULIP = "TULIP",
-  SUNFLOWER = "SUNFLOWER",
-  MIXED_FLOWERS = "MIXED_FLOWERS"
+export interface ShippingCalculation {
+  zone?: DeliveryZone;
+  availableMethods: ShippingOption[];
+  unavailableReasons?: string[];
 }
 
-export enum PriceRange {
-  UNDER_25 = "UNDER_25",
-  RANGE_25_50 = "RANGE_25_50",
-  RANGE_50_75 = "RANGE_50_75",
-  RANGE_75_100 = "RANGE_75_100",
-  OVER_100 = "OVER_100"
+export interface TrackingEvent {
+  id: string;
+  timestamp: string;
+  location?: string;
+  status: string;
+  description: string;
+  isCustomerVisible: boolean;
 }
+
+export interface DeliveryTracking {
+  id: string;
+  orderId: string;
+  trackingNumber?: string;
+  carrierName?: string;
+  status: string;
+  currentLocation?: string;
+  estimatedDelivery?: string;
+  actualDelivery?: string;
+  deliveredTo?: string;
+  deliveryNotes?: string;
+  deliveryPhoto?: string;
+  events: TrackingEvent[];
+}
+
+// ============================================
+// 🛒 PRODUCT TYPES
+// ============================================
 
 export interface Product {
   id: string;
