@@ -1,0 +1,58 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    // TypeScript settings for monorepo
+    "typescript.preferences.includePackageJsonAutoImports": "auto",
+    "typescript.workspaceSymbols.scope": "allOpenProjects",
+
+    // File associations
+    "files.associations": {
+      "*.env*": "properties"
+    },
+
+    // Auto-save for hot reload
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 1000,
+
+    // Prettier formatting
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    },
+
+    // Terminal settings
+    "terminal.integrated.defaultProfile.linux": "bash",
+    "terminal.integrated.cwd": "${workspaceFolder}",
+
+    // Explorer settings
+    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.patterns": {
+      "package.json": "pnpm-lock.yaml,pnpm-workspace.yaml,.nvmrc,.node-version",
+      "docker-compose.yml": "docker-compose.*.yml,Dockerfile*",
+      "tsconfig.json": "tsconfig.*.json",
+      ".env": ".env.*"
+    },
+
+    // Prisma settings
+    "prisma.showPrismaDataPlatformNotification": false,
+
+    // Git settings
+    "git.openRepositoryInParentFolders": "always"
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-vscode.vscode-typescript-next",
+      "esbenp.prettier-vscode",
+      "dbaeumer.vscode-eslint",
+      "prisma.prisma",
+      "ms-vscode.vscode-json",
+      "rangav.vscode-thunder-client",
+      "bradlc.vscode-tailwindcss"
+    ]
+  }
+}
