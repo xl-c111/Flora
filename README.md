@@ -18,6 +18,7 @@ code .
 ```
 
 That's it! Everything installs automatically and you'll have:
+
 - ✅ Node.js 20 with pnpm
 - ✅ PostgreSQL database running and seeded
 - ✅ All dependencies installed
@@ -63,42 +64,43 @@ holbertonschool-final_project/
 ├── docker-compose.dev.yml                 # Development overrides
 └── flora-dev.code-workspace               # VS Code workspace settings
 ```
-│           ├── routes/                    # API endpoints
-│           │   ├── auth.routes.js         # Auth0 endpoints
-│           │   ├── product.routes.js      # Products, filters, search
-│           │   ├── order.routes.js        # Checkout & subscriptions
-│           │   ├── delivery.routes.js     # Delivery tracking
-│           │   └── email.routes.js        # Email notifications
-│           ├── controllers/               # Route handlers
-│           │   ├── auth.controller.js
-│           │   ├── product.controller.js
-│           │   ├── order.controller.js
-│           │   ├── delivery.controller.js
-│           │   └── email.controller.js
-│           ├── services/                  # Business logic
-│           │   ├── auth.service.js        # Auth0 integration
-│           │   ├── product.service.js     # Product DB queries
-│           │   ├── order.service.js       # Stripe payment + subscriptions
-│           │   ├── delivery.service.js    # Simulated delivery status
-│           │   └── email.service.js       # Nodemailer/SendGrid
-│           ├── config/                    # Configuration files
-│           │   ├── auth0.js               # Auth0 setup
-│           │   ├── stripe.js              # Stripe API setup
-│           │   ├── email.js               # Email setup
-│           │   └── db.js                  # Prisma client for PostgreSQL
-│           ├── utils/
-│           │   └── logger.js              # Logging utility
-│           └── jobs/
-│               └── delivery.cron.js       # Background job to simulate delivery
-│
-├── docker-compose.yml                     # Orchestrates frontend, backend, postgres
-├── package.json                           # Root scripts for monorepo
-├── pnpm-workspace.yaml                    # Defines frontend + backend workspaces
-├── pnpm-lock.yaml                         # Locks dependency versions (auto-generated)
-├── README.md                              # Project documentation
-└── .gitignore                             # Files ignored by Git
 
-```
+│ ├── routes/ # API endpoints
+│ │ ├── auth.routes.js # Auth0 endpoints
+│ │ ├── product.routes.js # Products, filters, search
+│ │ ├── order.routes.js # Checkout & subscriptions
+│ │ ├── delivery.routes.js # Delivery tracking
+│ │ └── email.routes.js # Email notifications
+│ ├── controllers/ # Route handlers
+│ │ ├── auth.controller.js
+│ │ ├── product.controller.js
+│ │ ├── order.controller.js
+│ │ ├── delivery.controller.js
+│ │ └── email.controller.js
+│ ├── services/ # Business logic
+│ │ ├── auth.service.js # Auth0 integration
+│ │ ├── product.service.js # Product DB queries
+│ │ ├── order.service.js # Stripe payment + subscriptions
+│ │ ├── delivery.service.js # Simulated delivery status
+│ │ └── email.service.js # Nodemailer/SendGrid
+│ ├── config/ # Configuration files
+│ │ ├── auth0.js # Auth0 setup
+│ │ ├── stripe.js # Stripe API setup
+│ │ ├── email.js # Email setup
+│ │ └── db.js # Prisma client for PostgreSQL
+│ ├── utils/
+│ │ └── logger.js # Logging utility
+│ └── jobs/
+│ └── delivery.cron.js # Background job to simulate delivery
+│
+├── docker-compose.yml # Orchestrates frontend, backend, postgres
+├── package.json # Root scripts for monorepo
+├── pnpm-workspace.yaml # Defines frontend + backend workspaces
+├── pnpm-lock.yaml # Locks dependency versions (auto-generated)
+├── README.md # Project documentation
+└── .gitignore # Files ignored by Git
+
+````
 
 ## 🛠️ Tech Stack
 
@@ -120,7 +122,7 @@ holbertonschool-final_project/
 
 ```bash
 pnpm install:all
-```
+````
 
 ### 2. Set up environment files
 
@@ -146,9 +148,11 @@ pnpm db:setup
 ### 5. Start the development servers
 
 #### For fullstack:
+
 ```bash
 pnpm dev
 ```
+
 This will start:
 
 - **Backend API**: http://localhost:3001
@@ -156,15 +160,16 @@ This will start:
 - **PostgreSQL**: localhost:5432
 
 #### For the Backend only:
+
 ```bash
 pnpm --filter backtend dev
 ```
 
 #### For the frontend only:
+
 ```bash
 pnpm --filter frontend dev
 ```
-
 
 ## 📊 Database Schema
 
