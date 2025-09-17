@@ -2,9 +2,9 @@
 
 **Team:** Anthony, Bevan, Xiaoling, and Lily | **Timeline:** 5-6 weeks | **Holberton Final Project**
 
-**🚨 CRITICAL SAFETY:** Read [DOCKER_SAFETY_WARNING.md](./DOCKER_SAFETY_WARNING.md) before using Docker commands!
+**Built with ❤️ and lots of learning** 🌸
 
-> **First-time React & Full-Stack Guide**: This project is designed as a learning experience for developers new to React and full-stack development. Each folder and file has been carefully structured with detailed explanations.
+_Flora - Where every purchase blooms into joy_
 
 Flora is a modern flowers and plants marketplace featuring flexible purchasing options including one-time purchases and subscription services. Built with React + TypeScript, Node.js/Express, Prisma, PostgreSQL, and Docker.
 
@@ -19,25 +19,6 @@ Flora is a modern flowers and plants marketplace featuring flexible purchasing o
 - **Guest Checkout:** No account required for quick purchases
 
 ## 🚀 Quick Start for Team Development
-
-### 🐳 Option 1: Dev Container (Recommended for VS Code users)
-
-**Fastest setup with complete isolation:**
-
-```bash
-git clone https://github.com/Aldore-88/holbertonschool-final_project.git
-cd holbertonschool-final_project
-
-# Open in VS Code
-code flora-dev.code-workspace
-
-# Click "Reopen in Container" when prompted
-# Everything installs automatically! ✨
-```
-
-**Benefits:** Complete development environment in container, no local dependencies needed.
-
-### 🛠️ Option 2: Docker Services (Hybrid approach)
 
 ```bash
 git clone https://github.com/Aldore-88/holbertonschool-final_project.git
@@ -75,8 +56,7 @@ holbertonschool-final_project/           # 📁 Main project folder
 │   ├── dev.sh                           # 🛠️ Development helper script (start/stop services)
 │   ├── docker-compose.yml               # 🐳 Main Docker services configuration
 │   ├── docker-compose.dev.yml           # 🐳 Development-specific Docker settings
-│   ├── docker-compose.prod.yml          # 🐳 Production Docker settings
-│   └── .devcontainer/                   # 🏗️ VS Code Dev Container configuration
+│   └── docker-compose.prod.yml          # 🐳 Production Docker settings
 ├── 📦 Package Management
 │   ├── package.json                     # 📦 Root package.json (workspace config)
 │   ├── pnpm-workspace.yaml              # 📦 pnpm workspace configuration
@@ -320,44 +300,7 @@ apps/backend/                            # 📁 API Server Root
 ./dev.sh db-reset
 ```
 
----
-
-## 📊 Data Flow Explained
-
-### How Frontend and Backend Communicate:
-
-1. **User Action**: User clicks "Add to Cart" button
-2. **Frontend**: React component calls `cartService.addItem()`
-3. **API Request**: Frontend sends HTTP POST to backend
-4. **Backend Route**: `/api/cart` route receives request
-5. **Controller**: `CartController.addItem()` handles request
-6. **Service**: `CartService.addToCart()` does business logic
-7. **Database**: Prisma saves data to PostgreSQL
-8. **Response**: Backend sends success/error back to frontend
-9. **Frontend Update**: React updates UI to show new cart state
-
-### Example API Request Flow:
-
-```typescript
-// Frontend (React)
-const addToCart = async (productId: string) => {
-  const response = await fetch('/api/cart', {
-    method: 'POST',
-    body: JSON.stringify({ productId, quantity: 1 }),
-  });
-  const data = await response.json();
-  setCartItems(data.items);
-};
-
-// Backend (Express)
-router.post('/cart', async (req, res) => {
-  const { productId, quantity } = req.body;
-  const result = await CartService.addItem(productId, quantity);
-  res.json(result);
-});
-```
-
----
+--
 
 ## 🧪 Testing Your Changes
 
@@ -396,27 +339,6 @@ router.post('/cart', async (req, res) => {
 - **API call failing**: Verify URL and request format
 
 ---
-
-## 👥 Team
-
-**Holberton School Final Project Team:**
-
-- **Anthony** - Full-Stack Developer
-- **Bevan** - Full-Stack Developer
-- **Xiaoling** - Full-Stack Developer
-- **Lily** - Full-Stack Developer
-
----
-
-## 📄 License
-
-MIT License - This project is for educational purposes as part of Holberton School curriculum.
-
----
-
-**Built with ❤️ and lots of learning** 🌸
-
-_Flora - Where every purchase blooms into joy_
 
 ## 🎯 Feature Implementation Plan
 
@@ -485,7 +407,6 @@ _Flora - Where every purchase blooms into joy_
 - **Node.js** 18+
 - **pnpm** 8+
 - **Docker** and **Docker Compose**
-- **VS Code** with Dev Containers extension (recommended)
 
 ### Quick Start
 
@@ -494,11 +415,10 @@ _Flora - Where every purchase blooms into joy_
 ```bash
 git clone https://github.com/Aldore-88/holbertonschool-final_project.git
 cd holbertonschool-final_project
-code .
-# Click "Reopen in Container" when prompted
+./dev.sh start
 ```
 
-2. **Traditional setup (if not using Dev Container):**
+2. **Alternative setup (install dependencies locally):**
 
 ```bash
 pnpm install:all
@@ -530,30 +450,7 @@ EMAIL_SERVICE_API_KEY="your-email-api-key"
 VITE_API_URL="http://localhost:3001/api"
 VITE_SUPABASE_URL="your-supabase-url"
 VITE_SUPABASE_ANON_KEY="your-supabase-anon-key"
-## 🚀 Development Commands
-
-### Start Development Environment
-```bash
-pnpm dev                    # Start both frontend and backend
-pnpm docker:dev            # Start with Docker (recommended)
 ````
-
-### Access Points
-
-- **Frontend**: http://localhost:5173
-- **Backend API**: http://localhost:3001
-- **API Health**: http://localhost:3001/api/health
-- **Database**: localhost:5432
-
-### Useful Commands
-
-```bash
-pnpm db:setup              # Setup database schema and seed data
-pnpm db:reset              # Reset database (caution: deletes all data)
-pnpm build                 # Build for production
-pnpm docker:stop           # Stop all Docker services
-pnpm docker:clean          # Clean up Docker volumes
-```
 
 ## 🎯 API Endpoints Overview
 
@@ -662,59 +559,6 @@ pnpm docker:logs          # View all container logs
 pnpm docker:clean         # Clean up volumes (careful!)
 pnpm start:db             # Start only database
 ```
-
-### Frontend Scripts (from /apps/frontend)
-
-- `pnpm dev` - Start frontend development server
-- `pnpm build` - Build frontend for production
-- `pnpm preview` - Preview production build
-
-## 🔧 Environment Variables
-
-### Backend (.env)
-
-```bash
-DATABASE_URL="postgresql://flora_user:flora_password@localhost:5432/flora_db"
-PORT=3001
-NODE_ENV=development
-```
-
-### Frontend (.env)
-
-```bash
-VITE_API_URL=http://localhost:3001/api
-```
-
-## 🌱 Sample Data
-
-The seed script creates:
-
-- **8 sample products** including roses, tulips, orchids, sunflowers, succulents, etc.
-- **4 categories** (Bouquets, Plants, Arrangements, Seasonal)
-- Products with realistic **prices**, **descriptions**, and **filter tags**
-- **Images from Unsplash** for visual appeal
-
-## 🔍 Features
-
-### Backend Features
-
-- **RESTful API** with Express.js
-- **Type-safe database** queries with Prisma
-- **Advanced filtering** by occasion, season, mood, color, type, price range
-- **Pagination** support
-- **Search functionality**
-- **Health check endpoint**
-- **Error handling middleware**
-- **🚚 Delivery System Ready**: Complete schema and service structure for shipping management
-
-### Frontend Features
-
-- **Modern React 19** with TypeScript
-- **Responsive design** with CSS Grid
-- **Product catalog** with filtering capabilities
-- **API integration** with Axios
-- **Loading states** and error handling
-- **Clean, marketplace-style UI**
 
 ## 👥 Team
 
