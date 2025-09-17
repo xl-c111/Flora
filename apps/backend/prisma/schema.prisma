@@ -417,20 +417,33 @@ model EmailLog {
 }
 
 // ============================================
-// 🚚 DELIVERY MANAGEMENT (Simplified)
+// 🚚 DELIVERY MANAGEMENT
 // ============================================
 model DeliveryZone {
   id              String       @id @default(cuid())
-  name            String
+  name            String       @unique
+  description     String?
   zipCodes        String[]     // Array of supported zip codes
+  cities          String[]     // Array of supported cities
 
-  // Delivery options and pricing
+  // Delivery options and pricing (all in cents)
   standardCostCents   Int      // Standard delivery cost
   expressCostCents    Int?     // Express delivery cost (if available)
   sameDayCostCents    Int?     // Same day delivery cost (if available)
 
+  // Delivery timing
+  standardDeliveryDays Int     @default(5)  // 3-5 business days
+  expressDeliveryDays  Int     @default(2)  // 1-2 business days
+  sameDayAvailable     Boolean @default(false)
+  sameDayCutoffHour    Int?    // Hour of day (24h format) for same-day cutoff
+
+  // Special pricing rules
   freeDeliveryThreshold Int?   // Free delivery if order over this amount
-  maxDeliveryDays     Int      @default(5)
+  weekendDelivery      Boolean @default(false)
+  holidayDelivery      Boolean @default(false)
+
+  // Delivery windows
+  deliveryWindows     DeliveryWindow[]
 
   isActive        Boolean      @default(true)
 
@@ -438,4 +451,80 @@ model DeliveryZone {
   updatedAt       DateTime     @updatedAt
 
   @@map("delivery_zones")
+}
+
+model DeliveryWindow {
+  id              String        @id @default(cuid())
+  zoneId          String
+  name            String        // "Morning", "Afternoon", "Evening"
+  startTime       String        // "09:00"
+  endTime         String        // "12:00"
+  additionalCostCents Int       @default(0) // Extra cost for time window
+  isAvailable     Boolean       @default(true)
+
+  zone            DeliveryZone  @relation(fields: [zoneId], references: [id], onDelete: Cascade)
+
+  @@map("delivery_windows")
+}
+
+model DeliveryMethod {
+  id              String    @id @default(cuid())
+  name            String    @unique
+  description     String
+  deliveryType    DeliveryType
+  baseCostCents   Int       // Base cost in cents
+  isActive        Boolean   @default(true)
+
+  // Delivery characteristics
+  estimatedDays   Int       // Estimated delivery days
+  trackingAvailable Boolean @default(true)
+  signatureRequired Boolean @default(false)
+  insuranceIncluded Boolean @default(false)
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("delivery_methods")
+}
+
+model DeliveryTracking {
+  id              String    @id @default(cuid())
+  orderId         String    @unique
+  trackingNumber  String?   @unique
+  carrierName     String?   // "Flora Express", "Local Courier"
+
+  // Tracking status
+  status          String    @default("PREPARING") // PREPARING, SHIPPED, IN_TRANSIT, OUT_FOR_DELIVERY, DELIVERED
+  currentLocation String?
+  estimatedDelivery DateTime?
+  actualDelivery  DateTime?
+
+  // Delivery details
+  deliveredTo     String?   // Name of person who received
+  deliveryNotes   String?   // Special delivery instructions
+  deliveryPhoto   String?   // Photo proof of delivery
+
+  // Tracking events
+  events          TrackingEvent[]
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("delivery_tracking")
+}
+
+model TrackingEvent {
+  id              String    @id @default(cuid())
+  trackingId      String
+  timestamp       DateTime
+  location        String?
+  status          String    // "ORDER_PLACED", "PREPARING", "SHIPPED", "IN_TRANSIT", "DELIVERED"
+  description     String
+  isCustomerVisible Boolean @default(true)
+
+  tracking        DeliveryTracking @relation(fields: [trackingId], references: [id], onDelete: Cascade)
+
+  createdAt       DateTime  @default(now())
+
+  @@map("tracking_events")
 }

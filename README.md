@@ -2,6 +2,8 @@
 
 **Team:** Anthony, Bevan, Xiaoling, and Lily | **Timeline:** 5-6 weeks | **Holberton Final Project**
 
+**🚨 CRITICAL SAFETY:** Read [DOCKER_SAFETY_WARNING.md](./DOCKER_SAFETY_WARNING.md) before using Docker commands!
+
 > **First-time React & Full-Stack Guide**: This project is designed as a learning experience for developers new to React and full-stack development. Each folder and file has been carefully structured with detailed explanations.
 
 Flora is a modern flowers and plants marketplace featuring flexible purchasing options including one-time purchases and subscription services. Built with React + TypeScript, Node.js/Express, Prisma, PostgreSQL, and Docker.
@@ -18,7 +20,24 @@ Flora is a modern flowers and plants marketplace featuring flexible purchasing o
 
 ## 🚀 Quick Start for Team Development
 
-### Simple Development Setup (Recommended)
+### 🐳 Option 1: Dev Container (Recommended for VS Code users)
+
+**Fastest setup with complete isolation:**
+
+```bash
+git clone https://github.com/Aldore-88/holbertonschool-final_project.git
+cd holbertonschool-final_project
+
+# Open in VS Code
+code flora-dev.code-workspace
+
+# Click "Reopen in Container" when prompted
+# Everything installs automatically! ✨
+```
+
+**Benefits:** Complete development environment in container, no local dependencies needed.
+
+### 🛠️ Option 2: Docker Services (Hybrid approach)
 
 ```bash
 git clone https://github.com/Aldore-88/holbertonschool-final_project.git
@@ -56,7 +75,8 @@ holbertonschool-final_project/           # 📁 Main project folder
 │   ├── dev.sh                           # 🛠️ Development helper script (start/stop services)
 │   ├── docker-compose.yml               # 🐳 Main Docker services configuration
 │   ├── docker-compose.dev.yml           # 🐳 Development-specific Docker settings
-│   └── docker-compose.prod.yml          # 🐳 Production Docker settings
+│   ├── docker-compose.prod.yml          # 🐳 Production Docker settings
+│   └── .devcontainer/                   # 🏗️ VS Code Dev Container configuration
 ├── 📦 Package Management
 │   ├── package.json                     # 📦 Root package.json (workspace config)
 │   ├── pnpm-workspace.yaml              # 📦 pnpm workspace configuration
@@ -177,18 +197,21 @@ apps/backend/                            # 📁 API Server Root
         │   │   ├── ProductController.ts # 📦 Handle product requests (GET /api/products)
         │   │   ├── UserController.ts    # 👤 Handle user requests (POST /api/auth/login)
         │   │   ├── OrderController.ts   # 📋 Handle order requests (POST /api/orders)
-        │   │   └── PaymentController.ts # 💳 Handle payment requests
+        │   │   ├── PaymentController.ts # 💳 Handle payment requests
+        │   │   └── DeliveryController.ts # 🚚 Handle shipping requests (planned)
         │   ├── services/                # 🔧 Business Logic Layer
         │   │   ├── ProductService.ts    # 📦 Product business logic (search, filter)
         │   │   ├── UserService.ts       # 👤 User management logic
         │   │   ├── OrderService.ts      # 📋 Order processing logic
         │   │   ├── PaymentService.ts    # 💳 Payment processing logic
-        │   │   └── EmailService.ts      # 📧 Email notifications
+        │   │   ├── EmailService.ts      # 📧 Email notifications
+        │   │   └── DeliveryService.ts   # 🚚 Shipping calculations (planned)
         │   ├── routes/                  # 🛤️ API Endpoints (URL definitions)
         │   │   ├── products.ts          # 📦 Product URLs (/api/products/*)
         │   │   ├── users.ts             # 👤 User URLs (/api/auth/*)
         │   │   ├── orders.ts            # 📋 Order URLs (/api/orders/*)
-        │   │   └── payments.ts          # 💳 Payment URLs (/api/payments/*)
+        │   │   ├── payments.ts          # 💳 Payment URLs (/api/payments/*)
+        │   │   └── delivery.ts          # 🚚 Shipping URLs (/api/delivery/*) [planned]
         │   ├── middleware/              # 🔒 Request Processing
         │   │   ├── auth.ts              # 🔐 Check if user is logged in
         │   │   ├── validation.ts        # ✅ Validate request data
@@ -199,7 +222,7 @@ apps/backend/                            # 📁 API Server Root
         │   │   └── payment.ts           # 💳 Payment provider setup
         │   ├── types/                   # 📝 TypeScript Type Definitions
         │   │   ├── index.ts             # 📝 Main type exports
-        │   │   ├── api.ts               # 🌐 API request/response types
+        │   │   ├── api.ts               # 🌐 API request/response types (includes delivery types)
         │   │   └── database.ts          # 🗃️ Database model types
         │   └── utils/                   # 🛠️ Helper Functions
         │       ├── validation.ts        # ✅ Data validation helpers
@@ -234,7 +257,7 @@ apps/backend/                            # 📁 API Server Root
 
 **🗃️ Prisma**: Database toolkit
 
-- `schema.prisma` - Defines database tables
+- `schema.prisma` - Defines database tables (includes comprehensive delivery system)
 - Generates TypeScript types automatically
 - Makes database queries type-safe
 
@@ -374,27 +397,6 @@ router.post('/cart', async (req, res) => {
 
 ---
 
-## 📚 Learning Resources
-
-### For React Beginners:
-
-- [Official React Tutorial](https://react.dev/learn)
-- [TypeScript Handbook](https://www.typescriptlang.org/docs/)
-- [React Hooks Guide](https://react.dev/reference/react)
-
-### For Backend Beginners:
-
-- [Express.js Guide](https://expressjs.com/en/guide/routing.html)
-- [Prisma Documentation](https://www.prisma.io/docs/)
-- [REST API Design](https://restfulapi.net/)
-
-### For Full-Stack Development:
-
-- [MDN Web Docs](https://developer.mozilla.org/)
-- [JavaScript.info](https://javascript.info/)
-
----
-
 ## 👥 Team
 
 **Holberton School Final Project Team:**
@@ -416,24 +418,6 @@ MIT License - This project is for educational purposes as part of Holberton Scho
 
 _Flora - Where every purchase blooms into joy_
 
-## 🛠️ Tech Stack
-
-### Core Technologies
-
-- **Frontend**: React 19, TypeScript, Vite, Axios
-- **Backend**: Node.js, Express, TypeScript
-- **Database**: PostgreSQL with Prisma ORM
-- **Authentication**: Supabase Auth (Email/Password + Google OAuth)
-- **Package Manager**: pnpm (workspaces)
-- **DevOps**: Docker Compose
-
-### Key Integrations
-
-- **Payment Processing**: Stripe (test mode)
-- **Email Service**: SendGrid/Nodemailer for order confirmations
-- **Search**: Custom search service with filtering
-- **Styling**: CSS Modules / Tailwind CSS (TBD)
-
 ## 🎯 Feature Implementation Plan
 
 ### Must-Haves (Weeks 1-4)
@@ -449,33 +433,50 @@ _Flora - Where every purchase blooms into joy_
 
 - 📦 Product bundles
 - 🔔 Price alerts & notifications
-- 📍 Basic delivery tracking (hardcoded statuses)
+- � **Delivery Management System** (planned - see below)
+- �📍 Order tracking with real-time updates
 - 🎨 Advanced UI/UX polish
 
-## � Team Workflow
+### 🚚 Planned Delivery Feature (Future Implementation)
 
-### Sprint Structure (5-6 weeks)
+**Comprehensive shipping system** designed for real e-commerce functionality:
 
-**Week 1-2:** Foundation & Core Setup
-**Week 3-4:** Main Features & User Flow
-**Week 5-6:** Polish & Optional Features
+#### Database Schema (Already Designed)
 
-### Development Workflow
+- **DeliveryZone**: Zip code mapping with pricing per zone
+- **DeliveryMethod**: Standard/Express/Same-day options
+- **DeliveryTracking**: Real-time order tracking system
+- **DeliveryWindow**: Time slot selections for customers
 
-1. **Check** [`TEAM_WORKFLOW.md`](./TEAM_WORKFLOW.md) for current sprint assignments
-2. **Create** feature branch: `git checkout -b feature/your-feature-name`
-3. **Develop** in Dev Container for consistency
-4. **Test** locally before pushing
-5. **Create** Pull Request with clear description
-6. **Review** by at least one team member
-7. **Merge** to main branch
+#### Backend Services (Ready to Implement)
 
-### Key Files for Team Coordination
+- **DeliveryService.ts**: Shipping cost calculation engine
+- **DeliveryController.ts**: API endpoints for shipping options
+- **Routes**: `/api/delivery/*` for all shipping functionality
 
-- [`TEAM_WORKFLOW.md`](./TEAM_WORKFLOW.md) - Sprint planning & task assignments
-- [`docs/API_ENDPOINTS.md`](./docs/API_ENDPOINTS.md) - API documentation
-- [`docs/COMPONENT_GUIDE.md`](./docs/COMPONENT_GUIDE.md) - Frontend component specs
-- [`docs/DATABASE_SCHEMA.md`](./docs/DATABASE_SCHEMA.md) - Database design
+#### Frontend Components (Planned)
+
+- **ShippingSelector**: Choose delivery method during checkout
+- **DeliveryCostBreakdown**: Show shipping costs with explanations
+- **OrderTracking**: Customer order status page
+- **AddressValidation**: Verify delivery availability
+
+#### Key Features
+
+- **Smart Pricing**: Zone-based shipping with free delivery thresholds
+- **Real-time Calculation**: Dynamic shipping costs based on location
+- **Delivery Windows**: Morning/afternoon/evening slot booking
+- **Order Tracking**: From "preparing" to "delivered" with updates
+- **Validation**: Check zip code coverage before checkout
+
+#### Why This Matters for E-commerce Learning
+
+- **Real-world complexity**: Understanding shipping logistics
+- **Business logic**: Complex pricing rules and zone management
+- **Customer experience**: Transparent delivery expectations
+- **Integration challenges**: Connecting checkout flow with shipping
+
+> **Team Note**: All delivery types and interfaces are documented in `types/api.ts`. The database schema includes comprehensive delivery tables. This feature showcases how modern e-commerce platforms handle shipping complexity while maintaining user-friendly experiences.
 
 ## 🚀 Development Setup
 
@@ -554,39 +555,6 @@ pnpm docker:stop           # Stop all Docker services
 pnpm docker:clean          # Clean up Docker volumes
 ```
 
-## 📊 Core Data Models
-
-### Flora Marketplace Models
-
-```typescript
-// User (customers only, providers are hardcoded)
-User {
-  id, email, profile, preferences
-  orders, subscriptions
-}
-
-// Product (hardcoded inventory)
-Product {
-  id, name, description, price, imageUrl
-  category, occasions, seasons, moods, colors, type
-  inStock, stockCount
-}
-
-// Order (one-time purchases and subscription deliveries)
-Order {
-  id, purchaseType (ONE_TIME | SUBSCRIPTION)
-  subscriptionType (RECURRING_WEEKLY | RECURRING_MONTHLY | SPONTANEOUS)
-  guestEmail?, userId?
-  items, total, status, deliveryInfo
-}
-
-// Subscription (recurring and spontaneous)
-Subscription {
-  id, userId, type, frequency
-  nextDelivery, status, preferences
-}
-```
-
 ## 🎯 API Endpoints Overview
 
 ### Products & Search
@@ -647,74 +615,53 @@ VITE_SUPABASE_ANON_KEY="your-supabase-anon-key"
 VITE_STRIPE_PUBLISHABLE_KEY="pk_test_your-stripe-publishable-key"
 ```
 
-## 📚 Team Resources
-
-### Documentation
-
-- **[TEAM_WORKFLOW.md](./TEAM_WORKFLOW.md)** - Sprint planning & assignments
-- **[docs/API_ENDPOINTS.md](./docs/API_ENDPOINTS.md)** - Detailed API documentation
-- **[docs/COMPONENT_GUIDE.md](./docs/COMPONENT_GUIDE.md)** - Frontend component specifications
-- **[docs/DATABASE_SCHEMA.md](./docs/DATABASE_SCHEMA.md)** - Complete database design
-- **[docs/SUPABASE_SETUP.md](./docs/SUPABASE_SETUP.md)** - Authentication setup guide
-
-### Development Tools
-
-- **VS Code Dev Container** - Consistent development environment
-- **Prisma Studio** - Database browser (`pnpm prisma:studio`)
-- **Thunder Client** - API testing in VS Code
-- **Docker Dashboard** - Container management
-
-## 🎨 Design System
-
-### Color Palette (Flora Theme)
-
-```css
-Primary: #10B981 (Green)    /* Nature, growth */
-Secondary: #F59E0B (Amber)  /* Warmth, energy */
-Accent: #EC4899 (Pink)      /* Flowers, romance */
-Neutral: #6B7280 (Gray)     /* Text, borders */
-Background: #F9FAFB         /* Clean, fresh */
-```
-
-### Component Library
-
-- Consistent button styles and variants
-- Form inputs with validation states
-- Product card layouts
-- Modal and popup patterns
-- Loading and error states
-
 ## 🚀 Deployment
 
-### Development
+### Development (Choose Your Preferred Method)
+
+**Option 1: Using dev.sh script (Recommended for teams)**
 
 ```bash
-pnpm docker:dev:bg         # Run in background
+./dev.sh start            # Starts with health checks and safety features
+./dev.sh stop             # Clean shutdown
+./dev.sh status           # Check what's running
 ```
+
+**Option 2: Using pnpm directly**
+
+```bash
+pnpm docker:dev:bg        # Run in background
+pnpm docker:dev           # Run in foreground (see logs)
+pnpm docker:dev:build     # Force rebuild containers
+pnpm docker:stop          # Stop containers
+```
+
+**💡 Pro Tip for TypeScript Developers:**
+If you get TypeScript errors in VS Code when using Docker-only approach:
+
+```bash
+# Install dependencies locally for VS Code IntelliSense
+pnpm install
+
+# Then run Docker services (hybrid approach)
+pnpm docker:dev:bg
+```
+
+This gives you the best of both worlds: local TypeScript support + consistent Docker runtime.
 
 ### Production
 
 ```bash
-pnpm docker:prod           # Production build
+pnpm docker:prod          # Production deployment
 ```
 
-### Key Services Integration
+### Other Useful Commands
 
-- **Supabase**: User authentication & management
-- **Stripe**: Payment processing (test mode)
-- **Email Service**: Order confirmations & notifications
-- **PostgreSQL**: Primary database
-
----
-
-**Built with ❤️ by Anthony, Bevan, Xiaoling, and Lily**
-
-_Flora - Where every purchase blooms into joy_ 🌸
-
-- `pnpm build` - Build backend for production
-- `pnpm db:generate` - Generate Prisma client
-- `pnpm db:push` - Push schema changes to database
-- `pnpm db:migrate` - Run database migrations
+```bash
+pnpm docker:logs          # View all container logs
+pnpm docker:clean         # Clean up volumes (careful!)
+pnpm start:db             # Start only database
+```
 
 ### Frontend Scripts (from /apps/frontend)
 
@@ -758,6 +705,7 @@ The seed script creates:
 - **Search functionality**
 - **Health check endpoint**
 - **Error handling middleware**
+- **🚚 Delivery System Ready**: Complete schema and service structure for shipping management
 
 ### Frontend Features
 
@@ -767,15 +715,6 @@ The seed script creates:
 - **API integration** with Axios
 - **Loading states** and error handling
 - **Clean, marketplace-style UI**
-
-## 🐳 Docker Services
-
-The `docker-compose.yml` provides:
-
-- **PostgreSQL 15** database
-- **Persistent volume** for data
-- **Health checks**
-- **Environment variables** for connection
 
 ## 👥 Team
 
