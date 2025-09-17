@@ -1,26 +1,57 @@
 // ============================================
-// 🎓 FLORA FLOWER SHOP - PRISMA SCHEMA
+// � FLORA MARKETPLACE - PRISMA SCHEMA
 // ============================================
-// Complete e-commerce schema with MVP-first enum approach
-// Supports products, collections, users, orders, and delivery
+// Flora marketplace schema with customer focus:
+// - Guest checkout for one-time purchases
+// - User accounts for subscriptions
+// - Flexible subscription system (recurring + spontaneous)
+// - Hardcoded provider system (no vendor management)
 
 // ============================================
-// 🎓 GENERATOR: Creates TypeScript Types
+// GENERATOR & DATASOURCE
 // ============================================
 generator client {
   provider = "prisma-client-js"
 }
 
-// ============================================
-// 🎓 DATASOURCE: Database Connection
-// ============================================
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 // ============================================
-// 🎓 PRODUCT FILTER ENUMS
+// 🛒 PURCHASE & SUBSCRIPTION ENUMS
+// ============================================
+enum PurchaseType {
+  ONE_TIME      // Guest or user one-time purchase
+  SUBSCRIPTION  // Recurring subscription (requires login)
+}
+
+enum SubscriptionType {
+  RECURRING_WEEKLY    // Weekly recurring delivery
+  RECURRING_MONTHLY   // Monthly recurring delivery
+  SPONTANEOUS         // Flexible timing, user decides when
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAUSED
+  CANCELLED
+  EXPIRED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+// ============================================
+// � PRODUCT FILTER ENUMS
 // ============================================
 enum Occasion {
   BIRTHDAY
@@ -99,89 +130,49 @@ enum PriceRange {
   OVER_100      // Over $100
 }
 
-// ============================================
-// 🎓 E-COMMERCE ENUMS
-// ============================================
-enum OrderStatus {
-  PENDING
-  CONFIRMED
-  PREPARING
-  OUT_FOR_DELIVERY
-  DELIVERED
-  CANCELLED
-  REFUNDED
-}
-
 enum DeliveryType {
-  STANDARD
-  EXPRESS
-  SAME_DAY
-  PICKUP
+  STANDARD      // 3-5 business days
+  EXPRESS       // 1-2 business days
+  SAME_DAY      // Same day delivery
+  PICKUP        // Customer pickup
 }
 
 enum UserRole {
   CUSTOMER
   ADMIN
-  STAFF
 }
 
 // ============================================
-// 🎓 PRODUCT & CATALOG MODELS
+// � PRODUCT CATALOG
 // ============================================
 model Product {
   id          String      @id @default(cuid())
   name        String
   description String
-  priceCents  Int         // Store price in cents (e.g., 2599 = $25.99)
+  priceCents  Int         // Price in cents (e.g., 2599 = $25.99)
   priceRange  PriceRange
   imageUrl    String?
   inStock     Boolean     @default(true)
   stockCount  Int         @default(0)
+  isActive    Boolean     @default(true)
 
-  // Filter facets using enum arrays
-  occasions   Occasion[]  // Can be for multiple occasions
-  seasons     Season[]    // Available in multiple seasons
-  moods       Mood[]      // Conveys multiple moods
-  colors      Color[]     // Contains multiple colors
-  type        ProductType // Single product type
+  // Filter attributes for browsing
+  occasions   Occasion[]
+  seasons     Season[]
+  moods       Mood[]
+  colors      Color[]
+  type        ProductType
 
   // Relationships
-  collections     CollectionProduct[]
-  orderItems      OrderItem[]
+  categoryId  String?
+  category    Category?   @relation(fields: [categoryId], references: [id])
+  orderItems  OrderItem[]
+  subscriptionItems SubscriptionItem[]
 
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
   @@map("products")
-}
-
-model Collection {
-  id          String    @id @default(cuid())
-  name        String    @unique
-  description String?
-  imageUrl    String?
-  isActive    Boolean   @default(true)
-  discountPercent Int?  // Optional discount for collection (e.g., 15 = 15% off)
-
-  products    CollectionProduct[]
-
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  @@map("collections")
-}
-
-model CollectionProduct {
-  id           String     @id @default(cuid())
-  collectionId String
-  productId    String
-  position     Int        // For ordering products within collection
-
-  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
-  product      Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  @@unique([collectionId, productId])
-  @@map("collection_products")
 }
 
 model Category {
@@ -191,6 +182,8 @@ model Category {
   imageUrl    String?
   isActive    Boolean   @default(true)
 
+  products    Product[]
+
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -198,22 +191,28 @@ model Category {
 }
 
 // ============================================
-// 🎓 USER & AUTH MODELS
+// 👤 USER MANAGEMENT (Customers Only)
 // ============================================
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  firstName String
-  lastName  String
-  phone     String?
-  role      UserRole @default(CUSTOMER)
+  id          String    @id @default(cuid())
+  email       String    @unique
+  firstName   String?
+  lastName    String?
+  phone       String?
+  role        UserRole  @default(CUSTOMER)
+
+  // User preferences for recommendations
+  favoriteOccasions Occasion[]
+  favoriteColors    Color[]
+  favoriteMoods     Mood[]
 
   // Relationships
-  addresses Address[]
-  orders    Order[]
+  addresses     Address[]
+  orders        Order[]
+  subscriptions Subscription[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   @@map("users")
 }
@@ -221,7 +220,7 @@ model User {
 model Address {
   id          String  @id @default(cuid())
   userId      String
-  label       String? // e.g., "Home", "Work", "Mom's House"
+  label       String? // "Home", "Work", "Gift Address"
   firstName   String
   lastName    String
   company     String?
@@ -235,7 +234,8 @@ model Address {
   isDefault   Boolean @default(false)
 
   user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  orders      Order[]
+  orders      Order[] @relation("ShippingAddress")
+  subscriptions Subscription[] @relation("SubscriptionAddress")
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -244,36 +244,57 @@ model Address {
 }
 
 // ============================================
-// 🎓 ORDER & CHECKOUT MODELS
+// 🛒 ORDER SYSTEM (One-time & Subscription Orders)
 // ============================================
 model Order {
-  id              String      @id @default(cuid())
-  orderNumber     String      @unique // Human-friendly order number
-  userId          String
-  status          OrderStatus @default(PENDING)
+  id              String        @id @default(cuid())
+  orderNumber     String        @unique
 
-  // Pricing
-  subtotalCents   Int         // Subtotal in cents
-  shippingCents   Int         // Shipping cost in cents
-  taxCents        Int         // Tax amount in cents
-  discountCents   Int         @default(0) // Discount amount in cents
-  totalCents      Int         // Final total in cents
+  // Purchase type and user info
+  purchaseType    PurchaseType
+  userId          String?       // NULL for guest purchases
+  guestEmail      String?       // Email for guest purchases
+  guestPhone      String?       // Phone for guest purchases
+
+  // Subscription reference (if subscription order)
+  subscriptionId  String?
+  subscriptionType SubscriptionType?
+
+  status          OrderStatus   @default(PENDING)
+
+  // Pricing (all in cents)
+  subtotalCents   Int
+  shippingCents   Int
+  taxCents        Int
+  discountCents   Int           @default(0)
+  totalCents      Int
 
   // Delivery details
   deliveryType    DeliveryType
-  deliveryDate    DateTime?   // Requested delivery date
-  deliveryNotes   String?     // Special delivery instructions
+  requestedDeliveryDate DateTime?
+  actualDeliveryDate    DateTime?
+  deliveryNotes   String?
 
-  // Address (snapshot at time of order)
-  shippingAddressId String
-  shippingAddress   Address @relation(fields: [shippingAddressId], references: [id])
+  // Shipping address (snapshot for guest orders)
+  shippingAddressId String?
+  shippingFirstName String
+  shippingLastName  String
+  shippingStreet1   String
+  shippingStreet2   String?
+  shippingCity      String
+  shippingState     String
+  shippingZipCode   String
+  shippingPhone     String?
 
   // Relationships
-  user        User        @relation(fields: [userId], references: [id])
-  items       OrderItem[]
+  user            User?         @relation(fields: [userId], references: [id])
+  shippingAddress Address?      @relation("ShippingAddress", fields: [shippingAddressId], references: [id])
+  subscription    Subscription? @relation(fields: [subscriptionId], references: [id])
+  items           OrderItem[]
+  payments        Payment[]
 
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
   @@map("orders")
 }
@@ -283,7 +304,7 @@ model OrderItem {
   orderId       String
   productId     String
   quantity      Int
-  priceCents    Int     // Price at time of order (for historical accuracy)
+  priceCents    Int     // Price at time of order
 
   order         Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product       Product @relation(fields: [productId], references: [id])
@@ -291,18 +312,130 @@ model OrderItem {
   @@map("order_items")
 }
 
-model DeliveryRule {
+// ============================================
+// 🔄 SUBSCRIPTION SYSTEM
+// ============================================
+model Subscription {
+  id              String            @id @default(cuid())
+  userId          String
+  type            SubscriptionType
+  status          SubscriptionStatus @default(ACTIVE)
+
+  // Subscription details
+  frequency       Int?              // For recurring: weeks/months between deliveries
+  nextDeliveryDate DateTime?        // When next delivery is scheduled
+  lastDeliveryDate DateTime?        // When last delivery was made
+
+  // Default delivery preferences
+  deliveryType    DeliveryType      @default(STANDARD)
+  addressId       String
+  deliveryNotes   String?
+
+  // Subscription items (what they want to receive)
+  items           SubscriptionItem[]
+
+  // Generated orders from this subscription
+  orders          Order[]
+
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  address         Address           @relation("SubscriptionAddress", fields: [addressId], references: [id])
+
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@map("subscriptions")
+}
+
+model SubscriptionItem {
+  id              String        @id @default(cuid())
+  subscriptionId  String
+  productId       String
+  quantity        Int           @default(1)
+
+  subscription    Subscription  @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  product         Product       @relation(fields: [productId], references: [id])
+
+  @@unique([subscriptionId, productId])
+  @@map("subscription_items")
+}
+
+// ============================================
+// 💳 PAYMENT SYSTEM
+// ============================================
+model Payment {
+  id              String    @id @default(cuid())
+  orderId         String
+  amountCents     Int
+  currency        String    @default("USD")
+
+  // Payment provider details (Stripe)
+  stripePaymentIntentId String?
+  stripePaymentMethodId String?
+
+  status          String    // succeeded, pending, failed, etc.
+  paidAt          DateTime?
+
+  order           Order     @relation(fields: [orderId], references: [id])
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("payments")
+}
+
+// ============================================
+// 📧 EMAIL & NOTIFICATIONS
+// ============================================
+model EmailTemplate {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  subject     String
+  htmlContent String
+  textContent String?
+  isActive    Boolean   @default(true)
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("email_templates")
+}
+
+model EmailLog {
+  id          String    @id @default(cuid())
+  toEmail     String
+  subject     String
+  templateName String?
+  status      String    // sent, failed, pending
+  orderId     String?
+  userId      String?
+  sentAt      DateTime?
+  errorMessage String?
+
+  createdAt   DateTime  @default(now())
+
+  @@map("email_logs")
+}
+
+// ============================================
+// 🚚 DELIVERY MANAGEMENT (Simplified)
+// ============================================
+model DeliveryZone {
   id              String       @id @default(cuid())
-  deliveryType    DeliveryType
-  zipCode         String       // Delivery area
-  baseCostCents   Int          // Base delivery cost in cents
-  freeThresholdCents Int?      // Free delivery if order over this amount
-  maxDeliveryDays Int          // Maximum delivery days
+  name            String
+  zipCodes        String[]     // Array of supported zip codes
+
+  // Delivery options and pricing
+  standardCostCents   Int      // Standard delivery cost
+  expressCostCents    Int?     // Express delivery cost (if available)
+  sameDayCostCents    Int?     // Same day delivery cost (if available)
+
+  freeDeliveryThreshold Int?   // Free delivery if order over this amount
+  maxDeliveryDays     Int      @default(5)
+
   isActive        Boolean      @default(true)
 
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
 
-  @@unique([deliveryType, zipCode])
-  @@map("delivery_rules")
+  @@map("delivery_zones")
 }
