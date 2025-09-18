@@ -45,9 +45,10 @@ cd holbertonschool-final_project
 **Option 2: Using pnpm directly**
 
 ```bash
-pnpm docker:dev:bg        # Run in background
-pnpm docker:dev           # Run in foreground (see logs)
 pnpm docker:dev:build     # Force rebuild containers
+pnpm docker:dev           # Run in foreground (see logs)
+pnpm docker:dev:bg        # Run in background
+pnpm docker:setup         # Runs migrations + seeding
 pnpm docker:stop          # Stop containers
 ```
 
