@@ -42,15 +42,58 @@ cd holbertonschool-final_project
 ./dev.sh help             # See all commands
 ```
 
-**Option 2: Using pnpm directly**
+**Option 2: Using pnpm with docker-compose directly**
 
 ```bash
+# 🚀 Initial Setup (first time)
 pnpm docker:dev:build     # Force rebuild containers
-pnpm docker:dev           # Run in foreground (see logs)
-pnpm docker:dev:bg        # Run in background
-pnpm docker:setup         # Runs migrations + seeding
-pnpm docker:stop          # Stop containers
+pnpm docker:dev           # Start services (run in foreground, see logs)
+pnpm docker:setup         # Set up database (migrations + seeding) - run in another terminal
+
+# 📊 Daily Development
+pnpm docker:dev:bg        # Run services in background (preferred for daily work)
+pnpm docker:logs          # View all container logs
+pnpm docker:restart-backend # Restart backend (useful when Prisma schema changes)
+pnpm docker:restart-frontend # Restart frontend (useful for config changes)
+docker ps # Checking working containers
+
+docker logs flora-backend # View backend logs and backend preview (link)
+docker logs flora-frontend # View frontend logs and frontend preview (link)
+
+# 🗃️ Database Operations
+pnpm docker:seed          # Re-seed database with fresh sample data
+pnpm db:reset             # Reset database (WARNING: deletes all data!)
+
+# 🔧 Maintenance & Debugging
+pnpm docker:stop          # Stop all containers
+pnpm docker:build         # Rebuild containers without starting them
+pnpm docker:clean         # Remove containers and volumes (fresh start, keep images)
+pnpm docker:clean-project # Full cleanup: remove containers, images, and volumes
+
+# 🎯 Production
+pnpm docker:prod          # Run production build
 ```
+
+### 🤔 Docker Workflow Clarified
+
+**Q: Do we need both `docker:setup` AND `docker:seed`?**
+
+**A: No! Here's the breakdown:**
+
+```bash
+# Traditional way (3 separate steps):
+pnpm start:db      # Start PostgreSQL
+pnpm db:setup      # Run migrations
+pnpm db:seed       # Add sample data
+
+# Docker way (2 steps total):
+pnpm docker:dev    # Start all services (postgres + backend + frontend)
+pnpm docker:setup  # Runs: migrations + seeding (includes everything!)
+```
+
+**`docker:setup` = `db:generate` + `db:push` + `db:seed`** ✅
+
+**`docker:seed` is optional** - only use it when you want to refresh sample data without running migrations again.
 
 **💡 Pro Tip for TypeScript Developers:**
 If you get TypeScript errors in VS Code when using Docker-only approach:
@@ -64,6 +107,25 @@ pnpm docker:dev:bg
 ```
 
 This gives you the best of both worlds: local TypeScript support + consistent Docker runtime.
+
+### 🆘 Common Docker Issues & Quick Fixes
+
+```bash
+# 🐛 Problem: "Port already in use" or services won't start
+pnpm docker:stop && pnpm docker:dev
+
+# 🐛 Problem: Database connection errors
+pnpm docker:stop && pnpm docker:clean && pnpm docker:dev:build
+
+# 🐛 Problem: "Module not found" or dependency issues
+pnpm docker:build  # Rebuild containers with fresh dependencies
+
+# 🐛 Problem: Database is empty or has old data
+pnpm docker:setup  # Re-run migrations and seeding
+
+# 🐛 Problem: Want to start completely fresh
+pnpm docker:clean-project && pnpm docker:dev:build
+```
 
 ```bash
 ### Production
@@ -424,7 +486,6 @@ apps/backend/                            # 📁 API Server Root
 - **Integration challenges**: Connecting checkout flow with shipping
 
 > **Team Note**: All delivery types and interfaces are documented in `types/api.ts`. The database schema includes comprehensive delivery tables. This feature showcases how modern e-commerce platforms handle shipping complexity while maintaining user-friendly experiences.
-
 
 ### Environment Configuration
 
