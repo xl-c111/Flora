@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User, AuthError, Session } from '@supabase/supabase-js';
+import type { User, AuthError, Session } from '@supabase/supabase-js';
 import { supabase } from '../services/supabase';
 
 interface AuthContextType {
@@ -9,7 +9,7 @@ interface AuthContextType {
   signUp: (
     email: string,
     password: string,
-    userData?: any
+    userData?: Record<string, unknown>
   ) => Promise<{ error: AuthError | null }>;
   signIn: (
     email: string,
@@ -57,22 +57,51 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, userData?: any) => {
-    const { error } = await supabase.auth.signUp({
+  const signUp = async (email: string, password: string, userData?: Record<string, unknown>) => {
+    console.log('📝 Attempting sign up with email:', email);
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: userData,
       },
     });
+    
+    if (error) {
+      console.error('❌ Sign up error:', error);
+      console.error('Error details:', {
+        message: error.message,
+        status: error.status,
+        name: error.name
+      });
+    } else {
+      console.log('✅ Sign up response:', data);
+      if (data.user && !data.session) {
+        console.log('📧 User created but needs email confirmation');
+      }
+    }
+    
     return { error };
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
+    console.log('🔐 Attempting sign in with email:', email);
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
+    
+    if (error) {
+      console.error('❌ Sign in error:', error);
+      console.error('Error details:', {
+        message: error.message,
+        status: error.status,
+        name: error.name
+      });
+    } else {
+      console.log('✅ Sign in successful:', data);
+    }
+    
     return { error };
   };
 

@@ -29,11 +29,15 @@ Supabase Auth is perfect for Flora marketplace - it's free, supports email/passw
 1. Go to **Authentication > Providers**
 2. Enable **Google** provider
 3. Get Google OAuth credentials:
+
    - Go to [Google Cloud Console](https://console.cloud.google.com/)
    - Create new project or select existing
    - Enable Google+ API
    - Create OAuth 2.0 credentials
-   - Add authorized redirect URI: `https://your-project.supabase.co/auth/v1/callback`
+   - Add Authorized JavaScript origins with frontend link: `http://localhost:5173` (development) and your production URL (when deployed)
+   - Add authorized JavaScript origins: `http://localhost:5173` (and your production URL)
+   - Add authorized redirect URI: `https://your-project-id.supabase.co/auth/v1/callback` (replace with your actual project ID)
+
 4. Add Google Client ID and Secret to Supabase
 
 ### 4. Get API Keys
