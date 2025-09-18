@@ -28,9 +28,12 @@ enum PurchaseType {
 }
 
 enum SubscriptionType {
-  RECURRING_WEEKLY    // Weekly recurring delivery
-  RECURRING_MONTHLY   // Monthly recurring delivery
-  SPONTANEOUS         // Flexible timing, user decides when
+  RECURRING_WEEKLY      // Weekly recurring delivery
+  RECURRING_BIWEEKLY    // Every two weeks
+  RECURRING_MONTHLY     // Monthly recurring delivery
+  RECURRING_QUARTERLY   // Every 3 months
+  RECURRING_YEARLY      // Yearly recurring delivery
+  SPONTANEOUS           // Flexible timing, user decides when
 }
 
 enum SubscriptionStatus {
@@ -49,6 +52,7 @@ enum OrderStatus {
   CANCELLED
   REFUNDED
 }
+
 
 // ============================================
 // � PRODUCT FILTER ENUMS
@@ -528,3 +532,34 @@ model TrackingEvent {
 
   @@map("tracking_events")
 }
+
+// ============================================
+// 🛒 CART SYSTEM
+// ============================================
+model Cart {
+  id        String     @id @default(cuid())
+  userId    String?
+  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@map("carts")
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  cartId    String
+  productId String
+  quantity  Int      @default(1)
+
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("cart_items")
+}
+
