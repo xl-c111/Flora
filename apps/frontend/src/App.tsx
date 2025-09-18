@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import './App.css';
+import { useAuth } from './contexts/AuthContext';
+import { LoginForm } from './components/auth/LoginForm';
 
 // Simple inline types for now
 interface Product {
@@ -146,6 +148,9 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [useAPI, setUseAPI] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  
+  const { user, signOut, loading: authLoading } = useAuth();
 
   useEffect(() => {
     // Try to fetch from API first
@@ -222,8 +227,50 @@ function App() {
   return (
     <div className="app">
       <header className="header">
-        <h1>🌸 Flora</h1>
-        <p>Flowers & Plants Marketplace</p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <h1>🌸 Flora</h1>
+            <p>Flowers & Plants Marketplace</p>
+          </div>
+          
+          <div className="auth-section">
+            {authLoading ? (
+              <div>Loading...</div>
+            ) : user ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <span>Welcome, {user.email}</span>
+                <button 
+                  onClick={() => signOut()}
+                  style={{
+                    padding: '0.5rem 1rem',
+                    backgroundColor: '#dc2626',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <button 
+                onClick={() => setShowLoginModal(true)}
+                style={{
+                  padding: '0.5rem 1rem',
+                  backgroundColor: '#10b981',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              >
+                Sign In
+              </button>
+            )}
+          </div>
+        </div>
+        
         {!useAPI && (
           <div className="demo-badge">🚧 Demo Mode - Using Sample Data</div>
         )}
@@ -298,6 +345,43 @@ function App() {
           )}
         </section>
       </main>
+
+      {/* Login Modal */}
+      {showLoginModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{ position: 'relative' }}>
+            <button
+              onClick={() => setShowLoginModal(false)}
+              style={{
+                position: 'absolute',
+                top: '1rem',
+                right: '1rem',
+                background: 'none',
+                border: 'none',
+                fontSize: '1.5rem',
+                cursor: 'pointer',
+                zIndex: 1001
+              }}
+            >
+              ×
+            </button>
+            <LoginForm 
+              onSuccess={() => setShowLoginModal(false)}
+            />
+          </div>
+        </div>
+      )}
 
       <footer className="footer">
         <p>
