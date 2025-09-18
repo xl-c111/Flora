@@ -20,27 +20,85 @@ Flora is a modern flowers and plants marketplace featuring flexible purchasing o
 
 ## 🚀 Quick Start for Team Development
 
+### 🍎 Mac/Linux Users (Recommended - Hybrid Approach)
+
+```bash
+git clone https://github.com/Aldore-88/holbertonschool-final_project.git
+cd holbertonschool-final_project
+```
+
+**Option 1: Using dev.sh script (Recommended for teams)**
+
+```bash
+# First time setup (new teammates)
+./dev.sh setup            # Builds containers + starts services + sets up database
+
+# Daily development commands
+./dev.sh start            # Start services (after initial setup)
+./dev.sh stop             # Clean shutdown
+./dev.sh status           # Check what's running
+./dev.sh restart          # Restart services
+./dev.sh logs             # View logs
+./dev.sh help             # See all commands
+```
+
+**Option 2: Using pnpm directly**
+
+```bash
+pnpm docker:dev:bg        # Run in background
+pnpm docker:dev           # Run in foreground (see logs)
+pnpm docker:dev:build     # Force rebuild containers
+pnpm docker:stop          # Stop containers
+```
+
+**💡 Pro Tip for TypeScript Developers:**
+If you get TypeScript errors in VS Code when using Docker-only approach:
+
+```bash
+# Install dependencies locally for VS Code IntelliSense
+pnpm install
+
+# Then run Docker services (hybrid approach)
+pnpm docker:dev:bg
+```
+
+This gives you the best of both worlds: local TypeScript support + consistent Docker runtime.
+
+```bash
+### Production
+pnpm docker:prod          # Production deployment
+```
+
+```bash
+### Other Useful Commands
+pnpm docker:logs          # View all container logs
+pnpm docker:clean         # Clean up volumes (careful!)
+pnpm start:db             # Start only database
+```
+
+### 🪟 Windows Users (Full Docker with Volume Sync)
+
+**For Windows team members who want to avoid Node.js/pnpm setup issues:**
+
 ```bash
 git clone https://github.com/Aldore-88/holbertonschool-final_project.git
 cd holbertonschool-final_project
 
-# Start everything with one command
-./dev.sh start
+# Start everything in Docker
+./dev-windows.sh bg
 
-# Access the app:
-# Frontend: http://localhost:5173
-# Backend API: http://localhost:3001
-# API Health: http://localhost:3001/api/health
+# Check status
+./dev-windows.sh status
 ```
 
-**Available Commands:**
+**📖 Detailed Windows Setup:** See [WINDOWS_SETUP.md](./WINDOWS_SETUP.md) for complete instructions.
 
-- `./dev.sh start` - Start all services
-- `./dev.sh stop` - Stop all services
-- `./dev.sh restart` - Restart services
-- `./dev.sh logs` - View logs
-- `./dev.sh status` - Check service health
-- `./dev.sh help` - See all commands
+**Benefits for Windows:**
+
+- ✅ No Node.js installation needed
+- ✅ No Windows path/permission issues
+- ✅ VS Code IntelliSense still works
+- ✅ Same database as Mac teammates
 
 ---
 
@@ -268,40 +326,6 @@ apps/backend/                            # 📁 API Server Root
 
 ---
 
-## 🚀 Development Workflow
-
-### 1. Starting Development
-
-```bash
-./dev.sh start        # Starts all services
-```
-
-### 2. Making Changes
-
-- **Frontend changes**: Saved automatically, browser refreshes
-- **Backend changes**: Server restarts automatically
-- **Database changes**: Need to run migrations
-
-### 3. Common Development Tasks
-
-```bash
-./dev.sh logs         # See what's happening
-./dev.sh restart      # Restart if something breaks
-./dev.sh stop         # Stop everything
-```
-
-### 4. Database Operations
-
-```bash
-# Seed database with sample data
-./dev.sh db-seed
-
-# Reset database (deletes all data!)
-./dev.sh db-reset
-```
-
---
-
 ## 🧪 Testing Your Changes
 
 ### Frontend Testing:
@@ -400,32 +424,6 @@ apps/backend/                            # 📁 API Server Root
 
 > **Team Note**: All delivery types and interfaces are documented in `types/api.ts`. The database schema includes comprehensive delivery tables. This feature showcases how modern e-commerce platforms handle shipping complexity while maintaining user-friendly experiences.
 
-## 🚀 Development Setup
-
-### Prerequisites
-
-- **Node.js** 18+
-- **pnpm** 8+
-- **Docker** and **Docker Compose**
-
-### Quick Start
-
-1. **Clone and setup:**
-
-```bash
-git clone https://github.com/Aldore-88/holbertonschool-final_project.git
-cd holbertonschool-final_project
-./dev.sh start
-```
-
-2. **Alternative setup (install dependencies locally):**
-
-```bash
-pnpm install:all
-pnpm start:db
-pnpm db:setup
-pnpm dev
-```
 
 ### Environment Configuration
 
@@ -438,7 +436,7 @@ cp apps/frontend/.env.example apps/frontend/.env
 
 Required environment variables:
 
-````bash
+```bash
 # Backend (.env)
 DATABASE_URL="postgresql://flora_user:flora_password@localhost:5432/flora_db"
 SUPABASE_URL="your-supabase-url"
@@ -450,7 +448,7 @@ EMAIL_SERVICE_API_KEY="your-email-api-key"
 VITE_API_URL="http://localhost:3001/api"
 VITE_SUPABASE_URL="your-supabase-url"
 VITE_SUPABASE_ANON_KEY="your-supabase-anon-key"
-````
+```
 
 ## 🎯 API Endpoints Overview
 
@@ -486,78 +484,6 @@ POST   /api/subscriptions         # Create subscription
 GET    /api/subscriptions         # User's subscriptions
 PUT    /api/subscriptions/:id     # Update subscription
 DELETE /api/subscriptions/:id     # Cancel subscription
-```
-
-## 🔧 Environment Setup
-
-Create these environment files:
-
-**Backend (`.env`):**
-
-```env
-DATABASE_URL="postgresql://flora_user:flora_password@localhost:5432/flora_db"
-SUPABASE_URL="your-supabase-project-url"
-SUPABASE_ANON_KEY="your-supabase-anon-key"
-SUPABASE_SERVICE_ROLE_KEY="your-supabase-service-role-key"
-STRIPE_SECRET_KEY="sk_test_your-stripe-secret-key"
-EMAIL_SERVICE_API_KEY="your-email-service-api-key"
-```
-
-**Frontend (`.env`):**
-
-```env
-VITE_API_URL="http://localhost:3001/api"
-VITE_SUPABASE_URL="your-supabase-project-url"
-VITE_SUPABASE_ANON_KEY="your-supabase-anon-key"
-VITE_STRIPE_PUBLISHABLE_KEY="pk_test_your-stripe-publishable-key"
-```
-
-## 🚀 Deployment
-
-### Development (Choose Your Preferred Method)
-
-**Option 1: Using dev.sh script (Recommended for teams)**
-
-```bash
-./dev.sh start            # Starts with health checks and safety features
-./dev.sh stop             # Clean shutdown
-./dev.sh status           # Check what's running
-```
-
-**Option 2: Using pnpm directly**
-
-```bash
-pnpm docker:dev:bg        # Run in background
-pnpm docker:dev           # Run in foreground (see logs)
-pnpm docker:dev:build     # Force rebuild containers
-pnpm docker:stop          # Stop containers
-```
-
-**💡 Pro Tip for TypeScript Developers:**
-If you get TypeScript errors in VS Code when using Docker-only approach:
-
-```bash
-# Install dependencies locally for VS Code IntelliSense
-pnpm install
-
-# Then run Docker services (hybrid approach)
-pnpm docker:dev:bg
-```
-
-This gives you the best of both worlds: local TypeScript support + consistent Docker runtime.
-
-### Production
-
-```bash
-pnpm docker:prod          # Production deployment
-```
-
-### Other Useful Commands
-
-```bash
-pnpm docker:logs          # View all container logs
-pnpm docker:clean         # Clean up volumes (careful!)
-pnpm start:db             # Start only database
 ```
 
 ## 👥 Team
