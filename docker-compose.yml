@@ -30,13 +30,14 @@ services:
     restart: unless-stopped
     ports:
       - '3001:3001'
+    env_file:
+      - apps/backend/.env
     environment:
       - NODE_ENV=production
       - PORT=3001
       - DATABASE_URL=postgresql://flora_user:flora_password@postgres:5432/flora_db
       - SUPABASE_URL=https://gzsbrivgdvqojwqgwyge.supabase.co
       - SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6c2JyaXZnZHZxb2p3cWd3eWdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxNTkxOTQsImV4cCI6MjA3MzczNTE5NH0.lOA2jJjCc0p3Uypr3PeGgdJq1sFVAl0fBdRWeMr9yz8
-      - SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6c2JyaXZnZHZxb2p3cWd3eWdlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1ODE1OTE5NCwiZXhwIjoyMDczNzM1MTk0fQ.SEql0AcvXULIHHKTL6rOk1bcZ2wNHlskBrJdFsy6VpA
     depends_on:
       postgres:
         condition: service_healthy
