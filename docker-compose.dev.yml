@@ -1,23 +1,37 @@
-# Development override - use this for local development
-version: '3.8'
+# Development environment overrides
+# Run with: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
 
 services:
   backend:
-    working_dir: /app/apps/backend
-    command: ['pnpm', 'dev'] # Hot reload enabled
     environment:
       - NODE_ENV=development
+      - PORT=3001
       - DATABASE_URL=postgresql://flora_user:flora_password@postgres:5432/flora_db
+      - SUPABASE_URL=https://gzsbrivgdvqojwqgwyge.supabase.co
+      - SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6c2JyaXZnZHZxb2p3cWd3eWdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxNTkxOTQsImV4cCI6MjA3MzczNTE5NH0.lOA2jJjCc0p3Uypr3PeGgdJq1sFVAl0fBdRWeMr9yz8
+      - SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6c2JyaXZnZHZxb2p3cWd3eWdlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1ODE1OTE5NCwiZXhwIjoyMDczNzM1MTk0fQ.SEql0AcvXULIHHKTL6rOk1bcZ2wNHlskBrJdFsy6VpA
+    command: ['pnpm', 'dev']
     volumes:
+      # Mount source code for hot reload
       - ./apps/backend:/app/apps/backend
+      # Anonymous volume for node_modules to prevent conflicts
       - /app/apps/backend/node_modules
+    working_dir: /app/apps/backend
 
   frontend:
-    working_dir: /app/apps/frontend
-    command: ['pnpm', 'dev', '--host', '0.0.0.0'] # Vite dev server
     environment:
       - NODE_ENV=development
       - VITE_API_URL=http://localhost:3001/api
+      - VITE_SUPABASE_URL=https://gzsbrivgdvqojwqgwyge.supabase.co
+      - VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6c2JyaXZnZHZxb2p3cWd3eWdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxNTkxOTQsImV4cCI6MjA3MzczNTE5NH0.lOA2jJjCc0p3Uypr3PeGgdJq1sFVAl0fBdRWeMr9yz8
+    command: ['pnpm', 'dev', '--host', '0.0.0.0']
     volumes:
+      # Mount source code for hot reload
       - ./apps/frontend:/app/apps/frontend
+      # Anonymous volume for node_modules to prevent conflicts
       - /app/apps/frontend/node_modules
+    working_dir: /app/apps/frontend
+
+  postgres:
+    # Development database optimizations
+    command: postgres -c log_statement=all -c log_destination=stderr
