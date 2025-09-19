@@ -1,6 +1,9 @@
-import express, { Application } from 'express';
-import dotenv from 'dotenv';
-import { prisma } from './config/database';
+// Load environment variables FIRST
+import dotenv from "dotenv";
+dotenv.config();
+
+import express, { Application } from "express";
+import { prisma } from "./config/database";
 
 // Middleware
 import { corsMiddleware } from "./middleware/cors";
@@ -8,13 +11,11 @@ import { errorHandler } from "./middleware/errorHandler";
 import { notFoundHandler } from "./middleware/notFoundHandler";
 
 // Routes
-import productRoutes from './routes/products';
-import categoryRoutes from './routes/categories';
-import authTestRoutes from './routes/auth-test';
+import productRoutes from "./routes/products";
+import categoryRoutes from "./routes/categories";
+import authTestRoutes from "./routes/auth-test";
 import orderRoutes from "./routes/orders";
-
-// Load environment variables
-dotenv.config();
+import paymentRoutes from "./routes/payments";
 
 // Initialize Express app
 const app: Application = express();
@@ -25,8 +26,11 @@ app.use(corsMiddleware);
 app.use(express.json());
 
 // Routes
-app.use('/api/products', productRoutes);
-app.use('/api/categories', categoryRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/categories", categoryRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/payments", paymentRoutes);
+app.use("/api/auth-test", authTestRoutes);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
@@ -47,6 +51,7 @@ app.get("/", (req, res) => {
       products: "/api/products",
       categories: "/api/categories",
       orders: "/api/orders",
+      payments: "/api/payments",
     },
   });
 });
