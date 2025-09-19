@@ -1,15 +1,16 @@
-import express from 'express';
+import express, { Application } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { prisma } from './config/database';
 import productRoutes from './routes/products';
 import categoryRoutes from './routes/categories';
+import authTestRoutes from './routes/auth-test';
 
 // Load environment variables
 dotenv.config();
 
 // Initialize Express app
-const app = express();
+const app: Application = express();
 const port = process.env.PORT || 3001;
 
 // Middleware
@@ -19,6 +20,7 @@ app.use(express.json());
 // Routes
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
+app.use('/api/auth-test', authTestRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
