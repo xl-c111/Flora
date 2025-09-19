@@ -171,16 +171,13 @@ const collections = [
 async function main() {
   console.log('🌸 Starting to seed Flora database...');
 
-  // Clear existing data
+  // Clear existing data (only tables that exist)
   await prisma.orderItem.deleteMany();
   await prisma.order.deleteMany();
   await prisma.address.deleteMany();
   await prisma.user.deleteMany();
-  await prisma.collectionProduct.deleteMany();
-  await prisma.collection.deleteMany();
   await prisma.product.deleteMany();
   await prisma.category.deleteMany();
-  await prisma.deliveryRule.deleteMany();
 
   // Create categories
   console.log('📂 Creating categories...');
@@ -198,17 +195,9 @@ async function main() {
     });
   }
 
-  // Create collections
-  console.log('📦 Creating collections...');
-  for (const collection of collections) {
-    await prisma.collection.create({
-      data: collection,
-    });
-  }
-
   console.log('✅ Seeding completed successfully!');
   console.log(
-    `📊 Created ${categories.length} categories, ${sampleProducts.length} products, and ${collections.length} collections`
+    `📊 Created ${categories.length} categories and ${sampleProducts.length} products`
   );
 }
 

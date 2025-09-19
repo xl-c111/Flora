@@ -12,6 +12,8 @@
     "start:db": "docker-compose up -d postgres",
     "stop:db": "docker-compose down",
     "install:all": "pnpm install",
+    "docker:setup": "docker exec -it flora-backend pnpm db:setup",
+    "docker:seed": "docker exec -it flora-backend pnpm db:seed",
     "docker:dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up",
     "docker:dev:build": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
     "docker:dev:bg": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d",
@@ -19,6 +21,8 @@
     "docker:prod": "docker-compose -f docker-compose.yml -f docker-compose.prod.yml up",
     "docker:stop": "docker-compose down",
     "docker:logs": "docker-compose logs -f",
+    "docker:restart-frontend": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml restart frontend",
+    "docker:restart-backend": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml restart backend",
     "docker:clean": "docker-compose down -v",
     "docker:clean-project": "docker-compose down --rmi all -v"
   },
@@ -30,5 +34,8 @@
     "pnpm": ">=8.0.0"
   },
   "author": "Anthony, Bevan, Xiaoling, and Lily",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "zod": "3.22.4"
+  }
 }

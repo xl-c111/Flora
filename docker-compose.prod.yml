@@ -1,0 +1,36 @@
+# Production Docker Compose Configuration
+# This extends the base docker-compose.yml for production deployment
+
+services:
+  backend:
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://flora_user:flora_password@postgres:5432/flora_db
+    restart: always
+    # Remove development volumes
+    volumes: []
+
+  frontend:
+    environment:
+      - NODE_ENV=production
+      - VITE_API_URL=http://localhost:3001/api
+    restart: always
+    # Remove development volumes
+    volumes: []
+
+  postgres:
+    # Production database optimizations
+    environment:
+      POSTGRES_DB: flora_db
+      POSTGRES_USER: flora_user
+      POSTGRES_PASSWORD: flora_password
+    # Add persistent volume for production data
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Consider adding backup volume
+      # - ./backups:/backups
+
+volumes:
+  postgres_data:
+    # Production volume configuration
+    driver: local
