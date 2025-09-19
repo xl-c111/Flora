@@ -4,6 +4,12 @@ export interface ApiResponse<T = any> {
   data?: T;
   error?: string;
   message?: string;
+  meta?: {
+    currentPage?: number;
+    totalPages?: number;
+    totalItems?: number;
+    itemsPerPage?: number;
+  };
 }
 
 // Pagination types
@@ -157,4 +163,86 @@ export interface DeliveryValidationRequest {
   city?: string;
   deliveryType?: DeliveryType;
   requestedDate?: string; // ISO date string
+}
+
+// ============================================
+// 💳 PAYMENT TYPES
+// ============================================
+
+// Payment response types
+export interface PaymentResponse {
+  id: string;
+  orderId: string;
+  stripePaymentIntentId?: string;
+  amountCents: number;
+  status: 'pending' | 'succeeded' | 'failed' | 'refunded';
+  paidAt?: string;
+  refundedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+  order?: {
+    id: string;
+    orderNumber: string;
+    totalCents: number;
+    status: string;
+    user?: {
+      id: string;
+      email: string;
+      firstName?: string;
+      lastName?: string;
+    };
+  };
+}
+
+// Payment intent creation request
+export interface CreatePaymentIntentRequest {
+  orderId: string;
+  metadata?: Record<string, string>;
+}
+
+// Payment intent response
+export interface PaymentIntentResponse {
+  clientSecret: string;
+  paymentIntentId: string;
+}
+
+// Payment confirmation request
+export interface ConfirmPaymentRequest {
+  paymentIntentId: string;
+}
+
+// Customer creation request
+export interface CreateCustomerRequest {
+  email: string;
+  name?: string;
+  phone?: string;
+}
+
+// Payment method response
+export interface PaymentMethodResponse {
+  id: string;
+  type: string;
+  card?: {
+    brand: string;
+    last4: string;
+    expMonth: number;
+    expYear: number;
+  };
+  createdAt: string;
+}
+
+// Refund request
+export interface RefundRequest {
+  amount?: number;
+  reason?: 'duplicate' | 'fraudulent' | 'requested_by_customer';
+}
+
+// Refund response
+export interface RefundResponse {
+  id: string;
+  amount: number;
+  currency: string;
+  status: string;
+  reason?: string;
+  createdAt: string;
 }
