@@ -138,6 +138,72 @@ export class SubscriptionService {
     );
   }
 
+  // Create spontaneous delivery order
+  async createSpontaneousDelivery(
+    subscriptionId: string,
+    deliveryData: {
+      requestedDate?: Date;
+      deliveryNotes?: string;
+      items?: Array<{ productId: string; quantity: number }>;
+    }
+  ): Promise<any> {
+    const subscription = await prisma.subscription.findUnique({
+      where: { id: subscriptionId },
+      include: {
+        items: {
+          include: {
+            product: true,
+          },
+        },
+        user: true,
+        address: true,
+      },
+    });
+
+    if (!subscription) {
+      throw new Error('Subscription not found');
+    }
+
+    // Use subscription items or provided items
+    const orderItems = deliveryData.items || subscription.items.map(item => ({
+      productId: item.productId,
+      quantity: item.quantity,
+      priceCents: item.product.priceCents,
+    }));
+
+    // Create one-time order for spontaneous delivery
+    const orderData = {
+      userId: subscription.userId,
+      purchaseType: 'ONE_TIME' as const,
+      items: orderItems,
+      shippingAddress: {
+        firstName: subscription.address.firstName,
+        lastName: subscription.address.lastName,
+        street1: subscription.address.street1,
+        street2: subscription.address.street2,
+        city: subscription.address.city,
+        state: subscription.address.state,
+        zipCode: subscription.address.zipCode,
+        phone: subscription.address.phone,
+      },
+      deliveryType: subscription.deliveryType,
+      deliveryNotes: deliveryData.deliveryNotes || subscription.deliveryNotes,
+      requestedDeliveryDate: deliveryData.requestedDate,
+    };
+
+    // Would integrate with OrderService here
+    console.log('Creating spontaneous delivery order:', orderData);
+
+    // Return mock order for now
+    return {
+      id: 'spontaneous-order-' + Date.now(),
+      orderNumber: `SPNT${Date.now()}`,
+      ...orderData,
+      status: 'PENDING',
+      createdAt: new Date(),
+    };
+  }
+
   private calculateNextDelivery(
     currentDate: Date,
     type: SubscriptionType

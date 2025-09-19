@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { SubscriptionService } from '../services/SubscriptionService';
 import { ApiResponse } from '../types/api';
+import { AuthRequest } from '../middleware/auth';
 
 export class SubscriptionController {
   private subscriptionService: SubscriptionService;
@@ -10,7 +11,10 @@ export class SubscriptionController {
   }
 
   // Create new subscription (requires login)
-  createSubscription = async (req: Request, res: Response): Promise<void> => {
+  createSubscription = async (
+    req: AuthRequest,
+    res: Response
+  ): Promise<void> => {
     try {
       const userId = req.user?.id;
       if (!userId) {
@@ -41,8 +45,46 @@ export class SubscriptionController {
     }
   };
 
+  // Get specific subscription
+  getSubscription = async (req: AuthRequest, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const userId = req.user?.id;
+
+      if (!userId) {
+        res.status(401).json({ success: false, error: 'Unauthorized' });
+        return;
+      }
+
+      const subscription = await this.subscriptionService.getSubscription(id);
+
+      if (!subscription || subscription.userId !== userId) {
+        res.status(404).json({
+          success: false,
+          error: 'Subscription not found',
+        });
+        return;
+      }
+
+      const response: ApiResponse = {
+        success: true,
+        data: subscription,
+      };
+      res.json(response);
+    } catch (error) {
+      console.error('Get subscription error:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to get subscription',
+      });
+    }
+  };
+
   // Get user subscriptions
-  getUserSubscriptions = async (req: Request, res: Response): Promise<void> => {
+  getUserSubscriptions = async (
+    req: AuthRequest,
+    res: Response
+  ): Promise<void> => {
     try {
       const userId = req.user?.id;
       if (!userId) {
@@ -50,9 +92,8 @@ export class SubscriptionController {
         return;
       }
 
-      const subscriptions = await this.subscriptionService.getUserSubscriptions(
-        userId
-      );
+      const subscriptions =
+        await this.subscriptionService.getSubscriptionsByUser(userId);
 
       const response: ApiResponse = {
         success: true,
@@ -69,7 +110,10 @@ export class SubscriptionController {
   };
 
   // Update subscription
-  updateSubscription = async (req: Request, res: Response): Promise<void> => {
+  updateSubscription = async (
+    req: AuthRequest,
+    res: Response
+  ): Promise<void> => {
     try {
       const { id } = req.params;
       const userId = req.user?.id;
@@ -80,9 +124,18 @@ export class SubscriptionController {
         return;
       }
 
+      // Verify ownership
+      const existing = await this.subscriptionService.getSubscription(id);
+      if (!existing || existing.userId !== userId) {
+        res.status(404).json({
+          success: false,
+          error: 'Subscription not found',
+        });
+        return;
+      }
+
       const subscription = await this.subscriptionService.updateSubscription(
         id,
-        userId,
         updateData
       );
 
@@ -101,8 +154,11 @@ export class SubscriptionController {
     }
   };
 
-  // Pause subscription
-  pauseSubscription = async (req: Request, res: Response): Promise<void> => {
+  // Resume subscription
+  resumeSubscription = async (
+    req: AuthRequest,
+    res: Response
+  ): Promise<void> => {
     try {
       const { id } = req.params;
       const userId = req.user?.id;
@@ -112,10 +168,60 @@ export class SubscriptionController {
         return;
       }
 
-      const subscription = await this.subscriptionService.pauseSubscription(
-        id,
-        userId
+      // Verify ownership
+      const existing = await this.subscriptionService.getSubscription(id);
+      if (!existing || existing.userId !== userId) {
+        res.status(404).json({
+          success: false,
+          error: 'Subscription not found',
+        });
+        return;
+      }
+
+      const subscription = await this.subscriptionService.resumeSubscription(
+        id
       );
+
+      const response: ApiResponse = {
+        success: true,
+        data: subscription,
+        message: 'Subscription resumed successfully',
+      };
+      res.json(response);
+    } catch (error) {
+      console.error('Resume subscription error:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to resume subscription',
+      });
+    }
+  };
+
+  // Pause subscription
+  pauseSubscription = async (
+    req: AuthRequest,
+    res: Response
+  ): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const userId = req.user?.id;
+
+      if (!userId) {
+        res.status(401).json({ success: false, error: 'Unauthorized' });
+        return;
+      }
+
+      // Verify ownership
+      const existing = await this.subscriptionService.getSubscription(id);
+      if (!existing || existing.userId !== userId) {
+        res.status(404).json({
+          success: false,
+          error: 'Subscription not found',
+        });
+        return;
+      }
+
+      const subscription = await this.subscriptionService.pauseSubscription(id);
 
       const response: ApiResponse = {
         success: true,
@@ -133,7 +239,10 @@ export class SubscriptionController {
   };
 
   // Cancel subscription
-  cancelSubscription = async (req: Request, res: Response): Promise<void> => {
+  cancelSubscription = async (
+    req: AuthRequest,
+    res: Response
+  ): Promise<void> => {
     try {
       const { id } = req.params;
       const userId = req.user?.id;
@@ -143,9 +252,18 @@ export class SubscriptionController {
         return;
       }
 
+      // Verify ownership
+      const existing = await this.subscriptionService.getSubscription(id);
+      if (!existing || existing.userId !== userId) {
+        res.status(404).json({
+          success: false,
+          error: 'Subscription not found',
+        });
+        return;
+      }
+
       const subscription = await this.subscriptionService.cancelSubscription(
-        id,
-        userId
+        id
       );
 
       const response: ApiResponse = {
@@ -165,7 +283,7 @@ export class SubscriptionController {
 
   // Trigger spontaneous delivery
   createSpontaneousDelivery = async (
-    req: Request,
+    req: AuthRequest,
     res: Response
   ): Promise<void> => {
     try {
@@ -178,9 +296,18 @@ export class SubscriptionController {
         return;
       }
 
+      // Verify ownership
+      const existing = await this.subscriptionService.getSubscription(id);
+      if (!existing || existing.userId !== userId) {
+        res.status(404).json({
+          success: false,
+          error: 'Subscription not found',
+        });
+        return;
+      }
+
       const order = await this.subscriptionService.createSpontaneousDelivery(
         id,
-        userId,
         deliveryData
       );
 
