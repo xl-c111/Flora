@@ -375,7 +375,7 @@ model Payment {
   currency        String    @default("USD")
 
   // Payment provider details (Stripe)
-  stripePaymentIntentId String?
+  stripePaymentIntentId String? @unique
   stripePaymentMethodId String?
 
   status          String    // succeeded, pending, failed, etc.

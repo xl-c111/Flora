@@ -1,37 +1,60 @@
-# Development environment overrides
-# Run with: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+# Development overrides
+# Run with: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build
 
 services:
   backend:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
     environment:
       - NODE_ENV=development
       - PORT=3001
       - DATABASE_URL=postgresql://flora_user:flora_password@postgres:5432/flora_db
       - SUPABASE_URL=https://gzsbrivgdvqojwqgwyge.supabase.co
-      - SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6c2JyaXZnZHZxb2p3cWd3eWdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxNTkxOTQsImV4cCI6MjA3MzczNTE5NH0.lOA2jJjCc0p3Uypr3PeGgdJq1sFVAl0fBdRWeMr9yz8
-      - SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6c2JyaXZnZHZxb2p3cWd3eWdlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1ODE1OTE5NCwiZXhwIjoyMDczNzM1MTk0fQ.SEql0AcvXULIHHKTL6rOk1bcZ2wNHlskBrJdFsy6VpA
-    command: ['pnpm', 'dev']
+      - SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+      - SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+    command: ["pnpm", "dev"]
     volumes:
-      # Mount source code for hot reload
       - ./apps/backend:/app/apps/backend
-      # Anonymous volume for node_modules to prevent conflicts
       - /app/apps/backend/node_modules
     working_dir: /app/apps/backend
+    ports:
+      - "3001:3001"
 
   frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
     environment:
       - NODE_ENV=development
       - VITE_API_URL=http://localhost:3001/api
       - VITE_SUPABASE_URL=https://gzsbrivgdvqojwqgwyge.supabase.co
-      - VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6c2JyaXZnZHZxb2p3cWd3eWdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxNTkxOTQsImV4cCI6MjA3MzczNTE5NH0.lOA2jJjCc0p3Uypr3PeGgdJq1sFVAl0fBdRWeMr9yz8
-    command: ['pnpm', 'dev', '--host', '0.0.0.0']
+      - VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+    command: ["pnpm", "dev", "--host", "0.0.0.0"]
     volumes:
-      # Mount source code for hot reload
       - ./apps/frontend:/app/apps/frontend
-      # Anonymous volume for node_modules to prevent conflicts
       - /app/apps/frontend/node_modules
     working_dir: /app/apps/frontend
+    ports:
+      - "5173:5173"
 
   postgres:
-    # Development database optimizations
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: flora_user
+      POSTGRES_PASSWORD: flora_password
+      POSTGRES_DB: flora_db
+    ports:
+      - "5432:5432"
     command: postgres -c log_statement=all -c log_destination=stderr
+
+  stripe-cli:
+    image: stripe/stripe-cli:latest
+    container_name: flora-stripe-cli
+    command: listen --forward-to http://backend:3001/api/webhooks/stripe
+    environment:
+      - STRIPE_API_KEY=${STRIPE_SECRET_KEY}
+    depends_on:
+      - backend
+    networks:
+      - flora-network
