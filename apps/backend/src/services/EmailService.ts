@@ -1,5 +1,5 @@
-import nodemailer from 'nodemailer';
-import { User, Order, Subscription } from '@prisma/client';
+import nodemailer from "nodemailer";
+import { User, Order, Subscription } from "@prisma/client";
 
 interface EmailConfig {
   host: string;
@@ -16,9 +16,9 @@ export class EmailService {
 
   constructor() {
     const config: EmailConfig = {
-      host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: parseInt(process.env.SMTP_PORT || '587'),
-      secure: process.env.SMTP_SECURE === 'true',
+      host: process.env.SMTP_HOST || "smtp.gmail.com",
+      port: parseInt(process.env.SMTP_PORT || "587"),
+      secure: process.env.SMTP_SECURE === "true",
       auth: {
         user: process.env.SMTP_USER!,
         pass: process.env.SMTP_PASS!,
@@ -30,13 +30,13 @@ export class EmailService {
 
   async sendWelcomeEmail(user: User): Promise<void> {
     const mailOptions = {
-      from: process.env.FROM_EMAIL || 'noreply@flora.com',
+      from: process.env.FROM_EMAIL || "noreply@flora.com",
       to: user.email,
-      subject: 'Welcome to Flora!',
+      subject: "Welcome to Flora!",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h1 style="color: #16a34a;">Welcome to Flora!</h1>
-          <p>Dear ${user.name || 'Customer'},</p>
+          <p>Dear ${user.firstName || "Customer"},</p>
           <p>Thank you for joining Flora! We're excited to help you discover beautiful, fresh flowers for every occasion.</p>
 
           <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
@@ -59,33 +59,39 @@ export class EmailService {
   }
 
   async sendOrderConfirmation(order: Order & { user?: User }): Promise<void> {
+    const customerEmail = order.guestEmail || order.user?.email;
+    const customerName = order.user?.firstName || 'Customer';
+    const totalAmount = (order.totalCents / 100).toFixed(2);
+    const deliveryAddress = `${order.shippingFirstName} ${order.shippingLastName}\n${order.shippingStreet1}${order.shippingStreet2 ? '\n' + order.shippingStreet2 : ''}\n${order.shippingCity}, ${order.shippingState} ${order.shippingZipCode}`;
+
+    if (!customerEmail) {
+      console.warn('No email found for order confirmation:', order.id);
+      return;
+    }
+
     const mailOptions = {
-      from: process.env.FROM_EMAIL || 'noreply@flora.com',
-      to: order.guestEmail || order.user?.email,
-      subject: `Order Confirmation #${order.id}`,
+      from: process.env.FROM_EMAIL || "noreply@flora.com",
+      to: customerEmail,
+      subject: `Order Confirmation #${order.orderNumber}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h1 style="color: #16a34a;">Order Confirmation</h1>
-          <p>Dear ${order.guestName || order.user?.name || 'Customer'},</p>
+          <p>Dear ${customerName},</p>
           <p>Thank you for your order! We've received your purchase and are preparing it for delivery.</p>
 
           <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <h3 style="color: #16a34a; margin-top: 0;">Order Details</h3>
-            <p><strong>Order Number:</strong> #${order.id}</p>
+            <p><strong>Order Number:</strong> #${order.orderNumber}</p>
             <p><strong>Order Date:</strong> ${order.createdAt.toLocaleDateString()}</p>
-            <p><strong>Total Amount:</strong> $${order.total.toFixed(2)}</p>
+            <p><strong>Total Amount:</strong> $${totalAmount}</p>
             <p><strong>Delivery Address:</strong><br/>
-            ${order.deliveryAddress}</p>
+            ${deliveryAddress}</p>
             ${
-              order.deliveryDate
-                ? `<p><strong>Delivery Date:</strong> ${order.deliveryDate.toLocaleDateString()}</p>`
-                : ''
+              order.requestedDeliveryDate
+                ? `<p><strong>Requested Delivery Date:</strong> ${new Date(order.requestedDeliveryDate).toLocaleDateString()}</p>`
+                : ""
             }
-            ${
-              order.message
-                ? `<p><strong>Special Message:</strong> ${order.message}</p>`
-                : ''
-            }
+            ${order.deliveryNotes ? `<p><strong>Delivery Notes:</strong> ${order.deliveryNotes}</p>` : ""}
           </div>
 
           <p>We'll send you another email when your order ships with tracking information.</p>
@@ -98,34 +104,36 @@ export class EmailService {
     await this.transporter.sendMail(mailOptions);
   }
 
-  async sendOrderShipped(
-    order: Order & { user?: User },
-    trackingNumber?: string
-  ): Promise<void> {
+  async sendOrderShipped(order: Order & { user?: User }, trackingNumber?: string): Promise<void> {
+    const customerEmail = order.guestEmail || order.user?.email;
+    const customerName = order.user?.firstName || 'Customer';
+    const deliveryAddress = `${order.shippingFirstName} ${order.shippingLastName}\n${order.shippingStreet1}${order.shippingStreet2 ? '\n' + order.shippingStreet2 : ''}\n${order.shippingCity}, ${order.shippingState} ${order.shippingZipCode}`;
+
+    if (!customerEmail) {
+      console.warn('No email found for shipping notification:', order.id);
+      return;
+    }
+
     const mailOptions = {
-      from: process.env.FROM_EMAIL || 'noreply@flora.com',
-      to: order.guestEmail || order.user?.email,
-      subject: `Your Flora Order #${order.id} Has Shipped!`,
+      from: process.env.FROM_EMAIL || "noreply@flora.com",
+      to: customerEmail,
+      subject: `Your Flora Order #${order.orderNumber} Has Shipped!`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h1 style="color: #16a34a;">Your Order Has Shipped!</h1>
-          <p>Dear ${order.guestName || order.user?.name || 'Customer'},</p>
+          <p>Dear ${customerName},</p>
           <p>Great news! Your Flora order is on its way to you.</p>
 
           <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <h3 style="color: #16a34a; margin-top: 0;">Shipping Information</h3>
-            <p><strong>Order Number:</strong> #${order.id}</p>
-            ${
-              trackingNumber
-                ? `<p><strong>Tracking Number:</strong> ${trackingNumber}</p>`
-                : ''
-            }
+            <p><strong>Order Number:</strong> #${order.orderNumber}</p>
+            ${trackingNumber ? `<p><strong>Tracking Number:</strong> ${trackingNumber}</p>` : ""}
             <p><strong>Delivery Address:</strong><br/>
-            ${order.deliveryAddress}</p>
+            ${deliveryAddress}</p>
             ${
-              order.deliveryDate
-                ? `<p><strong>Expected Delivery:</strong> ${order.deliveryDate.toLocaleDateString()}</p>`
-                : ''
+              order.requestedDeliveryDate
+                ? `<p><strong>Expected Delivery:</strong> ${new Date(order.requestedDeliveryDate).toLocaleDateString()}</p>`
+                : ""
             }
           </div>
 
@@ -138,17 +146,15 @@ export class EmailService {
     await this.transporter.sendMail(mailOptions);
   }
 
-  async sendSubscriptionConfirmation(
-    subscription: Subscription & { user: User }
-  ): Promise<void> {
+  async sendSubscriptionConfirmation(subscription: Subscription & { user: User }): Promise<void> {
     const mailOptions = {
-      from: process.env.FROM_EMAIL || 'noreply@flora.com',
+      from: process.env.FROM_EMAIL || "noreply@flora.com",
       to: subscription.user.email,
-      subject: 'Your Flora Subscription is Active!',
+      subject: "Your Flora Subscription is Active!",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h1 style="color: #16a34a;">Subscription Confirmed!</h1>
-          <p>Dear ${subscription.user.name || 'Customer'},</p>
+          <p>Dear ${subscription.user.name || "Customer"},</p>
           <p>Your Flora subscription is now active! You'll receive beautiful, fresh flowers regularly.</p>
 
           <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
@@ -158,11 +164,7 @@ export class EmailService {
             <p><strong>Next Delivery:</strong> ${subscription.nextDelivery.toLocaleDateString()}</p>
             <p><strong>Delivery Address:</strong><br/>
             ${subscription.deliveryAddress}</p>
-            ${
-              subscription.notes
-                ? `<p><strong>Notes:</strong> ${subscription.notes}</p>`
-                : ''
-            }
+            ${subscription.notes ? `<p><strong>Notes:</strong> ${subscription.notes}</p>` : ""}
           </div>
 
           <p>You can manage your subscription anytime from your account dashboard.</p>
@@ -175,17 +177,15 @@ export class EmailService {
     await this.transporter.sendMail(mailOptions);
   }
 
-  async sendSubscriptionReminder(
-    subscription: Subscription & { user: User }
-  ): Promise<void> {
+  async sendSubscriptionReminder(subscription: Subscription & { user: User }): Promise<void> {
     const mailOptions = {
-      from: process.env.FROM_EMAIL || 'noreply@flora.com',
+      from: process.env.FROM_EMAIL || "noreply@flora.com",
       to: subscription.user.email,
-      subject: 'Your Flora Delivery is Coming Soon!',
+      subject: "Your Flora Delivery is Coming Soon!",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h1 style="color: #16a34a;">Delivery Reminder</h1>
-          <p>Dear ${subscription.user.name || 'Customer'},</p>
+          <p>Dear ${subscription.user.name || "Customer"},</p>
           <p>Just a friendly reminder that your next Flora delivery is scheduled for ${subscription.nextDelivery.toLocaleDateString()}.</p>
 
           <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
@@ -208,9 +208,9 @@ export class EmailService {
     const resetUrl = `${process.env.FRONTEND_URL}/auth/reset-password?token=${resetToken}`;
 
     const mailOptions = {
-      from: process.env.FROM_EMAIL || 'noreply@flora.com',
+      from: process.env.FROM_EMAIL || "noreply@flora.com",
       to: email,
-      subject: 'Reset Your Flora Password',
+      subject: "Reset Your Flora Password",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h1 style="color: #16a34a;">Reset Your Password</h1>
@@ -239,8 +239,8 @@ export class EmailService {
     message: string;
   }): Promise<void> {
     const mailOptions = {
-      from: process.env.FROM_EMAIL || 'noreply@flora.com',
-      to: process.env.CONTACT_EMAIL || 'support@flora.com',
+      from: process.env.FROM_EMAIL || "noreply@flora.com",
+      to: process.env.CONTACT_EMAIL || "support@flora.com",
       subject: `Contact Form: ${data.subject}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -251,7 +251,7 @@ export class EmailService {
             <p><strong>Email:</strong> ${data.email}</p>
             <p><strong>Subject:</strong> ${data.subject}</p>
             <p><strong>Message:</strong></p>
-            <p>${data.message.replace(/\n/g, '<br>')}</p>
+            <p>${data.message.replace(/\n/g, "<br>")}</p>
           </div>
         </div>
       `,
@@ -261,9 +261,9 @@ export class EmailService {
 
     // Send confirmation to user
     const confirmationOptions = {
-      from: process.env.FROM_EMAIL || 'noreply@flora.com',
+      from: process.env.FROM_EMAIL || "noreply@flora.com",
       to: data.email,
-      subject: 'We Received Your Message - Flora',
+      subject: "We Received Your Message - Flora",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h1 style="color: #16a34a;">Thank You for Contacting Flora</h1>
@@ -272,7 +272,7 @@ export class EmailService {
 
           <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <p><strong>Your message:</strong></p>
-            <p>${data.message.replace(/\n/g, '<br>')}</p>
+            <p>${data.message.replace(/\n/g, "<br>")}</p>
           </div>
 
           <p>Thank you for reaching out to us!</p>

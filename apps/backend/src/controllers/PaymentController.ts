@@ -61,23 +61,6 @@ export class PaymentController {
     }
   };
 
-  // Stripe webhook handler
-  handleStripeWebhook = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const sig = req.headers['stripe-signature'] as string;
-      const payload = req.body;
-
-      await this.paymentService.handleWebhook(payload, sig);
-
-      res.status(200).json({ received: true });
-    } catch (error) {
-      console.error('Stripe webhook error:', error);
-      res.status(400).json({
-        success: false,
-        error: 'Webhook signature verification failed',
-      });
-    }
-  };
 
   // Get payment details
   getPayment = async (req: Request, res: Response): Promise<void> => {
@@ -100,6 +83,70 @@ export class PaymentController {
       res.status(500).json({
         success: false,
         error: 'Failed to get payment',
+      });
+    }
+  };
+
+  // Get payment methods for a customer
+  getPaymentMethods = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { customerId } = req.query;
+
+      if (!customerId || typeof customerId !== 'string') {
+        res.status(400).json({
+          success: false,
+          error: 'Customer ID is required',
+        });
+        return;
+      }
+
+      const paymentMethods = await this.paymentService.getPaymentMethods(customerId);
+
+      const response: ApiResponse = {
+        success: true,
+        data: paymentMethods,
+      };
+      res.json(response);
+    } catch (error) {
+      console.error('Get payment methods error:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to get payment methods',
+      });
+    }
+  };
+
+  // Create customer
+  createCustomer = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { email, name, phone, address } = req.body;
+
+      if (!email) {
+        res.status(400).json({
+          success: false,
+          error: 'Email is required',
+        });
+        return;
+      }
+
+      const customer = await this.paymentService.createCustomer({
+        email,
+        name,
+        phone,
+        address,
+      });
+
+      const response: ApiResponse = {
+        success: true,
+        data: customer,
+        message: 'Customer created successfully',
+      };
+      res.json(response);
+    } catch (error) {
+      console.error('Create customer error:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to create customer',
       });
     }
   };
