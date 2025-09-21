@@ -29,10 +29,11 @@ docker start flora-backend flora-stripe-cli
 ### Step 2: watch backend logs in Terminal 1
 
 ```bash
-Watch Backend Logs
+docker logs -f flora-backend
 ```
 
 ### Step 3: Start Stripe CLI Listener in Terminal 2
+
 ```bash
 docker exec -it flora-stripe-cli stripe listen --forward-to http://backend:3001/api/webhooks/stripe
 ```
@@ -54,4 +55,48 @@ docker exec -it flora-stripe-cli stripe trigger invoice.payment_succeeded
 docker logs -f flora-stripe-cli
 ```
 
+## 4. Common Stripe Test Cards
 
+**✅ Successful Payment**
+
+```yaml
+4242 4242 4242 4242
+```
+
+**❌ Declined Payments**
+
+- **Always fails**
+
+```yaml
+4000 0000 0000 0002
+```
+
+- **Insufficient funds**
+
+```yaml
+4000 0000 0000 9995
+```
+
+- **Lost card**
+
+```yaml
+4000 0000 0000 9987
+```
+
+**🔄 Authentication Required (3D Secure)**
+
+```yaml
+4000 0027 6000 3184
+```
+
+**💳 Refund / Dispute Flows**
+
+```yaml
+4000 0000 0000 0259
+```
+
+**Usage Notes**
+
+- Use **any future expiry date** (e.g., 12/34)
+- Use **any CVC** (3 digits, or 4 for AmEx)
+- Use **any billing ZIP/postal code**
