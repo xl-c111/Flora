@@ -19,7 +19,7 @@
     "docker:dev:bg": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d",
     "docker:build": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml build",
     "docker:prod": "docker-compose -f docker-compose.yml -f docker-compose.prod.yml up",
-    "docker:stop": "docker-compose down",
+    "docker:stop": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml down",
     "docker:logs": "docker-compose logs -f",
     "docker:restart-frontend": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml restart frontend",
     "docker:restart-backend": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml restart backend",

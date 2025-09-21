@@ -423,7 +423,7 @@ export class OrderService {
     await this.updateDeliveryTracking(orderId, status);
 
     // Send status update email
-    await this.emailService.sendOrderStatusUpdate(order);
+    await this.emailService.sendOrderShipped(order);
 
     return order;
   }
