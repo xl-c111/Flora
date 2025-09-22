@@ -20,29 +20,16 @@ Flora is a modern flowers and plants marketplace featuring flexible purchasing o
 
 ## 🚀 Quick Start for Team Development
 
-### 🍎 Mac/Linux Users (Recommended - Hybrid Approach)
+### 🖥️ All Platforms (Mac/Linux/Windows)
 
 ```bash
 git clone https://github.com/Aldore-88/holbertonschool-final_project.git
 cd holbertonschool-final_project
 ```
 
-**Option 1: Using dev.sh script (Recommended for teams)**
+**Choose your setup method:**
 
-```bash
-# First time setup (new teammates)
-./dev.sh setup            # Builds containers + starts services + sets up database
-
-# Daily development commands
-./dev.sh start            # Start services (after initial setup)
-./dev.sh stop             # Clean shutdown
-./dev.sh status           # Check what's running
-./dev.sh restart          # Restart services
-./dev.sh logs             # View logs
-./dev.sh help             # See all commands
-```
-
-**Option 2: Using pnpm with docker-compose directly**
+#### 🚀 Method 1: Standard Docker (Recommended for Mac/Linux)
 
 ```bash
 # 🚀 Initial Setup (first time)
@@ -54,13 +41,191 @@ pnpm docker:setup         # Set up database (migrations + seeding) - run in anot
 pnpm docker:dev:bg        # Run services in background (preferred for daily work)
 pnpm docker:logs          # View all container logs
 pnpm docker:restart-backend # Restart backend (useful when Prisma schema changes)
-pnpm docker:restart-frontend # Restart frontend (useful for config changes)
+pnpm docker:restart-frontend # Restart frontend
 docker ps # Checking working containers
 
 docker logs flora-backend # View backend logs and backend preview (link)
 docker logs flora-frontend # View frontend logs and frontend preview (link)
+```
 
-# 🗃️ Database Operations
+#### 🪟 Method 2: Windows-Optimized Docker (for Window users)
+
+If you're on Windows and experiencing file sync issues, use this optimized setup:
+
+```bash
+# � Windows Setup (first time)
+docker-compose -f docker-compose.yml -f docker-compose.windows.yml build
+docker-compose -f docker-compose.yml -f docker-compose.windows.yml up -d
+pnpm docker:setup         # Set up database (migrations + seeding)
+
+# 📊 Daily Development (Windows)
+pnpm docker:windows           # Start services
+pnpm docker:windows:logs      # View logs
+
+# 🔧 Windows Maintenance
+pnpm docker:windows:stop              # Stop all containers
+pnpm docker:windows:restart-backend   # Restart backend only
+pnpm docker:windows:restart-frontend  # Restart frontend only
+```
+
+**Windows Benefits:**
+- ✅ Better file watching and hot reload
+- ✅ Proper node_modules sync for VS Code IntelliSense
+- ✅ No permission issues with volumes
+- ✅ Optimized for Windows Docker Desktop
+- ✅ **NEW: Convenient pnpm shortcuts!**
+
+**🔧 Windows-Specific Optimizations Explained:**
+- **Named Volumes**: `backend_node_modules` & `frontend_node_modules` avoid Windows path issues
+- **Proper Commands**: Uses `sh -c` instead of direct commands for better Windows compatibility
+- **Volume Mounting**: Separates source code from node_modules to prevent permission conflicts
+- **TTY Support**: `stdin_open: true` & `tty: true` enable proper debugging on Windows
+
+#### 💻 Method 3: Local Development (Alternative - Requires More Setup)
+
+**⚠️ Important: Don't mix this with Docker methods above!**
+
+If you prefer running services locally instead of Docker:
+
+```bash
+# 🛠️ Prerequisites (one-time setup)
+npm install -g pnpm          # Install pnpm globally
+pnpm install                 # Install all dependencies
+
+# 🗃️ Database Setup (still uses Docker for PostgreSQL)
+pnpm start:db                # Start PostgreSQL container only
+pnpm db:setup                # Run migrations + seeding
+
+# 🚀 Start Development (runs locally, not in containers)
+pnpm dev                     # Starts both backend + frontend locally
+# Backend: http://localhost:3001
+# Frontend: http://localhost:5173
+
+# 🔧 Database Operations (same as Docker)
+pnpm db:seed                 # Re-seed with fresh data
+pnpm db:reset                # Reset database (⚠️ deletes all data)
+pnpm stop:db                 # Stop PostgreSQL when done
+```
+
+**When to use Local Development:**
+- ✅ You want faster startup times
+- ✅ You prefer debugging locally
+- ✅ You have Node.js 18+ installed
+- ⚠️ **But**: Docker is more consistent across team environments
+
+### 🤔 **Which Method Should I Choose?**
+
+| Method | Best For | Pros | Cons |
+|--------|----------|------|------|
+| **Docker (Method 1 & 2)** | Most people | ✅ Consistent environment<br>✅ No local setup issues<br>✅ Same as production | ⚠️ Slightly slower startup |
+| **Local (Method 3)** | Advanced users | ✅ Faster startup<br>✅ Direct debugging | ⚠️ Requires Node.js setup<br>⚠️ Environment differences |
+
+**👥 Team Recommendation: Use Docker (Method 1 or 2) to avoid "works on my machine" issues!**
+
+---
+
+## 🔄 **Complete Docker Workflow Guide**
+
+### 🚀 **New Team Member Setup (Do This Once)**
+
+```bash
+# Step 1: Get the code
+git clone https://github.com/Aldore-88/holbertonschool-final_project.git
+cd holbertonschool-final_project
+
+# Step 2: Choose your method
+# Mac/Linux users:
+pnpm docker:dev:build && pnpm docker:setup
+
+# Windows users:
+pnpm docker:windows:build && pnpm docker:setup
+
+# Step 3: Verify everything works
+# Frontend: http://localhost:5173
+# Backend: http://localhost:3001/api/health
+```
+
+### 🔁 **Daily Development Workflow**
+
+```bash
+# Mac/Linux:
+pnpm docker:dev:bg        # Start in background
+pnpm docker:logs          # View logs when needed
+
+# Windows:
+pnpm docker:windows       # Start in background
+pnpm docker:windows:logs  # View logs when needed
+```
+
+### 🗃️ **Database Operations (When Do You Need Them?)**
+
+| Operation | Command | When to Use | Restart Needed? |
+|-----------|---------|-------------|-----------------|
+| **Fresh sample data** | `pnpm docker:seed` | Want new test data | ❌ **No restart!** |
+| **Schema changed** | `pnpm docker:restart-backend` | Prisma schema.prisma modified | ✅ Backend only |
+| **Environment changed** | `pnpm docker:restart-backend` | .env files modified | ✅ Backend only |
+| **Nuclear reset** | `pnpm db:reset && pnpm docker:restart-backend` | Database corrupted | ✅ Backend only |
+| **First time setup** | `pnpm docker:setup` | New team member | ❌ **No restart!** |
+
+### 🤔 **Important Clarifications**
+
+**Q: Does `docker:setup` include seeding?**
+✅ **YES!** `docker:setup` = migrations + seeding (everything!)
+
+**Q: When do I NOT need to restart anything?**
+- ✅ Code changes (hot reload handles it)
+- ✅ Adding new data with `docker:seed`
+- ✅ Running `docker:setup` (if containers already running)
+
+**Q: When DO I need to restart backend?**
+- ⚠️ Environment variables changed (.env files)
+- ⚠️ Prisma schema changed (schema.prisma)
+- ⚠️ Backend configuration changes
+- ⚠️ After `pnpm db:reset` (NOTE: it will clear all data)
+
+### 🚨 **Troubleshooting Decision Tree**
+
+```bash
+# 🐛 Problem: Frontend not loading
+→ Check: Is backend running? `docker ps`
+→ Fix: `pnpm docker:restart-backend`
+
+# 🐛 Problem: Database connection error
+→ Check: Is postgres healthy? `docker ps` (should show "healthy")
+→ Fix: `pnpm docker:stop && pnpm docker:dev:bg`
+
+# 🐛 Problem: "Module not found" errors
+→ Fix: `pnpm docker:build` (rebuild with fresh dependencies)
+
+# 🐛 Problem: Old data showing up
+→ Fix: `pnpm docker:seed` (refresh sample data)
+
+# 🐛 Problem: Everything is broken
+→ Nuclear option: `pnpm docker:clean-project && pnpm docker:dev:build`
+```
+
+#### 🔄 **Database Workflow (Important for Team)**
+
+**After Re-seeding Data:**
+```bash
+pnpm docker:seed          # ✅ No restart needed - data changes immediately!
+# Your API calls will see new data right away
+```
+
+**After Schema Changes (Prisma):**
+```bash
+# Schema changed? Restart backend to reload Prisma client:
+pnpm docker:restart-backend
+```
+
+**After Full Database Reset:**
+```bash
+pnpm db:reset             # ⚠️ Deletes everything
+pnpm docker:restart-backend  # Required: Backend needs to reconnect
+```
+#### �🗃️ Database Operations (All Platforms)
+
+```bash
 pnpm docker:seed          # Re-seed database with fresh sample data
 pnpm db:reset             # Reset database (WARNING: deletes all data!)
 
@@ -74,94 +239,7 @@ pnpm docker:clean-project # Full cleanup: remove containers, images, and volumes
 pnpm docker:prod          # Run production build
 ```
 
-### 🤔 Docker Workflow Clarified
-
-**Q: Do we need both `docker:setup` AND `docker:seed`?**
-
-**A: No! Here's the breakdown:**
-
-```bash
-# Traditional way (3 separate steps):
-pnpm start:db      # Start PostgreSQL
-pnpm db:setup      # Run migrations
-pnpm db:seed       # Add sample data
-
-# Docker way (2 steps total):
-pnpm docker:dev    # Start all services (postgres + backend + frontend)
-pnpm docker:setup  # Runs: migrations + seeding (includes everything!)
-```
-
-**`docker:setup` = `db:generate` + `db:push` + `db:seed`** ✅
-
-**`docker:seed` is optional** - only use it when you want to refresh sample data without running migrations again.
-
-**💡 Pro Tip for TypeScript Developers:**
-If you get TypeScript errors in VS Code when using Docker-only approach:
-
-```bash
-# Install dependencies locally for VS Code IntelliSense
-pnpm install
-
-# Then run Docker services (hybrid approach)
-pnpm docker:dev:bg
-```
-
-This gives you the best of both worlds: local TypeScript support + consistent Docker runtime.
-
-### 🆘 Common Docker Issues & Quick Fixes
-
-```bash
-# 🐛 Problem: "Port already in use" or services won't start
-pnpm docker:stop && pnpm docker:dev
-
-# 🐛 Problem: Database connection errors
-pnpm docker:stop && pnpm docker:clean && pnpm docker:dev:build
-
-# 🐛 Problem: "Module not found" or dependency issues
-pnpm docker:build  # Rebuild containers with fresh dependencies
-
-# 🐛 Problem: Database is empty or has old data
-pnpm docker:setup  # Re-run migrations and seeding
-
-# 🐛 Problem: Want to start completely fresh
-pnpm docker:clean-project && pnpm docker:dev:build
-```
-
-```bash
-### Production
-pnpm docker:prod          # Production deployment
-```
-
-```bash
-### Other Useful Commands
-pnpm docker:logs          # View all container logs
-pnpm docker:clean         # Clean up volumes (careful!)
-pnpm start:db             # Start only database
-```
-
-### 🪟 Windows Users (Full Docker with Volume Sync)
-
-**For Windows team members who want to avoid Node.js/pnpm setup issues:**
-
-```bash
-git clone https://github.com/Aldore-88/holbertonschool-final_project.git
-cd holbertonschool-final_project
-
-# Start everything in Docker
-./dev-windows.sh bg
-
-# Check status
-./dev-windows.sh status
-```
-
-**📖 Detailed Windows Setup:** See [WINDOWS_SETUP.md](./WINDOWS_SETUP.md) for complete instructions.
-
-**Benefits for Windows:**
-
-- ✅ No Node.js installation needed
-- ✅ No Windows path/permission issues
-- ✅ VS Code IntelliSense still works
-- ✅ Same database as Mac teammates
+---
 
 ---
 
@@ -174,7 +252,6 @@ This is a **monorepo** (multiple apps in one repository) using **pnpm workspaces
 ```
 holbertonschool-final_project/           # 📁 Main project folder
 ├── 🐳 Docker & Development
-│   ├── dev.sh                           # 🛠️ Development helper script (start/stop services)
 │   ├── docker-compose.yml               # 🐳 Main Docker services configuration
 │   ├── docker-compose.dev.yml           # 🐳 Development-specific Docker settings
 │   └── docker-compose.prod.yml          # 🐳 Production Docker settings
@@ -393,37 +470,26 @@ apps/backend/                            # 📁 API Server Root
 
 ### Frontend Testing:
 
-1. Open http://localhost:5173
-2. Check browser console for errors (F12)
-3. Test user interactions (clicking, typing)
+1. Check frontend logs: `docker logs flora-frontend`
+2. Open http://localhost:5173
+3. Check browser console for errors (F12)
+4. Test user interactions (clicking, typing)
 
 ### Backend Testing:
 
 1. Check http://localhost:3001/api/health
 2. Use browser or Postman to test API endpoints
-3. Check logs with `./dev.sh logs`
+3. Check backend logs:
+`docker logs flora-backend --tail 10`
+or:
+`pnpm docker:logs backend --tail 5`
+
+4. Check all logs together: `pnpm docker:logs --tail 5` (if needed)
 
 ### Database Testing:
 
 1. Check data with Prisma Studio: `npx prisma studio`
 2. Verify API responses return correct data
-
----
-
-## 🆘 Common Issues & Solutions
-
-### 🔧 Development Issues:
-
-- **Services won't start**: Run `./dev.sh restart`
-- **Database connection error**: Run `./dev.sh db-reset` (loses data!)
-- **Frontend won't load**: Check if backend is running
-- **API returns errors**: Check backend logs
-
-### 📝 Code Issues:
-
-- **TypeScript errors**: Fix type mismatches
-- **React component not updating**: Check useState/useEffect
-- **API call failing**: Verify URL and request format
 
 ---
 
@@ -511,43 +577,7 @@ VITE_API_URL="http://localhost:3001/api"
 VITE_SUPABASE_URL="your-supabase-url"
 VITE_SUPABASE_ANON_KEY="your-supabase-anon-key"
 ```
-
-## 🎯 API Endpoints Overview
-
-### Products & Search
-
-```
-GET    /api/products              # Browse with filters
-GET    /api/products/:id          # Product details
-GET    /api/products/search       # Search functionality
-GET    /api/categories            # Category list
-```
-
-### Authentication (Supabase)
-
-```
-POST   /api/auth/register         # User registration
-POST   /api/auth/login            # User login
-GET    /api/auth/profile          # User profile
-```
-
-### Orders & Checkout
-
-```
-POST   /api/orders                # Create order (guest or user)
-GET    /api/orders/:id            # Order details
-POST   /api/orders/:id/confirm    # Confirm payment
-```
-
-### Subscriptions
-
-```
-POST   /api/subscriptions         # Create subscription
-GET    /api/subscriptions         # User's subscriptions
-PUT    /api/subscriptions/:id     # Update subscription
-DELETE /api/subscriptions/:id     # Cancel subscription
-```
-
+---
 ## 👥 Team
 
 Created by the Holberton team:
