@@ -54,8 +54,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setLoading(false);
     });
 
+    // cleanup function when the components unmount => stop listenning for changes
     return () => subscription.unsubscribe();
-  }, []);
+  }, []); // empty dependency =  run the effect once
 
   const signUp = async (email: string, password: string, userData?: Record<string, unknown>) => {
     console.log('📝 Attempting sign up with email:', email);
@@ -66,7 +67,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         data: userData,
       },
     });
-    
+
     if (error) {
       console.error('❌ Sign up error:', error);
       console.error('Error details:', {
@@ -80,7 +81,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         console.log('📧 User created but needs email confirmation');
       }
     }
-    
+
     return { error };
   };
 
@@ -90,7 +91,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       email,
       password,
     });
-    
+
     if (error) {
       console.error('❌ Sign in error:', error);
       console.error('Error details:', {
@@ -101,7 +102,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     } else {
       console.log('✅ Sign in successful:', data);
     }
-    
+
     return { error };
   };
 
@@ -127,6 +128,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     return { error };
   };
 
+  // finally bundle it into a TOOLBOX
   const value = {
     user,
     session,
@@ -138,5 +140,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     resetPassword,
   };
 
+  // so any components later can access and use it
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
