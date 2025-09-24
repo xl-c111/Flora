@@ -42,9 +42,10 @@ export interface ProductsResult {
 
 export class ProductService {
   /**
-   * Get products with filtering and pagination
+   * Get products with filtering options and pagination
    */
   static async getProducts(filters: ProductFilters): Promise<ProductsResult> {
+    // pagination setup
     const page = filters.page || 1;
     const limit = filters.limit || 12;
     const skip = (page - 1) * limit;
@@ -153,11 +154,7 @@ export class ProductService {
     return await prisma.product.findUnique({
       where: { id },
       include: {
-        collections: {
-          include: {
-            collection: true,
-          },
-        },
+        category: true,
       },
     });
   }
@@ -168,13 +165,19 @@ export class ProductService {
   static async getSearchSuggestions(query: string): Promise<string[]> {
     const products = await prisma.product.findMany({
       where: {
-        OR: [
-          { name: { contains: query, mode: 'insensitive' } },
-          { description: { contains: query, mode: 'insensitive' } },
+        AND: [
+          { isActive: true }, // Only active products in suggestions
+          {
+            OR: [
+              { name: { contains: query, mode: 'insensitive' } },
+              { description: { contains: query, mode: 'insensitive' } },
+            ],
+          },
         ],
       },
       select: { name: true },
       take: 10,
+      orderBy: { createdAt: 'desc' },
     });
 
     return products.map((p) => p.name);
