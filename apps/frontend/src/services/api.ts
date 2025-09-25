@@ -1,7 +1,8 @@
 import axios from 'axios';
-import { Product, ProductResponse } from '../types';
+import type { Product, ProductResponse } from '../types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -10,7 +11,9 @@ const api = axios.create({
 
 export const apiService = {
   // Products
-  getProducts: async (params?: Record<string, string>): Promise<ProductResponse> => {
+  getProducts: async (
+    params?: Record<string, string>
+  ): Promise<ProductResponse> => {
     const response = await api.get('/products', { params });
     return response.data;
   },
@@ -37,7 +40,11 @@ export const apiService = {
   },
 
   // Health check
-  healthCheck: async (): Promise<{ status: string; message: string; timestamp: string }> => {
+  healthCheck: async (): Promise<{
+    status: string;
+    message: string;
+    timestamp: string;
+  }> => {
     const response = await api.get('/health');
     return response.data;
   },
