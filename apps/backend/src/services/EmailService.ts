@@ -1,6 +1,16 @@
 import nodemailer from "nodemailer";
 import { User, Order, Subscription } from "@prisma/client";
 
+// Type for order with optional user info
+type OrderWithUser = Order & {
+  user?: {
+    id: string;
+    email: string;
+    firstName: string | null;
+    lastName: string | null;
+  } | null;
+};
+
 interface EmailConfig {
   host: string;
   port: number;
@@ -28,9 +38,19 @@ export class EmailService {
     this.transporter = nodemailer.createTransport(config);
   }
 
+  // Helper method to get professional sender format
+  private getProfessionalSender(): string {
+    // Use professional display name with the authenticated email
+    // Format: "Flora Marketplace <authenticated@email.com>"
+    const senderEmail = process.env.SMTP_USER!;
+    return `"Flora Marketplace" <${senderEmail}>`;
+  }
+
   async sendWelcomeEmail(user: User): Promise<void> {
+    const personalization = this.getPersonalization(user);
+
     const mailOptions = {
-      from: process.env.FROM_EMAIL || "noreply@flora.com",
+      from: this.getProfessionalSender(),
       to: user.email,
       subject: "Welcome to Flora!",
       html: `
@@ -39,12 +59,20 @@ export class EmailService {
           <p>Dear ${user.firstName || "Customer"},</p>
           <p>Thank you for joining Flora! We're excited to help you discover beautiful, fresh flowers for every occasion.</p>
 
+          ${personalization ? `
+          <div style="background-color: #e8f5e8; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="color: #16a34a; margin-top: 0;">Based on your preferences:</h3>
+            <p>${personalization}</p>
+          </div>
+          ` : ''}
+
           <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <h3 style="color: #16a34a; margin-top: 0;">What's next?</h3>
             <ul>
               <li>Browse our collection of fresh flowers and arrangements</li>
               <li>Consider a subscription for regular flower deliveries</li>
               <li>Check out our seasonal specials</li>
+              <li>Complete your profile to get personalized recommendations</li>
             </ul>
           </div>
 
@@ -58,7 +86,7 @@ export class EmailService {
     await this.transporter.sendMail(mailOptions);
   }
 
-  async sendOrderConfirmation(order: Order & { user?: User }): Promise<void> {
+  async sendOrderConfirmation(order: OrderWithUser): Promise<void> {
     const customerEmail = order.guestEmail || order.user?.email;
     const customerName = order.user?.firstName || 'Customer';
     const totalAmount = (order.totalCents / 100).toFixed(2);
@@ -70,7 +98,7 @@ export class EmailService {
     }
 
     const mailOptions = {
-      from: process.env.FROM_EMAIL || "noreply@flora.com",
+      from: this.getProfessionalSender(),
       to: customerEmail,
       subject: `Order Confirmation #${order.orderNumber}`,
       html: `
@@ -104,7 +132,7 @@ export class EmailService {
     await this.transporter.sendMail(mailOptions);
   }
 
-  async sendOrderShipped(order: Order & { user?: User }, trackingNumber?: string): Promise<void> {
+  async sendOrderShipped(order: OrderWithUser, trackingNumber?: string): Promise<void> {
     const customerEmail = order.guestEmail || order.user?.email;
     const customerName = order.user?.firstName || 'Customer';
     const deliveryAddress = `${order.shippingFirstName} ${order.shippingLastName}\n${order.shippingStreet1}${order.shippingStreet2 ? '\n' + order.shippingStreet2 : ''}\n${order.shippingCity}, ${order.shippingState} ${order.shippingZipCode}`;
@@ -115,7 +143,7 @@ export class EmailService {
     }
 
     const mailOptions = {
-      from: process.env.FROM_EMAIL || "noreply@flora.com",
+      from: this.getProfessionalSender(),
       to: customerEmail,
       subject: `Your Flora Order #${order.orderNumber} Has Shipped!`,
       html: `
@@ -148,7 +176,7 @@ export class EmailService {
 
   async sendSubscriptionConfirmation(subscription: Subscription & { user: User }): Promise<void> {
     const mailOptions = {
-      from: process.env.FROM_EMAIL || "noreply@flora.com",
+      from: this.getProfessionalSender(),
       to: subscription.user.email,
       subject: "Your Flora Subscription is Active!",
       html: `
@@ -282,5 +310,43 @@ export class EmailService {
     };
 
     await this.transporter.sendMail(confirmationOptions);
+  }
+
+  // Helper method to create personalized content based on user preferences
+  private getPersonalization(user: User): string | null {
+    const preferences = [];
+
+    if (user.favoriteColors && user.favoriteColors.length > 0) {
+      preferences.push(`We have beautiful ${user.favoriteColors.join(', ').toLowerCase()} flowers`);
+    }
+
+    if (user.favoriteOccasions && user.favoriteOccasions.length > 0) {
+      preferences.push(`perfect for ${user.favoriteOccasions.join(', ').toLowerCase()}`);
+    }
+
+    if (user.favoriteMoods && user.favoriteMoods.length > 0) {
+      preferences.push(`to create ${user.favoriteMoods.join(', ').toLowerCase()} atmospheres`);
+    }
+
+    return preferences.length > 0 ? preferences.join(' ') + '.' : null;
+  }
+
+  // Helper method to determine appropriate greeting based on user context
+  private getGreeting(user?: User, guestEmail?: string | null): string {
+    if (user && user.firstName) {
+      return `Dear ${user.firstName}`;
+    } else if (user) {
+      return `Dear Valued Customer`;
+    } else if (guestEmail) {
+      return `Dear Customer`;
+    }
+    return `Hello`;
+  }
+
+  // Check if user has opted out of marketing emails (placeholder for future implementation)
+  private async shouldSendMarketingEmail(user: User): Promise<boolean> {
+    // In the future, check user preferences for marketing emails
+    // For now, default to true
+    return true;
   }
 }

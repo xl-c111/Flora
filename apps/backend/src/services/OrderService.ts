@@ -43,20 +43,20 @@ export interface OrderWithDetails extends Order {
       id: string;
       name: string;
       priceCents: number;
-      imageUrl?: string;
+      imageUrl: string | null;
     };
   })[];
   user?: {
     id: string;
     email: string;
-    firstName?: string;
-    lastName?: string;
+    firstName: string | null;
+    lastName: string | null;
   } | null;
   payments?: Array<{
     id: string;
     amountCents: number;
     status: string;
-    paidAt?: Date;
+    paidAt: Date | null;
   }>;
 }
 
@@ -168,9 +168,16 @@ export class OrderService {
   async getOrderById(orderId: string, userId?: string): Promise<OrderWithDetails | null> {
     const whereClause: any = { id: orderId };
 
-    // If user is provided, ensure they own the order or it's accessible
+    // If user is provided, ensure they own the order
+    // If no user, only allow access to guest orders (for order confirmation pages)
     if (userId) {
-      whereClause.OR = [{ userId }, { AND: [{ userId: null }, { guestEmail: { not: null } }] }];
+      whereClause.OR = [
+        { userId }, // User owns the order
+        { AND: [{ userId: null }, { guestEmail: { not: null } }] } // Guest order
+      ];
+    } else {
+      // No auth - only allow guest orders
+      whereClause.AND = [{ userId: null }, { guestEmail: { not: null } }];
     }
 
     return await prisma.order.findFirst({
@@ -374,7 +381,7 @@ export class OrderService {
     await this.createDeliveryTracking(order);
 
     // Send confirmation email
-    await this.emailService.sendOrderConfirmation(order);
+    await this.emailService.sendOrderConfirmation(order as any);
 
     return order;
   }
@@ -423,7 +430,7 @@ export class OrderService {
     await this.updateDeliveryTracking(orderId, status);
 
     // Send status update email
-    await this.emailService.sendOrderShipped(order);
+    await this.emailService.sendOrderShipped(order as any);
 
     return order;
   }
