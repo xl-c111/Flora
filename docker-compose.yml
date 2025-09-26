@@ -36,8 +36,9 @@ services:
       - NODE_ENV=production
       - PORT=3001
       - DATABASE_URL=postgresql://flora_user:flora_password@postgres:5432/flora_db
-      - SUPABASE_URL=https://gzsbrivgdvqojwqgwyge.supabase.co
-      - SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6c2JyaXZnZHZxb2p3cWd3eWdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxNTkxOTQsImV4cCI6MjA3MzczNTE5NH0.lOA2jJjCc0p3Uypr3PeGgdJq1sFVAl0fBdRWeMr9yz8
+      - AUTH0_DOMAIN=dev-ijvur34mojpovh8e.us.auth0.com
+      - AUTH0_CLIENT_ID=tegmEuc40IvXfYFDLIRnJmbsa1izkTVL
+      - AUTH0_CLIENT_SECRET=your-auth0-client-secret
     depends_on:
       postgres:
         condition: service_healthy
@@ -55,8 +56,8 @@ services:
     environment:
       - NODE_ENV=production
       - VITE_API_URL=http://localhost:3001/api
-      - VITE_SUPABASE_URL=https://gzsbrivgdvqojwqgwyge.supabase.co
-      - VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6c2JyaXZnZHZxb2p3cWd3eWdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxNTkxOTQsImV4cCI6MjA3MzczNTE5NH0.lOA2jJjCc0p3Uypr3PeGgdJq1sFVAl0fBdRWeMr9yz8
+      - VITE_AUTH0_DOMAIN=dev-ijvur34mojpovh8e.us.auth0.com
+      - VITE_AUTH0_CLIENT_ID=tegmEuc40IvXfYFDLIRnJmbsa1izkTVL
     depends_on:
       - backend
     networks:
