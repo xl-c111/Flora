@@ -2,16 +2,12 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import './App.css';
 import { useAuth } from './contexts/AuthContext';
-import { LoginForm } from './components/auth/LoginForm';
 import ProductsPage from './pages/ProductsPage';
-import { AuthCallback } from './pages/auth/AuthCallback';
 
 function App() {
   const [loading, setLoading] = useState(true);
   const [useAPI, setUseAPI] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-
-  const { user, signOut, loading: authLoading } = useAuth();
+  const { user, login, logout, loading: authLoading } = useAuth();
 
   useEffect(() => {
     // Check if API is available
@@ -86,6 +82,7 @@ function App() {
               </Link>
 
               <div className="auth-section">
+                {/* Show loading spinner while Auth0 is loading */}
                 {authLoading ? (
                   <div>Loading...</div>
                 ) : user ? (
@@ -96,9 +93,10 @@ function App() {
                       gap: '1rem',
                     }}
                   >
+                    {/* Show user's email from Auth0 profile */}
                     <span>Welcome, {user.email}</span>
                     <button
-                      onClick={() => signOut()}
+                      onClick={logout}
                       style={{
                         padding: '0.5rem 1rem',
                         backgroundColor: '#dc2626',
@@ -113,7 +111,7 @@ function App() {
                   </div>
                 ) : (
                   <button
-                    onClick={() => setShowLoginModal(true)}
+                    onClick={login}
                     style={{
                       padding: '0.5rem 1rem',
                       backgroundColor: '#10b981',
@@ -136,6 +134,7 @@ function App() {
         </header>
 
         <main className="main">
+          {/* Define app routes. AuthCallback is not needed with Auth0 React SDK */}
           <Routes>
             <Route
               path="/"
@@ -145,53 +144,12 @@ function App() {
               path="/products"
               element={<ProductsPage />}
             />
-            <Route
-              path="/auth/callback"
-              element={<AuthCallback />}
-            />
           </Routes>
         </main>
 
-        {/* Login Modal */}
-        {showLoginModal && (
-          <div
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              zIndex: 1000,
-            }}
-          >
-            <div style={{ position: 'relative' }}>
-              <button
-                onClick={() => setShowLoginModal(false)}
-                style={{
-                  position: 'absolute',
-                  top: '1rem',
-                  right: '1rem',
-                  background: 'none',
-                  border: 'none',
-                  fontSize: '1.5rem',
-                  cursor: 'pointer',
-                  zIndex: 1001,
-                }}
-              >
-                ×
-              </button>
-              <LoginForm onSuccess={() => setShowLoginModal(false)} />
-            </div>
-          </div>
-        )}
-
         <footer className="footer">
           <p>
-            &copy; 2024 Flora - Holberton Demo Project by Anthony, Bevan,
+            &copy; 2025 Flora - Holberton Demo Project by Anthony, Bevan,
             Xiaoling, and Lily
           </p>
         </footer>
