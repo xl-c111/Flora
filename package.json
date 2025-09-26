@@ -12,7 +12,6 @@
     "start:db": "docker-compose up -d postgres",
     "stop:db": "docker-compose down",
     "install:all": "pnpm install",
-
     "docker:build": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml build",
     "docker:setup": "docker exec -it flora-backend pnpm db:setup",
     "docker:dev:build": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
@@ -26,7 +25,6 @@
     "docker:restart-backend": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml restart backend",
     "docker:clean": "docker-compose down -v",
     "docker:clean-project": "docker-compose down --rmi all -v",
-
     "docker:windows": "docker-compose -f docker-compose.yml -f docker-compose.windows.yml up -d",
     "docker:windows:build": "docker-compose -f docker-compose.yml -f docker-compose.windows.yml up --build",
     "docker:windows:logs": "docker-compose -f docker-compose.yml -f docker-compose.windows.yml logs -f",
@@ -44,6 +42,8 @@
   "author": "Anthony, Bevan, Xiaoling, and Lily",
   "license": "MIT",
   "dependencies": {
+    "@auth0/auth0-react": "^2.0.0",
+    "jwks-rsa": "^3.0.1",
     "zod": "3.22.4"
   }
 }
