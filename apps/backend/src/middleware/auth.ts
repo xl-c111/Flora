@@ -1,6 +1,6 @@
 // Auth0 JWT validation middleware for Express
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import jwt,  { JwtPayload } from 'jsonwebtoken';
 import jwksClient from 'jwks-rsa';
 
 // Extend Express Request to include user info
@@ -18,10 +18,31 @@ const client = jwksClient({
 
 // Helper to get signing key from Auth0
 function getKey(header: any, callback: any) {
-  client.getSigningKey(header.kid, function (err, key) {
-    const signingKey = key.getPublicKey();
+  client.getSigningKey(header.kid, (err, key) => {
+    const signingKey = key?.getPublicKey();
     callback(null, signingKey);
   });
+}
+
+// helper function to verify token
+function verifyToken(token: string, cb: (err: any, decoded?: JwtPayload) => void) {
+  jwt.verify(
+    token,
+    getKey,
+    {
+      audience: process.env.AUTH0_AUDIENCE, // ⚠️ probably not client ID
+      issuer: `https://${process.env.AUTH0_DOMAIN}/`,
+      algorithms: ['RS256'],
+    },
+    (err, decoded) => cb(err, decoded as JwtPayload)
+  );
+}
+// attach user info to the request (to protect routes)
+function attachUser(decoded: JwtPayload): { id: string; email?: string } {
+  return {
+    id: decoded.sub as string,
+    email: (decoded as any).email ?? (decoded as any)['https://your-app/email'],
+  };
 }
 
 // Middleware to require valid Auth0 JWT
@@ -38,58 +59,26 @@ export const authMiddleware = (
   }
   const token = authHeader.split(' ')[1];
 
-  // Verify JWT using Auth0 public keys
-  jwt.verify(
-    token,
-    getKey,
-    {
-      audience: process.env.AUTH0_CLIENT_ID,
-      issuer: `https://${process.env.AUTH0_DOMAIN}/`,
-      algorithms: ['RS256'],
-    },
-    (err: any, decoded: any) => {
-      if (err) {
-        return res.status(401).json({ error: 'Invalid token' });
-      }
-      // Attach user info from token to request
-      req.user = {
-        id: decoded.sub,
-        email: decoded.email,
-      };
-      next();
-    }
-  );
+  verifyToken(token, (err, decoded) => {
+    if (err || !decoded) return res.status(401).json({ error: 'Invalid token' });
+    req.user = attachUser(decoded);
+    next();
+  });
 };
 
 // Optional auth (for routes that work with or without auth)
-// Optional auth: attaches user if token is present, otherwise continues
-export const optionalAuth = (
-  req: AuthRequest,
-  res: Response,
-  next: NextFunction
-) => {
+// Optional auth: attaches user if token is present, otherwise still continues
+export function optionalAuth(req: AuthRequest, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
-  if (authHeader && authHeader.startsWith('Bearer ')) {
+  if (authHeader?.startsWith('Bearer ')) {
     const token = authHeader.split(' ')[1];
-    jwt.verify(
-      token,
-      getKey,
-      {
-        audience: process.env.AUTH0_CLIENT_ID,
-        issuer: `https://${process.env.AUTH0_DOMAIN}/`,
-        algorithms: ['RS256'],
-      },
-      (err: any, decoded: any) => {
-        if (!err && decoded) {
-          req.user = {
-            id: decoded.sub,
-            email: decoded.email,
-          };
-        }
-        next();
+    verifyToken(token, (err, decoded) => {
+      if (!err && decoded) {
+        req.user = attachUser(decoded);
       }
-    );
+      next();
+    });
   } else {
     next();
   }
-};
+}
