@@ -111,7 +111,7 @@ export class PaymentService {
     return subscription;
   }
 
-  async handleWebhook(body: string, signature: string, endpointSecret: string): Promise<void> {
+  async handleWebhook(body: Buffer, signature: string, endpointSecret: string): Promise<void> {
     let event: Stripe.Event;
 
     try {
