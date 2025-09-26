@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { Product } from '../types';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
+import type { Product } from '../types';
 
 export interface CartItem {
   id: string;
@@ -77,7 +77,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 
 const calculateTotal = (items: CartItem[]): number => {
   return items.reduce(
-    (total, item) => total + item.product.price * item.quantity,
+    (total, item) => total + item.product.priceCents * item.quantity,
     0
   );
 };
