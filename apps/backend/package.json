@@ -12,7 +12,10 @@
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
     "db:setup": "pnpm db:generate && pnpm db:push && pnpm db:seed",
-    "db:reset": "prisma migrate reset --force"
+    "db:reset": "prisma migrate reset --force",
+    "test:token": "tsx src/test/get-token-for-testing.ts",
+    "test:webhook": "tsx src/test/test-webhook.ts",
+    "test:email": "tsx src/test/test-email-safely.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.7.0",
