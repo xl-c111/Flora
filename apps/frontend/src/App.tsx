@@ -3,16 +3,35 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import './App.css';
 import { useAuth } from './contexts/AuthContext';
 import ProductsPage from './pages/ProductsPage';
+import SubscriptionsPage from './pages/SubscriptionsPage';
 
 function App() {
   const [loading, setLoading] = useState(true);
   const [useAPI, setUseAPI] = useState(false);
-  const { user, login, logout, loading: authLoading } = useAuth();
+  const {
+    user,
+    login,
+    logout,
+    loading: authLoading,
+    getAccessToken,
+  } = useAuth();
 
   useEffect(() => {
     // Check if API is available
     checkAPIStatus();
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      getAccessToken().then((token) => {
+        if (token) {
+          console.log('Auth0 token: ', token);
+        } else {
+          console.log('No Auth0 token found');
+        }
+      });
+    }
+  }, [user, getAccessToken]);
 
   const checkAPIStatus = async () => {
     try {
@@ -143,6 +162,10 @@ function App() {
             <Route
               path="/products"
               element={<ProductsPage />}
+            />
+            <Route
+              path="/subscriptions"
+              element={<SubscriptionsPage />}
             />
           </Routes>
         </main>

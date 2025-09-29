@@ -39,6 +39,14 @@ export const apiService = {
     return response.data;
   },
 
+  // Subscriptions
+  getSubscriptions: async (token: string): Promise<{ success: boolean; data: any[] }> => {
+    const response = await api.get('/subscriptions', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  },
+
   // Health check
   healthCheck: async (): Promise<{
     status: string;
