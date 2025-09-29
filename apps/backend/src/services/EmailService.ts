@@ -182,17 +182,17 @@ export class EmailService {
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h1 style="color: #16a34a;">Subscription Confirmed!</h1>
-          <p>Dear ${subscription.user.name || "Customer"},</p>
+          <p>Dear ${subscription.user.firstName || subscription.user.lastName || "Customer"},</p>
           <p>Your Flora subscription is now active! You'll receive beautiful, fresh flowers regularly.</p>
 
           <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <h3 style="color: #16a34a; margin-top: 0;">Subscription Details</h3>
             <p><strong>Subscription Type:</strong> ${subscription.type}</p>
-            <p><strong>Start Date:</strong> ${subscription.startDate.toLocaleDateString()}</p>
-            <p><strong>Next Delivery:</strong> ${subscription.nextDelivery.toLocaleDateString()}</p>
+            <p><strong>Start Date:</strong> ${subscription.createdAt.toLocaleDateString()}</p>
+            <p><strong>Next Delivery:</strong> ${subscription.nextDeliveryDate?.toLocaleDateString() || 'TBD'}</p>
             <p><strong>Delivery Address:</strong><br/>
-            ${subscription.deliveryAddress}</p>
-            ${subscription.notes ? `<p><strong>Notes:</strong> ${subscription.notes}</p>` : ""}
+            Address on file</p>
+            ${subscription.deliveryNotes ? `<p><strong>Notes:</strong> ${subscription.deliveryNotes}</p>` : ""}
           </div>
 
           <p>You can manage your subscription anytime from your account dashboard.</p>
@@ -213,14 +213,14 @@ export class EmailService {
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h1 style="color: #16a34a;">Delivery Reminder</h1>
-          <p>Dear ${subscription.user.name || "Customer"},</p>
-          <p>Just a friendly reminder that your next Flora delivery is scheduled for ${subscription.nextDelivery.toLocaleDateString()}.</p>
+          <p>Dear ${subscription.user.firstName || subscription.user.lastName || "Customer"},</p>
+          <p>Just a friendly reminder that your next Flora delivery is scheduled for ${subscription.nextDeliveryDate?.toLocaleDateString() || 'TBD'}.</p>
 
           <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <h3 style="color: #16a34a; margin-top: 0;">Delivery Details</h3>
-            <p><strong>Delivery Date:</strong> ${subscription.nextDelivery.toLocaleDateString()}</p>
+            <p><strong>Delivery Date:</strong> ${subscription.nextDeliveryDate?.toLocaleDateString() || 'TBD'}</p>
             <p><strong>Delivery Address:</strong><br/>
-            ${subscription.deliveryAddress}</p>
+            Address on file</p>
           </div>
 
           <p>Need to make changes to your subscription? You can do so anytime from your account dashboard.</p>
