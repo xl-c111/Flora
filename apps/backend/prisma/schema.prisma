@@ -332,6 +332,9 @@ model Subscription {
   nextDeliveryDate DateTime?        // When next delivery is scheduled
   lastDeliveryDate DateTime?        // When last delivery was made
 
+  // Stripe subscription reference
+  stripeSubscriptionId String?      @unique
+
   // Default delivery preferences
   deliveryType    DeliveryType      @default(STANDARD)
   addressId       String

@@ -90,13 +90,29 @@ export class PaymentService {
     return subscription;
   }
 
-  async cancelSubscription(subscriptionId: string): Promise<Stripe.Subscription> {
-    const subscription = await stripe.subscriptions.cancel(subscriptionId);
+  async cancelSubscription(localSubscriptionId: string): Promise<Stripe.Subscription> {
+    const localSubscription = await prisma.subscription.findUnique({
+      where: { id: localSubscriptionId },
+    });
+
+    if (!localSubscription?.stripeSubscriptionId) {
+      throw new Error("Subscription not found or not linked to Stripe");
+    }
+
+    const subscription = await stripe.subscriptions.cancel(localSubscription.stripeSubscriptionId);
     return subscription;
   }
 
-  async pauseSubscription(subscriptionId: string): Promise<Stripe.Subscription> {
-    const subscription = await stripe.subscriptions.update(subscriptionId, {
+  async pauseSubscription(localSubscriptionId: string): Promise<Stripe.Subscription> {
+    const localSubscription = await prisma.subscription.findUnique({
+      where: { id: localSubscriptionId },
+    });
+
+    if (!localSubscription?.stripeSubscriptionId) {
+      throw new Error("Subscription not found or not linked to Stripe");
+    }
+
+    const subscription = await stripe.subscriptions.update(localSubscription.stripeSubscriptionId, {
       pause_collection: {
         behavior: "mark_uncollectible",
       },
@@ -104,8 +120,16 @@ export class PaymentService {
     return subscription;
   }
 
-  async resumeSubscription(subscriptionId: string): Promise<Stripe.Subscription> {
-    const subscription = await stripe.subscriptions.update(subscriptionId, {
+  async resumeSubscription(localSubscriptionId: string): Promise<Stripe.Subscription> {
+    const localSubscription = await prisma.subscription.findUnique({
+      where: { id: localSubscriptionId },
+    });
+
+    if (!localSubscription?.stripeSubscriptionId) {
+      throw new Error("Subscription not found or not linked to Stripe");
+    }
+
+    const subscription = await stripe.subscriptions.update(localSubscription.stripeSubscriptionId, {
       pause_collection: null,
     });
     return subscription;
