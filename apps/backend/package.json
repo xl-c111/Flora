@@ -13,9 +13,16 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:setup": "pnpm db:generate && pnpm db:push && pnpm db:seed",
     "db:reset": "prisma migrate reset --force",
-    "test:token": "tsx src/test/get-token-for-testing.ts",
-    "test:webhook": "tsx src/test/test-webhook.ts",
-    "test:email": "tsx src/test/test-email-safely.ts"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:auth": "jest --testPathPatterns=auth",
+    "test:order": "jest --testPathPatterns=order",
+    "test:payment": "jest --testPathPatterns=payment",
+    "test:email": "jest --testPathPatterns=email",
+    "test:integration": "jest --testPathPatterns=integration",
+    "test:live-email": "tsx src/test/test-get-live-email.ts",
+    "get-token": "tsx src/test/test-get-token.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.7.0",
@@ -28,22 +35,25 @@
     "helmet": "^7.1.0",
     "joi": "^17.11.0",
     "jsonwebtoken": "^9.0.2",
+    "jwks-rsa": "^3.0.1",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.7",
-    "stripe": "^14.0.0",
-    "jwks-rsa": "^3.0.1"
+    "stripe": "^14.0.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "@types/jest": "^30.0.0",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/morgan": "^1.9.9",
     "@types/multer": "^1.4.11",
     "@types/node": "^20.10.0",
     "@types/nodemailer": "^6.4.14",
+    "jest": "^30.2.0",
     "prisma": "^5.7.0",
+    "ts-jest": "^29.4.4",
     "tsx": "^4.20.5",
     "typescript": "^5.3.0"
   },
