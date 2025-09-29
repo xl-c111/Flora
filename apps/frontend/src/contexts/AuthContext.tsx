@@ -35,7 +35,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   // Helper to get the current access token (JWT)
   const getAccessToken = async () => {
     try {
-      return await getAccessTokenSilently();
+      return await getAccessTokenSilently({
+        audience: import.meta.env.VITE_AUTH0_AUDIENCE,
+      });
     } catch {
       return undefined;
     }
