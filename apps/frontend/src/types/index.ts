@@ -5,7 +5,7 @@ export interface Product {
   description: string;
   priceCents: number; // Changed from price to priceCents to match API
   priceRange: string;
-  imageUrl?: string;
+  imageUrl?: string | null;
   inStock: boolean;
   stockCount: number; // Added to match API
   isActive: boolean; // Added to match API
@@ -14,6 +14,7 @@ export interface Product {
   moods: string[];
   colors: string[];
   type: string;
+  category?: string; // Optional category name for display
   categoryId: string | null; // Added to match API
   createdAt: string;
   updatedAt: string;
