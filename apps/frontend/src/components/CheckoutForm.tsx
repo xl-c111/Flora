@@ -1,0 +1,557 @@
+import React, { useState } from 'react';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import type { Appearance } from '@stripe/stripe-js';
+import PaymentForm from './PaymentForm';
+import { useAuth } from '../contexts/AuthContext';
+import '../styles/CheckoutForm.css';
+
+const stripePromise = loadStripe(
+  import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || ''
+);
+
+export interface CheckoutFormData {
+  deliveryMethod: 'ship' | 'pickup';
+  guestEmail: string;
+  giftMessageTo?: string;
+  giftMessageFrom?: string;
+  giftMessage?: string;
+  recipientFirstName: string;
+  recipientLastName: string;
+  recipientBusinessName?: string;
+  recipientAddress: string;
+  recipientApartment?: string;
+  recipientCity: string;
+  recipientState: string;
+  recipientZipCode: string;
+  recipientPhone?: string;
+  senderFirstName: string;
+  senderLastName: string;
+  senderBusinessName?: string;
+  senderAddress: string;
+  senderApartment?: string;
+  senderCity: string;
+  senderState: string;
+  senderZipCode: string;
+  senderPhone?: string;
+  useSameAddress: boolean;
+}
+
+interface CheckoutFormProps {
+  clientSecret?: string;
+  orderId?: string;
+  onSubmit: (data: CheckoutFormData) => void;
+  onPaymentSuccess: () => void;
+  onPaymentError: (error: string) => void;
+}
+
+const CheckoutForm: React.FC<CheckoutFormProps> = ({
+  clientSecret,
+  orderId,
+  onSubmit,
+  onPaymentSuccess,
+  onPaymentError,
+}) => {
+  const { login } = useAuth();
+  const [deliveryMethod, setDeliveryMethod] = useState<'ship' | 'pickup'>('ship');
+  const [useSameAddress, setUseSameAddress] = useState(false);
+  const [isEditingMessage, setIsEditingMessage] = useState(false);
+  const [savedMessage, setSavedMessage] = useState({ to: '', from: '', message: '' });
+  const [formData, setFormData] = useState<CheckoutFormData>({
+    deliveryMethod: 'ship',
+    guestEmail: '',
+    giftMessageTo: '',
+    giftMessageFrom: '',
+    giftMessage: '',
+    recipientFirstName: '',
+    recipientLastName: '',
+    recipientBusinessName: '',
+    recipientAddress: '',
+    recipientApartment: '',
+    recipientCity: '',
+    recipientState: '',
+    recipientZipCode: '',
+    recipientPhone: '',
+    senderFirstName: '',
+    senderLastName: '',
+    senderBusinessName: '',
+    senderAddress: '',
+    senderApartment: '',
+    senderCity: '',
+    senderState: '',
+    senderZipCode: '',
+    senderPhone: '',
+    useSameAddress: false,
+  });
+
+  const [errors, setErrors] = useState<Partial<Record<keyof CheckoutFormData, string>>>({});
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name as keyof CheckoutFormData]) {
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: Partial<Record<keyof CheckoutFormData, string>> = {};
+
+    if (!formData.guestEmail.trim()) {
+      newErrors.guestEmail = 'Enter an email address';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.guestEmail)) {
+      newErrors.guestEmail = 'Enter a valid email address';
+    }
+    if (!formData.recipientFirstName.trim()) {
+      newErrors.recipientFirstName = 'Enter a first name';
+    }
+    if (!formData.recipientLastName.trim()) {
+      newErrors.recipientLastName = 'Enter a last name';
+    }
+    if (!formData.recipientAddress.trim()) {
+      newErrors.recipientAddress = 'Enter an address';
+    }
+    if (!formData.recipientCity.trim()) {
+      newErrors.recipientCity = 'Enter a city';
+    }
+    if (!formData.recipientZipCode.trim()) {
+      newErrors.recipientZipCode = 'Enter a ZIP / postal code';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleProceedToPayment = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validateForm()) {
+      onSubmit(formData);
+    }
+  };
+
+  const handleSaveMessage = () => {
+    setSavedMessage({
+      to: formData.giftMessageTo || '',
+      from: formData.giftMessageFrom || '',
+      message: formData.giftMessage || '',
+    });
+    setIsEditingMessage(false);
+  };
+
+  const handleUpdateMessage = () => {
+    setIsEditingMessage(true);
+  };
+
+  const appearance: Appearance = {
+    theme: 'stripe',
+    variables: {
+      colorPrimary: '#7a2e4a',
+      colorBackground: '#ffffff',
+      colorText: '#30313d',
+      colorDanger: '#df1b41',
+      fontFamily: 'system-ui, sans-serif',
+      spacingUnit: '4px',
+      borderRadius: '8px',
+    },
+  };
+
+  const elementsOptions = clientSecret
+    ? {
+        clientSecret,
+        appearance,
+      }
+    : undefined;
+
+  return (
+    <div className="checkout-form-container">
+      {/* Gift Message Section */}
+      <section className="checkout-section gift-message-section">
+        <h2 className="section-title">Your Gift Message</h2>
+        <div className="message-actions">
+          <p className="section-description">Update Your Message Below</p>
+          <button type="button" className="update-cart-link" onClick={() => window.location.href = '/cart'}>
+            Or Update In The Cart
+          </button>
+        </div>
+
+        {!isEditingMessage && (savedMessage.to || savedMessage.from || savedMessage.message) ? (
+          <div className="saved-message-display">
+            {savedMessage.to && <p><strong>To:</strong> {savedMessage.to}</p>}
+            {savedMessage.from && <p><strong>From:</strong> {savedMessage.from}</p>}
+            {savedMessage.message && <p><strong>Message:</strong> {savedMessage.message}</p>}
+            <button type="button" className="edit-message-button" onClick={handleUpdateMessage}>
+              Edit Message
+            </button>
+          </div>
+        ) : (
+          <div className="form-section">
+            <div className="form-field">
+              <input
+                type="text"
+                name="giftMessageTo"
+                className="form-input"
+                placeholder="To"
+                value={formData.giftMessageTo}
+                onChange={handleInputChange}
+              />
+            </div>
+
+            <div className="form-field">
+              <input
+                type="text"
+                name="giftMessageFrom"
+                className="form-input"
+                placeholder="From"
+                value={formData.giftMessageFrom}
+                onChange={handleInputChange}
+              />
+            </div>
+
+            <div className="form-field">
+              <textarea
+                name="giftMessage"
+                className="form-input gift-message-textarea"
+                placeholder="Message"
+                rows={4}
+                value={formData.giftMessage}
+                onChange={handleInputChange}
+              />
+            </div>
+
+            <button type="button" className="save-message-button" onClick={handleSaveMessage}>
+              Save
+            </button>
+          </div>
+        )}
+      </section>
+
+      {/* How we will reach you Section */}
+      <section className="checkout-section">
+        <div className="section-header-with-link">
+          <h2 className="section-title">How we will reach you</h2>
+          <button type="button" onClick={login} className="sign-in-link">Sign in</button>
+        </div>
+
+        <div className="form-section">
+          <div className="form-field">
+            <input
+              type="email"
+              name="guestEmail"
+              className={`form-input ${errors.guestEmail ? 'error' : ''}`}
+              placeholder="Your email address"
+              value={formData.guestEmail}
+              onChange={handleInputChange}
+            />
+            {errors.guestEmail && (
+              <span className="field-error">{errors.guestEmail}</span>
+            )}
+          </div>
+
+          <div className="form-field checkbox-field">
+            <input type="checkbox" id="emailOptIn" />
+            <label htmlFor="emailOptIn">
+              Flora in your inbox. Little joys, every day.
+            </label>
+          </div>
+        </div>
+      </section>
+
+      {/* Delivery Section */}
+      <section className="checkout-section">
+        <h2 className="section-title">Delivery</h2>
+
+        <div className="delivery-options">
+          <button
+            type="button"
+            className={`delivery-option ${deliveryMethod === 'ship' ? 'active' : ''}`}
+            onClick={() => {
+              setDeliveryMethod('ship');
+              setFormData((prev) => ({ ...prev, deliveryMethod: 'ship' }));
+            }}
+          >
+            <span className="option-radio"></span>
+            Ship
+          </button>
+          <button
+            type="button"
+            className={`delivery-option ${deliveryMethod === 'pickup' ? 'active' : ''}`}
+            onClick={() => {
+              setDeliveryMethod('pickup');
+              setFormData((prev) => ({ ...prev, deliveryMethod: 'pickup' }));
+            }}
+          >
+            <span className="option-radio"></span>
+            Pick up
+          </button>
+        </div>
+
+        {/* Recipient's Address */}
+        <div className="form-section">
+          <div className="section-header">
+            <span className="info-icon">ⓘ</span>
+            <h3 className="section-subtitle">Recipient's Address</h3>
+          </div>
+          <p className="section-description">Please add the recipient's details below.</p>
+
+          <div className="form-field">
+            <label className="form-label-top">Country</label>
+            <input
+              type="text"
+              name="country"
+              className="form-input"
+              value="Australia"
+              readOnly
+              disabled
+            />
+          </div>
+
+          <div className="form-row">
+            <div className="form-field">
+              <input
+                type="text"
+                name="recipientFirstName"
+                className={`form-input ${errors.recipientFirstName ? 'error' : ''}`}
+                placeholder="First Name"
+                value={formData.recipientFirstName}
+                onChange={handleInputChange}
+              />
+              {errors.recipientFirstName && (
+                <span className="field-error">{errors.recipientFirstName}</span>
+              )}
+            </div>
+            <div className="form-field">
+              <input
+                type="text"
+                name="recipientLastName"
+                className={`form-input ${errors.recipientLastName ? 'error' : ''}`}
+                placeholder="Last Name"
+                value={formData.recipientLastName}
+                onChange={handleInputChange}
+              />
+              {errors.recipientLastName && (
+                <span className="field-error">{errors.recipientLastName}</span>
+              )}
+            </div>
+          </div>
+
+          <div className="form-field">
+            <input
+              type="text"
+              name="recipientBusinessName"
+              className="form-input"
+              placeholder="Business Name"
+              value={formData.recipientBusinessName}
+              onChange={handleInputChange}
+            />
+          </div>
+
+          <div className="form-field">
+            <input
+              type="text"
+              name="recipientAddress"
+              className={`form-input ${errors.recipientAddress ? 'error' : ''}`}
+              placeholder="Address"
+              value={formData.recipientAddress}
+              onChange={handleInputChange}
+            />
+            <p className="field-hint">Add a house number if you have one</p>
+            {errors.recipientAddress && (
+              <span className="field-error">{errors.recipientAddress}</span>
+            )}
+          </div>
+
+          <div className="form-field">
+            <input
+              type="text"
+              name="recipientApartment"
+              className="form-input"
+              placeholder="Apartment, unit, etc."
+              value={formData.recipientApartment}
+              onChange={handleInputChange}
+            />
+          </div>
+
+          <div className="form-row form-row-three">
+            <div className="form-field">
+              <input
+                type="text"
+                name="recipientCity"
+                className={`form-input ${errors.recipientCity ? 'error' : ''}`}
+                placeholder="Suburb"
+                value={formData.recipientCity}
+                onChange={handleInputChange}
+              />
+              {errors.recipientCity && (
+                <span className="field-error">{errors.recipientCity}</span>
+              )}
+            </div>
+            <div className="form-field">
+              <select
+                name="recipientState"
+                className="form-input"
+                value={formData.recipientState}
+                onChange={handleInputChange}
+              >
+                <option value="">State/territory</option>
+                <option value="ACT">Australian Capital Territory</option>
+                <option value="NSW">New South Wales</option>
+                <option value="NT">Northern Territory</option>
+                <option value="QLD">Queensland</option>
+                <option value="SA">South Australia</option>
+                <option value="TAS">Tasmania</option>
+                <option value="VIC">Victoria</option>
+                <option value="WA">Western Australia</option>
+              </select>
+            </div>
+            <div className="form-field">
+              <input
+                type="text"
+                name="recipientZipCode"
+                className={`form-input ${errors.recipientZipCode ? 'error' : ''}`}
+                placeholder="Postcode"
+                value={formData.recipientZipCode}
+                onChange={handleInputChange}
+              />
+              {errors.recipientZipCode && (
+                <span className="field-error">{errors.recipientZipCode}</span>
+              )}
+            </div>
+          </div>
+
+          <div className="form-field">
+            <input
+              type="tel"
+              name="recipientPhone"
+              className="form-input"
+              placeholder="Phone (optional)"
+              value={formData.recipientPhone}
+              onChange={handleInputChange}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Payment Section */}
+      {clientSecret && orderId && (
+        <section className="checkout-section payment-section">
+          <h2 className="section-title">Payment</h2>
+          <p className="payment-security-notice">
+            All transactions are secure and encrypted.
+          </p>
+
+          <Elements stripe={stripePromise} options={elementsOptions}>
+            <PaymentForm
+              orderId={orderId}
+              onPaymentSuccess={onPaymentSuccess}
+              onPaymentError={onPaymentError}
+            />
+          </Elements>
+
+          {/* Sender's Details (Billing Address) */}
+          <div className="form-section billing-section">
+            <h3 className="section-subtitle">Sender's Details (Billing Address)</h3>
+
+            <div className="form-field checkbox-field">
+              <input
+                type="checkbox"
+                id="useSameAddress"
+                checked={useSameAddress}
+                onChange={(e) => setUseSameAddress(e.target.checked)}
+              />
+              <label htmlFor="useSameAddress">
+                Use shipping address as billing address
+              </label>
+            </div>
+
+            {!useSameAddress && (
+              <>
+                <div className="form-field">
+                  <label className="form-label-top">Country</label>
+                  <input
+                    type="text"
+                    name="senderCountry"
+                    className="form-input"
+                    value="Australia"
+                    readOnly
+                    disabled
+                  />
+                </div>
+
+                <div className="form-row">
+                  <div className="form-field">
+                    <input
+                      type="text"
+                      name="senderFirstName"
+                      className="form-input"
+                      placeholder="First Name"
+                      value={formData.senderFirstName}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="form-field">
+                    <input
+                      type="text"
+                      name="senderLastName"
+                      className="form-input"
+                      placeholder="Last Name"
+                      value={formData.senderLastName}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                </div>
+
+                <div className="form-field">
+                  <input
+                    type="text"
+                    name="senderBusinessName"
+                    className="form-input"
+                    placeholder="Business Name"
+                    value={formData.senderBusinessName}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div className="form-field">
+                  <input
+                    type="text"
+                    name="senderAddress"
+                    className="form-input"
+                    placeholder="Address"
+                    value={formData.senderAddress}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div className="form-field">
+                  <input
+                    type="text"
+                    name="senderApartment"
+                    className="form-input"
+                    placeholder="Apartment, unit, etc."
+                    value={formData.senderApartment}
+                    onChange={handleInputChange}
+                  />
+                </div>
+              </>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* Continue button if no client secret yet */}
+      {!clientSecret && (
+        <button
+          type="button"
+          onClick={handleProceedToPayment}
+          className="continue-button"
+        >
+          Continue to Payment
+        </button>
+      )}
+    </div>
+  );
+};
+
+export default CheckoutForm;
