@@ -1,9 +1,14 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import './App.css';
 import { useAuth } from './contexts/AuthContext';
+import { useAuth0 } from '@auth0/auth0-react';
+import { useCart } from './contexts/CartContext';
 import ProductsPage from './pages/ProductsPage';
 import SubscriptionsPage from './pages/SubscriptionsPage';
+import CartPage from './pages/CartPage';
+import CheckoutPage from './pages/Checkout';
+import OrderConfirmationPage from './pages/OrderConfirmationPage';
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -15,6 +20,7 @@ function App() {
     loading: authLoading,
     getAccessToken,
   } = useAuth();
+  const { getItemCount } = useCart();
 
   useEffect(() => {
     // Check if API is available
@@ -67,6 +73,41 @@ function App() {
 
   return (
     <BrowserRouter>
+      <AppContent
+        loading={loading}
+        useAPI={useAPI}
+        user={user}
+        authLoading={authLoading}
+        login={login}
+        logout={logout}
+        getItemCount={getItemCount}
+      />
+    </BrowserRouter>
+  );
+}
+
+function AppContent({ loading, useAPI, user, authLoading, login, logout, getItemCount }: any) {
+  const navigate = useNavigate();
+  const { isLoading: auth0Loading, isAuthenticated } = useAuth0();
+
+  useEffect(() => {
+    // Handle Auth0 redirect callback - wait until Auth0 finishes processing
+    if (!auth0Loading && isAuthenticated) {
+      const returnTo = sessionStorage.getItem('auth_return_to');
+
+      if (returnTo) {
+        console.log('📍 Navigating to saved location:', returnTo);
+        sessionStorage.removeItem('auth_return_to');
+
+        // Small delay to ensure Auth0 has fully processed
+        setTimeout(() => {
+          navigate(returnTo, { replace: true });
+        }, 100);
+      }
+    }
+  }, [auth0Loading, isAuthenticated, navigate]);
+
+  return (
       <div className="app">
         <header className="header">
           <div
@@ -98,6 +139,39 @@ function App() {
                 }}
               >
                 Browse Products
+              </Link>
+
+              <Link
+                to="/cart"
+                style={{
+                  padding: '0.5rem 1rem',
+                  backgroundColor: '#7a2e4a',
+                  color: 'white',
+                  textDecoration: 'none',
+                  borderRadius: '4px',
+                  position: 'relative',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                }}
+              >
+                🛒 Cart
+                {getItemCount() > 0 && (
+                  <span style={{
+                    backgroundColor: '#dc2626',
+                    color: 'white',
+                    borderRadius: '50%',
+                    width: '20px',
+                    height: '20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.75rem',
+                    fontWeight: 'bold',
+                  }}>
+                    {getItemCount()}
+                  </span>
+                )}
               </Link>
 
               <div className="auth-section">
@@ -167,6 +241,18 @@ function App() {
               path="/subscriptions"
               element={<SubscriptionsPage />}
             />
+            <Route
+              path="/cart"
+              element={<CartPage />}
+            />
+            <Route
+              path="/checkout"
+              element={<CheckoutPage />}
+            />
+            <Route
+              path="/order-confirmation/:orderId"
+              element={<OrderConfirmationPage />}
+            />
           </Routes>
         </main>
 
@@ -177,7 +263,6 @@ function App() {
           </p>
         </footer>
       </div>
-    </BrowserRouter>
   );
 }
 
