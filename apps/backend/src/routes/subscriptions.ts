@@ -16,6 +16,12 @@ router.post(
   subscriptionController.createSubscription
 );
 
+// Create subscription from product (convenience endpoint for frontend)
+router.post(
+  '/from-product',
+  subscriptionController.createSubscriptionFromProduct
+);
+
 // Get user's subscriptions
 router.get('/', subscriptionController.getUserSubscriptions);
 

@@ -13,11 +13,12 @@ import { notFoundHandler } from "./middleware/notFoundHandler";
 // Routes
 import productRoutes from "./routes/products";
 import categoryRoutes from "./routes/categories";
-import authTestRoutes from "./routes/auth-test";
+import authTestRoutes from "./test/auth-test";
 import orderRoutes from "./routes/orders";
 import subscriptionRoutes from "./routes/subscriptions";
 import paymentRoutes from "./routes/payments";
 import webhookRoutes from "./routes/webhooks";
+import deliveryInfoRoutes from "./routes/deliveryInfo";
 
 // Initialize Express app
 const app: Application = express();
@@ -38,6 +39,7 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/subscriptions", subscriptionRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use("/api/delivery", deliveryInfoRoutes);
 app.use("/api/auth-test", authTestRoutes);
 
 // Health check endpoint

@@ -25,6 +25,11 @@ export class SubscriptionController {
       }
 
       const subscriptionData = req.body;
+
+      // Add educational logging for debugging
+      console.log('📝 Creating subscription for user:', userId);
+      console.log('📋 Subscription data:', subscriptionData);
+
       const subscription = await this.subscriptionService.createSubscription({
         ...subscriptionData,
         userId,
@@ -322,6 +327,77 @@ export class SubscriptionController {
       res.status(500).json({
         success: false,
         error: 'Failed to schedule delivery',
+      });
+    }
+  };
+
+  // Convenience method: Create subscription from a product page
+  // This is perfect for your UI flow where users select a product and choose subscription
+  createSubscriptionFromProduct = async (
+    req: AuthRequest,
+    res: Response
+  ): Promise<void> => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, error: 'Login required' });
+        return;
+      }
+
+      const {
+        productId,
+        quantity = 1,
+        subscriptionType,
+        shippingAddress,
+        deliveryType,
+        deliveryNotes
+      } = req.body;
+
+      console.log(`🛍️ Creating subscription for product ${productId} with type ${subscriptionType}`);
+
+      // Validate required fields
+      if (!productId || !subscriptionType || !shippingAddress) {
+        res.status(400).json({
+          success: false,
+          error: 'Missing required fields: productId, subscriptionType, shippingAddress',
+        });
+        return;
+      }
+
+      // Validate shippingAddress has required fields
+      const requiredAddressFields = ['firstName', 'lastName', 'street1', 'city', 'state', 'zipCode'];
+      const missingFields = requiredAddressFields.filter(field => !shippingAddress[field]);
+      if (missingFields.length > 0) {
+        res.status(400).json({
+          success: false,
+          error: `Missing address fields: ${missingFields.join(', ')}`,
+        });
+        return;
+      }
+
+      console.log(`👤 Creating subscription for Auth0 user: ${userId}`);
+
+      // Create subscription using simplified service method
+      const subscription = await this.subscriptionService.createSubscription({
+        userId,
+        type: subscriptionType,
+        shippingAddress,
+        deliveryType,
+        deliveryNotes,
+        items: [{ productId, quantity }],
+      });
+
+      const response: ApiResponse = {
+        success: true,
+        data: subscription,
+        message: 'Subscription created successfully from product',
+      };
+      res.status(201).json(response);
+    } catch (error) {
+      console.error('Create subscription from product error:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to create subscription from product',
       });
     }
   };
