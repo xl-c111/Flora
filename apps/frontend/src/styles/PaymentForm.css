@@ -1,0 +1,83 @@
+/* Payment Form Styles - Stripe Elements Integration */
+
+.payment-form {
+  width: 100%;
+}
+
+.payment-element-container {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  margin-bottom: 1.5rem;
+}
+
+/* Stripe Payment Element customization is done via JS options */
+
+.payment-error {
+  background-color: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #dc2626;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9375rem;
+}
+
+.error-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.submit-payment-button {
+  width: 100%;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background-color: #7a2e4a;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 1rem;
+}
+
+.submit-payment-button:hover:not(:disabled) {
+  background-color: #5f2339;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(122, 46, 74, 0.3);
+}
+
+.submit-payment-button:disabled {
+  background-color: #d1d5db;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.submit-payment-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Loading state for submit button */
+.submit-payment-button:disabled::after {
+  content: '';
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #ffffff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
