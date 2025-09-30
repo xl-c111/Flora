@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import type { Product } from '../types';
+import { useCart } from '../contexts/CartContext';
 import './ProductCard.css';
 
 /**
@@ -18,6 +19,8 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const { addItem } = useCart();
+
   /**
    * Format price from cents to dollars
    * Backend stores price in cents, we display in dollars
@@ -158,8 +161,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             className="quick-action-btn cart-btn"
             onClick={(e) => {
               e.preventDefault();
-              // TODO: Implement add to cart functionality
-              console.log('Add to cart:', product.id);
+              addItem({
+                product,
+                quantity: 1,
+              });
+              alert(`Added ${product.name} to cart!`);
             }}
             title="Add to cart"
           >
