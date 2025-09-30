@@ -75,15 +75,11 @@ export class OrderService {
     // Calculate totals
     const subtotalCents = orderData.items.reduce((sum, item) => sum + item.priceCents * item.quantity, 0);
 
-    // Calculate shipping
-    const shippingCents = await this.calculateShipping(
-      orderData.deliveryType,
-      orderData.shippingAddress.zipCode,
-      subtotalCents
-    );
+    // Fixed shipping fee: $5 AUD
+    const shippingCents = 500;
 
-    // Calculate tax (simplified - 8.5%)
-    const taxCents = Math.round(subtotalCents * 0.085);
+    // No additional tax (tax included in item price)
+    const taxCents = 0;
 
     const totalCents = subtotalCents + shippingCents + taxCents;
 

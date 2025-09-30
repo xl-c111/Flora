@@ -48,7 +48,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const value: AuthContextType = {
     user,
     loading: isLoading,
-    login: () => loginWithRedirect(),
+    login: () => {
+      const returnTo = window.location.pathname;
+      console.log('🔐 Login initiated from:', returnTo);
+      // Save to sessionStorage as backup
+      sessionStorage.setItem('auth_return_to', returnTo);
+      loginWithRedirect({
+        appState: { returnTo }
+      });
+    },
     logout: () => logout(),
     getAccessToken,
   };
