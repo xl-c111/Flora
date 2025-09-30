@@ -69,21 +69,40 @@ pnpm db:seed             # Seed with sample data
 - User authentication (Auth0)
 - Subscription system (recurring deliveries)
 - Order processing & email confirmations
+- **Simple delivery system with flat-rate pricing** (Melbourne coverage)
 
 ### Planned 📋
-- Delivery management system with zone-based pricing
-- Order tracking
-- Product bundles
+- Order tracking & status updates
+- Product bundles & gift options
 - Advanced UI/UX polish
+- Enhanced email templates
+
+### Delivery System Status ✅
+
+**Current Implementation: Simple & Production-Ready**
+- **Flat-rate pricing**: $8.99 AUD standard, $15.99 AUD express delivery
+- **Coverage area**: Melbourne metro area (100+ postcodes supported)
+- **Integration**: Fully integrated with orders and subscriptions
+- **API endpoints**: `/api/delivery/info` and `/api/delivery/validate/:postcode`
+
+**Architecture Decision**:
+The team chose a simple flat-rate delivery system over complex zone-based pricing to meet project timeline while maintaining professional quality. This approach provides:
+- Predictable costs for customers
+- Simple integration with payment processing
+- Easy maintenance and testing
+- Professional demo experience
+
+**Future Enhancement Capability**:
+Database schema includes delivery zone tables for future zone-based pricing if needed, but current simple system is production-ready and sufficient for graduation project scope.
 
 ## Database Schema
 
 Key entities managed by Prisma:
 - **Users**: Customer accounts and authentication
 - **Products**: Flowers, plants, and bundles
-- **Orders**: Purchase transactions
+- **Orders**: Purchase transactions with delivery fees
 - **Subscriptions**: Recurring delivery schedules
-- **Delivery System**: Zones, methods, tracking (designed but not implemented)
+- **Delivery System**: Zone tables available for future enhancement (currently using simple config)
 
 ## Current Development Status
 
@@ -162,6 +181,64 @@ curl -H "Authorization: Bearer YOUR_TOKEN" http://localhost:3001/api/subscriptio
 - **Database**: Prisma schema-first approach with migrations
 - **Authentication**: JWT tokens via Auth0
 
+## Testing & CI/CD
+
+### **Local Testing Commands**
+
+Run tests inside Docker containers for consistency:
+
+```bash
+# Run all tests with coverage
+docker exec flora-backend pnpm test
+
+# Run specific test suites
+docker exec flora-backend pnpm test:auth        # Authentication tests
+docker exec flora-backend pnpm test:order       # Order processing tests
+docker exec flora-backend pnpm test:payment     # Payment & Stripe tests
+docker exec flora-backend pnpm test:email       # Email service tests
+docker exec flora-backend pnpm test:integration # Full integration tests
+
+# Development testing commands
+docker exec flora-backend pnpm test:watch       # Watch mode for development
+docker exec flora-backend pnpm test:coverage    # Generate coverage reports
+
+# Manual testing tools
+docker exec flora-backend pnpm test:live-email  # Test real email sending
+docker exec flora-backend pnpm get-token        # Get Auth0 token for API testing
+```
+
+### **Test Command Explanations**
+
+- **`jest`**: Core test runner that finds and executes `.test.ts` files
+- **`--watch`**: Automatically re-runs tests when files change (for development)
+- **`--coverage`**: Generates code coverage reports showing which code is tested
+- **`--testPathPatterns=auth`**: Only runs test files containing "auth" in the path
+- **`tsx src/test/...`**: Runs TypeScript files directly (for utility scripts)
+
+### **CI/CD Pipeline**
+
+**Automated testing runs on:**
+- ✅ All team member branches: `main`, `li-dev`, `anth-branch`, `bevan-branch`, `xiaoling`
+- ✅ Pull requests to `main` branch
+
+**Three parallel jobs:**
+1. **Backend Tests** - All Jest tests with coverage reporting
+2. **Frontend Tests** - Build and lint checks
+3. **Type Checking** - TypeScript compilation validation
+
+**GitHub Actions Files:**
+- `.github/workflows/test.yml` - Main testing pipeline
+- `.github/workflows/security.yml` - Security scanning and dependency audits
+
+### **CI/CD Best Practices Implemented**
+
+- ✅ **Branch Protection**: Tests must pass before merging
+- ✅ **Parallel Execution**: Fast feedback with concurrent jobs
+- ✅ **Real Database Testing**: PostgreSQL in CI matches production
+- ✅ **Code Coverage**: Tracks test coverage over time
+- ✅ **Security Scanning**: Weekly dependency audits
+- ✅ **Type Safety**: TypeScript compilation in CI
+
 ## Team Development Notes
 
 - Use Docker for consistent development environment
@@ -169,3 +246,5 @@ curl -H "Authorization: Bearer YOUR_TOKEN" http://localhost:3001/api/subscriptio
 - Test changes with both Docker logs and browser dev tools
 - All major features should include proper TypeScript types
 - Database changes require backend restart: `pnpm docker:restart-backend`
+- **Run tests locally before pushing** to catch issues early
+- **All tests must pass** before code can be merged to main
