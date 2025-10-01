@@ -24,10 +24,20 @@ export const subscriptionItemSchema = z.object({
 // Note: userId is added by the controller from auth, not from request body
 export const subscriptionSchema = z.object({
   type: subscriptionTypeEnum,
-  addressId: z.string().min(1, "Address ID is required"),
   deliveryType: deliveryTypeEnum.optional(), // default is STANDARD
   deliveryNotes: z.string().optional(),
   items: z.array(subscriptionItemSchema).min(1, "At least one subscription item is required"),
+  // Inline shipping address (matches Order model pattern)
+  shippingAddress: z.object({
+    firstName: z.string().min(1, "First name is required"),
+    lastName: z.string().min(1, "Last name is required"),
+    street1: z.string().min(1, "Street address is required"),
+    street2: z.string().optional(),
+    city: z.string().min(1, "City is required"),
+    state: z.string().min(1, "State is required"),
+    zipCode: z.string().min(1, "Zip code is required"),
+    phone: z.string().optional(),
+  }),
 });
 
 // For learning: We don't validate userId, status, or delivery dates in the request
