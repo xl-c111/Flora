@@ -236,14 +236,19 @@ const testAddresses = [
 async function main() {
   console.log('🌸 Starting to seed Flora database...');
 
-  // Clear existing data (only tables that exist)
+  // Clear existing data in correct order to respect foreign key constraints
   console.log('🧹 Cleaning existing data...');
-  await prisma.orderItem.deleteMany();
-  await prisma.order.deleteMany();
-  await prisma.address.deleteMany();
-  await prisma.user.deleteMany();
-  await prisma.product.deleteMany();
-  await prisma.category.deleteMany();
+
+  // Delete in order: children first, parents last
+  await prisma.payment.deleteMany();           // References orders
+  await prisma.orderItem.deleteMany();         // References orders
+  await prisma.subscriptionItem.deleteMany();  // References subscriptions
+  await prisma.order.deleteMany();             // References subscriptions, users, addresses
+  await prisma.subscription.deleteMany();      // References users
+  await prisma.address.deleteMany();           // References users
+  await prisma.user.deleteMany();              // No dependencies
+  await prisma.product.deleteMany();           // No dependencies
+  await prisma.category.deleteMany();          // No dependencies
 
   // Create categories
   console.log('📂 Creating categories...');

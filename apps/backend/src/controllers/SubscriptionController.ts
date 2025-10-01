@@ -1,13 +1,16 @@
 import { Request, Response } from 'express';
 import { SubscriptionService } from '../services/SubscriptionService';
+import { PaymentService } from '../services/PaymentService';
 import { ApiResponse } from '../types/api';
 import { AuthRequest } from '../middleware/auth';
 
 export class SubscriptionController {
   private subscriptionService: SubscriptionService;
+  private paymentService: PaymentService;
 
   constructor() {
     this.subscriptionService = new SubscriptionService();
+    this.paymentService = new PaymentService();
   }
 
   // Create new subscription (requires login)
@@ -46,6 +49,78 @@ export class SubscriptionController {
       res.status(500).json({
         success: false,
         error: 'Failed to create subscription',
+      });
+    }
+  };
+
+  // NEW: Create subscription with Stripe payment setup (safe addition)
+  createSubscriptionWithPayment = async (
+    req: AuthRequest,
+    res: Response
+  ): Promise<void> => {
+    try {
+      const userId = req.user?.id;
+      const userEmail = req.user?.email;
+
+      if (!userId || !userEmail) {
+        res
+          .status(401)
+          .json({ success: false, error: 'Authentication required for subscription payments' });
+        return;
+      }
+
+      const subscriptionData = req.body;
+
+      console.log('🔄 Creating subscription with payment setup for user:', userId);
+      console.log('📋 Subscription data:', subscriptionData);
+
+      // Feature flag check - fallback to regular subscription if payment disabled
+      if (process.env.ENABLE_SUBSCRIPTION_PAYMENTS !== 'true') {
+        console.log('⚠️ Subscription payments disabled, falling back to regular subscription');
+        return this.createSubscription(req, res);
+      }
+
+      // Step 1: Create Flora subscription (without payment)
+      const floraSubscription = await this.subscriptionService.createSubscription({
+        ...subscriptionData,
+        userId,
+      });
+
+      // Step 2: Create Stripe subscription with payment setup
+      const customerName = `${req.user?.firstName || ''} ${req.user?.lastName || ''}`.trim() || 'Flora Customer';
+
+      const stripeResult = await this.paymentService.createSubscriptionWithPaymentSetup({
+        email: userEmail,
+        name: customerName,
+        subscriptionType: subscriptionData.type,
+        floraSubscriptionId: floraSubscription.id,
+        metadata: {
+          floraUserId: userId,
+          subscriptionType: subscriptionData.type,
+        },
+      });
+
+      // Step 3: Update Flora subscription with Stripe subscription ID
+      await this.subscriptionService.updateSubscription(floraSubscription.id, {
+        stripeSubscriptionId: stripeResult.subscription.id,
+      });
+
+      const response: ApiResponse = {
+        success: true,
+        data: {
+          subscription: floraSubscription,
+          clientSecret: stripeResult.clientSecret,
+          stripeSubscriptionId: stripeResult.subscription.id,
+        },
+        message: 'Subscription created with payment setup successfully',
+      };
+
+      res.status(201).json(response);
+    } catch (error) {
+      console.error('Create subscription with payment error:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to create subscription with payment setup',
       });
     }
   };

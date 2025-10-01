@@ -16,6 +16,13 @@ router.post(
   subscriptionController.createSubscription
 );
 
+// NEW: Create subscription with Stripe payment setup (safe addition)
+router.post(
+  '/with-payment',
+  validateSubscription,
+  subscriptionController.createSubscriptionWithPayment
+);
+
 // Create subscription from product (convenience endpoint for frontend)
 router.post(
   '/from-product',
