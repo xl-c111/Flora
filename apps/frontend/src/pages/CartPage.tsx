@@ -1,12 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useCart } from '../contexts/CartContext';
 import '../styles/CartPage.css';
 
 const CartPage: React.FC = () => {
-  const { state: cartState, updateQuantity, removeItem } = useCart();
-  const [purchaseType, setPurchaseType] = useState<'one-time' | 'recurring' | 'spontaneous'>('spontaneous');
-  const [frequency, setFrequency] = useState<'weekly' | 'fortnightly' | 'monthly'>('weekly');
-  const [giftMessage, setGiftMessage] = useState({ to: '', from: '', message: '' });
+  const {
+    state: cartState,
+    updateQuantity,
+    removeItem,
+    setPurchaseType,
+    setFrequency,
+    setGiftMessage
+  } = useCart();
+
+  // Use cart state instead of local state
+  const purchaseType = cartState.purchaseType;
+  const frequency = cartState.frequency;
+  const giftMessage = cartState.giftMessage || { to: '', from: '', message: '' };
 
   const handleCheckout = () => {
     // Save message to cart items if needed

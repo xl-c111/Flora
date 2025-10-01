@@ -4,6 +4,15 @@
 
 Flora is a modern flowers and plants marketplace featuring flexible purchasing options including one-time purchases and subscription services. Built with React + TypeScript, Node.js/Express, Prisma, PostgreSQL, and Docker.
 
+## Working style notes for Claude code
+**Strategy for Future Changes:**
+
+  1. Analyze Current State - What exists now
+  2. Identify Problem - What's broken/missing
+  3. Explain Why - Why the change is needed
+  4. Show Flow - Before → After flow
+  5. Next Steps - Clear sequence of changes
+
 ## Project Structure
 
 This is a **monorepo** using **pnpm workspaces**:

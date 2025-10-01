@@ -10,12 +10,12 @@ Flora is a modern flowers and plants marketplace featuring flexible purchasing o
 
 ## 🎯 Project Features
 
-✅ **Product browsing** with search/filter
-✅ **Guest checkout** (no account required)
-✅ **User authentication** (Auth0)
-✅ **Subscription system** (recurring + spontaneous deliveries)
-✅ **Melbourne delivery** with flat-rate pricing
-✅ **Order processing** & email confirmations
+✅ **Product browsing** with search/filter \
+✅ **Guest checkout** (no account required) \
+✅ **User authentication** (Auth0) \
+✅ **Subscription system** (recurring + spontaneous deliveries) \
+✅ **Melbourne delivery** with flat-rate pricing \
+✅ **Order processing** & email confirmations \
 ✅ **Automated testing** with CI/CD
 
 ---
@@ -281,29 +281,6 @@ git push origin your-branch
 
 ---
 
-### **🗃️ Database Commands**
-```bash
-# Database operations
-docker exec flora-backend pnpm db:seed      # Fresh test data
-docker exec flora-backend pnpm db:setup     # Full setup (migrations + seed)
-docker exec flora-backend pnpm db:reset     # ⚠️ Delete all data
-
-# Database inspection
-npx prisma studio                            # Database GUI
-docker exec flora-backend pnpm tsx src/test/get-test-data.ts  # Get product IDs
-```
-
-### **🧪 Testing Commands**
-```bash
-# Automated tests
-docker exec flora-backend pnpm test:subscriptions    # Full subscription test suite
-
-# Manual API testing
-curl http://localhost:3001/api/health                 # Health check
-curl http://localhost:3001/api/delivery/info          # Melbourne delivery info
-curl http://localhost:3001/api/delivery/validate/3000 # Postcode validation
-```
-
 ## 🛠️ **Tech Stack**
 
 ### **Frontend**
@@ -398,13 +375,13 @@ pnpm docker:setup
 
 ## 🎯 **Demo Day Ready Features**
 
-✅ **Melbourne-focused delivery** (postcodes 3000, 3141, etc.)
-✅ **AUD pricing** ($8.99 standard, $15.99 express)
-✅ **Auth0 authentication** (email/password + Google login)
-✅ **Subscription management** (pause, resume, cancel)
-✅ **Automated testing** (6/6 tests passing)
-✅ **Email confirmations** (order confirmations)
-✅ **Real order integration** (subscriptions create actual orders)
+- ✅ **Melbourne-focused delivery** (postcodes 3000, 3141, etc.)
+- ✅ **AUD pricing** ($8.99 standard, $15.99 express)
+- ✅ **Auth0 authentication** (email/password + Google login)
+- ✅ **Subscription management** (pause, resume, cancel)
+- ✅ **Automated testing** (6/6 tests passing)
+- ✅ **Email confirmations** (order confirmations)
+- ✅ **Real order integration** (subscriptions create actual orders)
 
 ---
 

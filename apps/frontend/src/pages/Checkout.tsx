@@ -19,7 +19,12 @@ const CheckoutPage: React.FC = () => {
   } = useCheckout();
 
   const handleFormSubmit = async (formData: CheckoutFormData) => {
-    await createOrderAndPaymentIntent(formData, state.items);
+    await createOrderAndPaymentIntent(
+      formData,
+      state.items,
+      state.purchaseType,
+      state.frequency
+    );
   };
 
   const handlePaymentSuccess = () => {
