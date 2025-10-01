@@ -82,6 +82,30 @@ class SubscriptionService {
     return response.json();
   }
 
+  // NEW: Create subscription with Stripe payment setup
+  async createSubscriptionWithPayment(data: CreateSubscriptionData, token?: string): Promise<{
+    subscription: Subscription;
+    clientSecret: string;
+    stripeSubscriptionId: string;
+  }> {
+    const response = await fetch(`${API_BASE_URL}/subscriptions/with-payment`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...createAuthHeaders(token),
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Failed to create subscription with payment: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result.data; // Return the data object which contains subscription, clientSecret, etc.
+  }
+
   async getSubscriptions(token?: string): Promise<Subscription[]> {
     const response = await fetch(`${API_BASE_URL}/subscriptions`, {
       headers: {

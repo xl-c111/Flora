@@ -7,6 +7,9 @@ export interface CartItem {
   quantity: number;
   selectedDate?: Date;
   message?: string;
+  isSubscription?: boolean;
+  subscriptionFrequency?: 'weekly' | 'fortnightly' | 'monthly';
+  subscriptionDiscount?: number; // Percentage discount for subscription
 }
 
 interface CartState {
@@ -96,7 +99,16 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 
 const calculateTotal = (items: CartItem[]): number => {
   return items.reduce(
-    (total, item) => total + item.product.priceCents * item.quantity,
+    (total, item) => {
+      let itemPrice = item.product.priceCents * item.quantity;
+
+      // Apply subscription discount if this is a subscription item
+      if (item.isSubscription && item.subscriptionDiscount) {
+        itemPrice = itemPrice * (1 - item.subscriptionDiscount / 100);
+      }
+
+      return total + itemPrice;
+    },
     0
   );
 };
@@ -119,7 +131,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     items: [],
     isOpen: false,
     total: 0,
-    purchaseType: 'spontaneous',
+    purchaseType: 'one-time',
     frequency: 'weekly',
   });
 

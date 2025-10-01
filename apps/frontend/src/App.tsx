@@ -5,6 +5,7 @@ import { useAuth } from './contexts/AuthContext';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useCart } from './contexts/CartContext';
 import ProductsPage from './pages/ProductsPage';
+import ProductDetail from './pages/ProductDetail';
 import SubscriptionsPage from './pages/SubscriptionsPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/Checkout';
@@ -236,6 +237,10 @@ function AppContent({ loading, useAPI, user, authLoading, login, logout, getItem
             <Route
               path="/products"
               element={<ProductsPage />}
+            />
+            <Route
+              path="/products/:id"
+              element={<ProductDetail />}
             />
             <Route
               path="/subscriptions"

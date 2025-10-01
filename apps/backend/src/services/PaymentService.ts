@@ -90,6 +90,77 @@ export class PaymentService {
     return subscription;
   }
 
+  // NEW: Safe subscription creation with payment setup for Flora subscriptions
+  async createSubscriptionWithPaymentSetup(data: {
+    email: string;
+    name: string;
+    subscriptionType: 'RECURRING_WEEKLY' | 'RECURRING_MONTHLY' | 'SPONTANEOUS';
+    floraSubscriptionId: string;
+    metadata?: Record<string, string>;
+  }): Promise<{
+    subscription: Stripe.Subscription;
+    clientSecret: string;
+  }> {
+    const { email, name, subscriptionType, floraSubscriptionId, metadata } = data;
+
+    // Step 1: Create or get customer
+    let customer: Stripe.Customer;
+    const existingCustomers = await stripe.customers.list({
+      email: email,
+      limit: 1,
+    });
+
+    if (existingCustomers.data.length > 0) {
+      customer = existingCustomers.data[0];
+    } else {
+      customer = await stripe.customers.create({
+        email,
+        name,
+        metadata: {
+          floraSubscriptionId,
+          ...metadata,
+        },
+      });
+    }
+
+    // Step 2: Get price ID for subscription type
+    const priceId = this.getSubscriptionPriceId(subscriptionType);
+
+    // Step 3: Create subscription with payment setup
+    const subscription = await stripe.subscriptions.create({
+      customer: customer.id,
+      items: [{ price: priceId }],
+      payment_behavior: 'default_incomplete',
+      payment_settings: { save_default_payment_method: 'on_subscription' },
+      expand: ['latest_invoice.payment_intent'],
+      metadata: {
+        floraSubscriptionId,
+        subscriptionType,
+        ...metadata,
+      },
+    });
+
+    const invoice = subscription.latest_invoice as Stripe.Invoice;
+    const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
+
+    return {
+      subscription,
+      clientSecret: paymentIntent.client_secret!,
+    };
+  }
+
+  // Helper: Map Flora subscription types to Stripe price IDs
+  private getSubscriptionPriceId(subscriptionType: string): string {
+    // TODO: Replace with actual Stripe price IDs once products are created
+    const priceMapping = {
+      'RECURRING_WEEKLY': process.env.STRIPE_WEEKLY_PRICE_ID || 'price_weekly_placeholder',
+      'RECURRING_MONTHLY': process.env.STRIPE_MONTHLY_PRICE_ID || 'price_monthly_placeholder',
+      'SPONTANEOUS': process.env.STRIPE_SPONTANEOUS_PRICE_ID || 'price_spontaneous_placeholder',
+    };
+
+    return priceMapping[subscriptionType as keyof typeof priceMapping];
+  }
+
   async cancelSubscription(localSubscriptionId: string): Promise<Stripe.Subscription> {
     const localSubscription = await prisma.subscription.findUnique({
       where: { id: localSubscriptionId },

@@ -36,9 +36,7 @@ interface UseCheckoutReturn {
   clientSecret: string | null;
   createOrderAndPaymentIntent: (
     formData: CheckoutFormData,
-    cartItems: CartItem[],
-    purchaseType: 'one-time' | 'recurring' | 'spontaneous',
-    frequency: 'weekly' | 'fortnightly' | 'monthly'
+    cartItems: CartItem[]
   ) => Promise<void>;
   handlePaymentSuccess: () => void;
   handlePaymentError: (error: string) => void;
@@ -53,25 +51,42 @@ export const useCheckout = (): UseCheckoutReturn => {
 
   const createOrderAndPaymentIntent = async (
     formData: CheckoutFormData,
-    cartItems: CartItem[],
-    purchaseType: 'one-time' | 'recurring' | 'spontaneous',
-    frequency: 'weekly' | 'fortnightly' | 'monthly'
+    cartItems: CartItem[]
   ) => {
     setIsProcessing(true);
     setError(null);
 
     try {
-      if (purchaseType === 'one-time') {
-        // Step 1a: Create one-time order
+      // Separate items into one-time and subscription items
+      const oneTimeItems = cartItems.filter(item => !item.isSubscription);
+      const subscriptionItems = cartItems.filter(item => item.isSubscription);
+
+      console.log('🛒 Processing mixed cart:', {
+        oneTimeCount: oneTimeItems.length,
+        subscriptionCount: subscriptionItems.length
+      });
+
+      let totalOrderId = null;
+      let totalClientSecret = null;
+
+      // Process one-time items if any
+      if (oneTimeItems.length > 0) {
         const orderData: CreateOrderData = {
           purchaseType: 'ONE_TIME',
           guestEmail: formData.guestEmail || 'guest@example.com',
           guestPhone: formData.recipientPhone || '+1234567890',
-          items: cartItems.map((item) => ({
-            productId: item.product.id,
-            quantity: item.quantity,
-            priceCents: item.product.priceCents,
-          })),
+          items: oneTimeItems.map((item) => {
+            // Calculate the actual price (including subscription discounts if any)
+            let finalPrice = item.product.priceCents;
+            if (item.isSubscription && item.subscriptionDiscount) {
+              finalPrice = Math.round(finalPrice * (1 - item.subscriptionDiscount / 100));
+            }
+            return {
+              productId: item.product.id,
+              quantity: item.quantity,
+              priceCents: finalPrice,
+            };
+          }),
           shippingAddress: {
             firstName: formData.recipientFirstName,
             lastName: formData.recipientLastName,
@@ -87,10 +102,11 @@ export const useCheckout = (): UseCheckoutReturn => {
 
         console.log('📦 Creating one-time order:', JSON.stringify(orderData, null, 2));
         const order = await orderService.createOrder(orderData);
-        console.log('Order created:', order);
-        setOrderId(order.id);
+        console.log('One-time order created:', order);
 
-        // Step 2a: Create payment intent for order
+        totalOrderId = order.id;
+
+        // Create payment intent for one-time items
         const totalInDollars = order.totalCents / 100;
         console.log('Creating payment intent for amount:', totalInDollars);
         const paymentIntent = await paymentService.createPaymentIntent({
@@ -98,43 +114,58 @@ export const useCheckout = (): UseCheckoutReturn => {
           amount: totalInDollars,
         });
         console.log('Payment intent created:', paymentIntent);
-        setClientSecret(paymentIntent.clientSecret);
+        totalClientSecret = paymentIntent.clientSecret;
+      }
 
-      } else {
-        // Step 1b: Create subscription (requires authentication)
+      // Process subscription items if any
+      if (subscriptionItems.length > 0) {
         const token = await getAccessToken();
         if (!token) {
-          throw new Error('Authentication required for subscriptions. Please log in.');
+          throw new Error('SUBSCRIPTION_AUTH_REQUIRED');
         }
 
-        const subscriptionData: CreateSubscriptionData = {
-          type: mapSubscriptionType(purchaseType, frequency),
-          deliveryType: 'STANDARD',
-          shippingAddress: {
-            firstName: formData.recipientFirstName,
-            lastName: formData.recipientLastName,
-            street1: formData.recipientAddress,
-            street2: formData.recipientApartment,
-            city: formData.recipientCity,
-            state: formData.recipientState,
-            zipCode: formData.recipientZipCode,
-            phone: formData.recipientPhone,
-          },
-          items: cartItems.map((item) => ({
-            productId: item.product.id,
-            quantity: item.quantity,
-          })),
-        };
+        // For now, process subscription items as simple subscription preferences
+        // This creates the subscription record but uses one-time payment
+        for (const item of subscriptionItems) {
+          const subscriptionData: CreateSubscriptionData = {
+            type: mapSubscriptionType('recurring', item.subscriptionFrequency || 'monthly'),
+            deliveryType: 'STANDARD',
+            shippingAddress: {
+              firstName: formData.recipientFirstName,
+              lastName: formData.recipientLastName,
+              street1: formData.recipientAddress,
+              street2: formData.recipientApartment,
+              city: formData.recipientCity,
+              state: formData.recipientState,
+              zipCode: formData.recipientZipCode,
+              phone: formData.recipientPhone,
+            },
+            items: [{
+              productId: item.product.id,
+              quantity: item.quantity,
+            }],
+          };
 
-        console.log('🔄 Creating subscription:', JSON.stringify(subscriptionData, null, 2));
-        const subscription = await subscriptionService.createSubscription(subscriptionData, token);
-        console.log('Subscription created:', subscription);
+          console.log(`🔄 Creating subscription for ${item.product.name}:`, subscriptionData);
 
-        // For subscriptions, we'll set a temporary ID and skip payment for now
-        // In a real implementation, you'd handle subscription billing here
-        setOrderId(subscription.id);
-        setClientSecret('subscription_created'); // Placeholder
+          // Create subscription record (stores preference for future automation)
+          const subscription = await subscriptionService.createSubscription(subscriptionData, token);
+          console.log(`Subscription created for ${item.product.name}:`, subscription);
+
+          // For now, we store the subscription but don't process payment automatically
+          // The subscription discount was already applied in the cart total calculation
+        }
+
+        // If only subscription items, create a minimal success response
+        if (!totalOrderId) {
+          totalOrderId = 'subscription_only';
+          totalClientSecret = 'subscription_created';
+        }
       }
+
+      setOrderId(totalOrderId);
+      setClientSecret(totalClientSecret);
+
     } catch (err: any) {
       console.error('Checkout error:', err);
       console.error('Error response:', err.response?.data);

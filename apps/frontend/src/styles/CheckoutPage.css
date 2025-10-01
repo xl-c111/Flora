@@ -1,3 +1,140 @@
+/* Auth Required Message */
+.auth-required-message {
+  background: linear-gradient(135deg, #fef3f2 0%, #fee2e2 100%);
+  border: 2px solid #fecaca;
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 1.5rem 0;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
+}
+
+.auth-message-content h3 {
+  margin: 0 0 1rem 0;
+  color: #dc2626;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.auth-message-content p {
+  margin: 0 0 1.5rem 0;
+  color: #7f1d1d;
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+.auth-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.login-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+}
+
+.login-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+}
+
+.back-to-cart-btn {
+  background: white;
+  color: #374151;
+  border: 2px solid #d1d5db;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.back-to-cart-btn:hover {
+  border-color: #9ca3af;
+  background-color: #f9fafb;
+}
+
+/* Delivery Options */
+.delivery-options {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: #f9fafb;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+}
+
+.delivery-options h3 {
+  margin: 0 0 1rem 0;
+  color: #1f2937;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.delivery-type-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.delivery-option {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.delivery-option input {
+  margin-right: 0.75rem;
+  transform: scale(1.1);
+}
+
+.delivery-option:hover {
+  border-color: #d1d5db;
+  background-color: #f9fafb;
+}
+
+.delivery-option.active {
+  border-color: #10b981;
+  background-color: #ecfdf5;
+}
+
+.delivery-details {
+  flex-grow: 1;
+}
+
+.delivery-name {
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.25rem;
+}
+
+.delivery-time {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 0.25rem;
+}
+
+.delivery-price {
+  font-weight: 700;
+  color: #10b981;
+  font-size: 1.125rem;
+}
+
 /* Checkout Page Layout - Two Column Design */
 .checkout-page {
   min-height: 100vh;

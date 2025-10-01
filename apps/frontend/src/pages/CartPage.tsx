@@ -1,5 +1,6 @@
 import React from 'react';
 import { useCart } from '../contexts/CartContext';
+import { SUBSCRIPTION_OPTIONS } from '../config/subscriptionConfig';
 import '../styles/CartPage.css';
 
 const CartPage: React.FC = () => {
@@ -23,10 +24,18 @@ const CartPage: React.FC = () => {
   };
 
   const calculateTotal = () => {
-    return cartState.items.reduce(
-      (total, item) => total + item.product.priceCents * item.quantity,
-      0
-    );
+    return cartState.total; // Use the cart's built-in total calculation which handles discounts
+  };
+
+  const calculateSavings = () => {
+    return cartState.items.reduce((savings, item) => {
+      if (item.isSubscription && item.subscriptionDiscount) {
+        const originalPrice = item.product.priceCents * item.quantity;
+        const discountedPrice = originalPrice * (1 - item.subscriptionDiscount / 100);
+        return savings + (originalPrice - discountedPrice);
+      }
+      return savings;
+    }, 0);
   };
 
   const formatPrice = (cents: number) => {
@@ -64,154 +73,120 @@ const CartPage: React.FC = () => {
             <div className="header-col">Delete</div>
           </div>
 
-          {cartState.items.map((item) => (
-            <div key={item.id} className="cart-item">
-              <div className="item-image">
-                <img src={item.product.imageUrl} alt={item.product.name} />
-              </div>
+          {cartState.items.map((item) => {
+            const isSubscription = item.isSubscription;
+            const originalPrice = item.product.priceCents * item.quantity;
+            let displayPrice = originalPrice;
 
-              <div className="item-description">
-                <h3>{item.product.name}</h3>
-                <p>{item.product.description}</p>
-              </div>
+            // Calculate discounted price for subscription items
+            if (isSubscription && item.subscriptionDiscount) {
+              displayPrice = originalPrice * (1 - item.subscriptionDiscount / 100);
+            }
 
-              <div className="item-quantity">
-                <button
-                  className="qty-btn"
-                  onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                >
-                  -
-                </button>
-                <span className="qty-value">{item.quantity}</span>
-                <button
-                  className="qty-btn"
-                  onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                >
-                  +
-                </button>
-              </div>
+            const subscriptionOption = isSubscription && item.subscriptionFrequency
+              ? SUBSCRIPTION_OPTIONS.find(opt => opt.frequency === item.subscriptionFrequency)
+              : null;
 
-              <div className="item-price">
-                {formatPrice(item.product.priceCents * item.quantity)}
-              </div>
+            return (
+              <div key={item.id} className={`cart-item ${isSubscription ? 'subscription-item' : 'one-time-item'}`}>
+                <div className="item-image">
+                  <img src={item.product.imageUrl} alt={item.product.name} />
+                  {isSubscription && (
+                    <div className="subscription-badge">
+                      📅 {subscriptionOption?.label}
+                    </div>
+                  )}
+                </div>
 
-              <div className="item-delete">
-                <button
-                  className="delete-btn"
-                  onClick={() => removeItem(item.id)}
-                >
-                  ✕
-                </button>
+                <div className="item-description">
+                  <h3>{item.product.name}</h3>
+                  <p>{item.product.description}</p>
+                  {isSubscription && (
+                    <div className="subscription-details">
+                      <span className="subscription-label">
+                        {subscriptionOption?.description}
+                      </span>
+                      {item.subscriptionDiscount && (
+                        <span className="savings-amount">
+                          Save ${((originalPrice - displayPrice) / 100).toFixed(2)}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <div className="item-quantity">
+                  <button
+                    className="qty-btn"
+                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                  >
+                    -
+                  </button>
+                  <span className="qty-value">{item.quantity}</span>
+                  <button
+                    className="qty-btn"
+                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                  >
+                    +
+                  </button>
+                </div>
+
+                <div className="item-price">
+                  <div className="price-display">
+                    <span className="current-price">{formatPrice(displayPrice)}</span>
+                    {isSubscription && item.subscriptionDiscount && (
+                      <span className="original-price">{formatPrice(originalPrice)}</span>
+                    )}
+                  </div>
+                  {isSubscription && (
+                    <div className="subscription-frequency">
+                      per {item.subscriptionFrequency?.replace('ly', '')}
+                    </div>
+                  )}
+                </div>
+
+                <div className="item-delete">
+                  <button
+                    className="delete-btn"
+                    onClick={() => removeItem(item.id)}
+                  >
+                    ✕
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
-        {/* Purchase Type and Message Section */}
-        <div className="cart-options">
-          <div className="purchase-type-section">
-            <h3>Purchase Type</h3>
-            <div className="purchase-options-grid">
-              {/* One-time */}
-              <div className="purchase-column">
-                <button
-                  className={`option-btn ${purchaseType === 'one-time' ? 'active' : ''}`}
-                  onClick={() => setPurchaseType('one-time')}
-                >
-                  <span className="radio-circle"></span>
-                  One-time
-                </button>
-              </div>
-
-              {/* Recurring Subscription */}
-              <div className="purchase-column">
-                <button
-                  className={`option-btn ${purchaseType === 'recurring' ? 'active' : ''}`}
-                  onClick={() => setPurchaseType('recurring')}
-                >
-                  <span className="radio-circle"></span>
-                  Reoccurring Subscription
-                </button>
-                <div className="frequency-options">
-                  <button
-                    className={`freq-btn ${purchaseType === 'recurring' && frequency === 'weekly' ? 'active' : ''}`}
-                    onClick={() => {
-                      setPurchaseType('recurring');
-                      setFrequency('weekly');
-                    }}
-                  >
-                    <span className="radio-circle"></span>
-                    Weekly
-                  </button>
-                  <button
-                    className={`freq-btn ${purchaseType === 'recurring' && frequency === 'fortnightly' ? 'active' : ''}`}
-                    onClick={() => {
-                      setPurchaseType('recurring');
-                      setFrequency('fortnightly');
-                    }}
-                  >
-                    <span className="radio-circle"></span>
-                    Fortnightly
-                  </button>
-                  <button
-                    className={`freq-btn ${purchaseType === 'recurring' && frequency === 'monthly' ? 'active' : ''}`}
-                    onClick={() => {
-                      setPurchaseType('recurring');
-                      setFrequency('monthly');
-                    }}
-                  >
-                    <span className="radio-circle"></span>
-                    Monthly
-                  </button>
-                </div>
-              </div>
-
-              {/* Spontaneous Subscription */}
-              <div className="purchase-column">
-                <button
-                  className={`option-btn ${purchaseType === 'spontaneous' ? 'active' : ''}`}
-                  onClick={() => setPurchaseType('spontaneous')}
-                >
-                  <span className="radio-circle"></span>
-                  Spontaneous Subscription
-                </button>
-                <div className="frequency-options">
-                  <button
-                    className={`freq-btn ${purchaseType === 'spontaneous' && frequency === 'weekly' ? 'active' : ''}`}
-                    onClick={() => {
-                      setPurchaseType('spontaneous');
-                      setFrequency('weekly');
-                    }}
-                  >
-                    <span className="radio-circle"></span>
-                    Weekly
-                  </button>
-                  <button
-                    className={`freq-btn ${purchaseType === 'spontaneous' && frequency === 'fortnightly' ? 'active' : ''}`}
-                    onClick={() => {
-                      setPurchaseType('spontaneous');
-                      setFrequency('fortnightly');
-                    }}
-                  >
-                    <span className="radio-circle"></span>
-                    Fortnightly
-                  </button>
-                  <button
-                    className={`freq-btn ${purchaseType === 'spontaneous' && frequency === 'monthly' ? 'active' : ''}`}
-                    onClick={() => {
-                      setPurchaseType('spontaneous');
-                      setFrequency('monthly');
-                    }}
-                  >
-                    <span className="radio-circle"></span>
-                    Monthly
-                  </button>
-                </div>
-              </div>
+        {/* Cart Summary Section */}
+        <div className="cart-summary">
+          <div className="summary-section">
+            <h3>Order Summary</h3>
+            <div className="summary-line">
+              <span>Subtotal ({cartState.items.length} items)</span>
+              <span>{formatPrice(calculateTotal() + calculateSavings())}</span>
             </div>
+            {calculateSavings() > 0 && (
+              <div className="summary-line savings-line">
+                <span>Subscription Savings</span>
+                <span className="savings-amount">-{formatPrice(calculateSavings())}</span>
+              </div>
+            )}
+            <div className="summary-line total-line">
+              <span>Total</span>
+              <span className="total-amount">{formatPrice(calculateTotal())}</span>
+            </div>
+            {calculateSavings() > 0 && (
+              <div className="savings-note">
+                🎉 You're saving {formatPrice(calculateSavings())} with subscriptions!
+              </div>
+            )}
           </div>
 
-          {/* Leave a Message */}
+        </div>
+
+        {/* Optional Gift Message Section */}
+        <div className="cart-options">
           <div className="message-section">
             <h3>Leave a Message</h3>
             <div className="message-inputs">
