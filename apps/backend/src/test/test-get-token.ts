@@ -47,7 +47,7 @@ async function getTokenForTesting() {
       throw new Error(`HTTP ${response.status}: ${errorText}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as { access_token: string; token_type: string; expires_in: number };
 
     console.log('\n✅ Token generated successfully!');
     console.log('=====================================');

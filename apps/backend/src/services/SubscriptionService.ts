@@ -259,16 +259,16 @@ export class SubscriptionService {
           firstName: subscription.shippingFirstName,
           lastName: subscription.shippingLastName,
           street1: subscription.shippingStreet1,
-          street2: subscription.shippingStreet2,
+          street2: subscription.shippingStreet2 ?? undefined,
           city: subscription.shippingCity,
           state: subscription.shippingState,
           zipCode: subscription.shippingZipCode,
-          phone: subscription.shippingPhone,
+          phone: subscription.shippingPhone ?? undefined,
         },
 
         deliveryType: subscription.deliveryType,
-        deliveryNotes: subscription.deliveryNotes,
-        requestedDeliveryDate: subscription.nextDeliveryDate,
+        deliveryNotes: subscription.deliveryNotes ?? undefined,
+        requestedDeliveryDate: subscription.nextDeliveryDate ?? undefined,
       };
 
       // Add delivery fee
@@ -344,15 +344,15 @@ export class SubscriptionService {
         firstName: subscription.shippingFirstName,
         lastName: subscription.shippingLastName,
         street1: subscription.shippingStreet1,
-        street2: subscription.shippingStreet2,
+        street2: subscription.shippingStreet2 ?? undefined,
         city: subscription.shippingCity,
         state: subscription.shippingState,
         zipCode: subscription.shippingZipCode,
-        phone: subscription.shippingPhone,
+        phone: subscription.shippingPhone ?? undefined,
       },
       deliveryType: subscription.deliveryType,
-      deliveryNotes: deliveryData.deliveryNotes || subscription.deliveryNotes,
-      requestedDeliveryDate: deliveryData.requestedDate,
+      deliveryNotes: (deliveryData.deliveryNotes || subscription.deliveryNotes) ?? undefined,
+      requestedDeliveryDate: deliveryData.requestedDate ?? undefined,
     };
 
     // Create the order using your teammate's OrderService

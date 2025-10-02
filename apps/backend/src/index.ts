@@ -83,4 +83,6 @@ process.on("SIGINT", async () => {
   process.exit(0);
 });
 
+// Export for use in routes and tests
+export { prisma } from "./config/database";
 export default app;
