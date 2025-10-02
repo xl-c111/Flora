@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import type { Product } from '../types';
+import { useCart } from '../contexts/CartContext';
 import './ProductCard.css';
 
 /**
@@ -19,6 +20,7 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const navigate = useNavigate();
+  const { addItem } = useCart();
 
   /**
    * Format price from cents to dollars
@@ -160,9 +162,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             className="quick-action-btn cart-btn"
             onClick={(e) => {
               e.preventDefault();
-              navigate(`/products/${product.id}`);
+              addItem({
+                product,
+                quantity: 1,
+              });
+              alert(`Added ${product.name} to cart!`);
             }}
-            title="View product details"
+            title="Add to cart"
           >
             🛒
           </button>

@@ -165,7 +165,6 @@ export const useCheckout = (): UseCheckoutReturn => {
 
       setOrderId(totalOrderId);
       setClientSecret(totalClientSecret);
-
     } catch (err: any) {
       console.error('Checkout error:', err);
       console.error('Error response:', err.response?.data);
