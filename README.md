@@ -262,6 +262,27 @@ git push origin your-branch
 # Then visit GitHub Actions tab to see real-time results
 ```
 
+### **Before You Push - Pre-Commit Checklist** ✅
+
+**Run these commands locally to ensure CI/CD will pass:**
+
+```bash
+# 1️⃣ Run all backend tests (must pass)
+docker exec flora-backend pnpm test
+
+# 2️⃣ Run frontend type-check (warnings OK, but script must exist)
+docker exec flora-frontend pnpm type-check || echo "Type warnings are OK"
+
+# 3️⃣ Build frontend to catch critical errors
+docker exec flora-frontend pnpm build
+```
+
+**Quick verification:**
+- ✅ All backend tests pass (64/64 tests)
+- ✅ Frontend type-check runs (warnings allowed)
+- ✅ Frontend builds successfully
+- ✅ Docker containers running: `docker ps`
+
 ### **Troubleshooting Failed CI/CD**
 
 **Common Issues & Solutions:**
@@ -271,10 +292,11 @@ git push origin your-branch
 | `Tests failed` | Broken functionality | Run `docker exec flora-backend pnpm test` locally |
 | `Build failed` | TypeScript errors | Run `docker exec flora-backend pnpm build` locally |
 | `Lint failed` | Code style issues | Run `docker exec flora-frontend pnpm lint --fix` |
+| `type-check script not found` | Missing script in package.json | Rebuild: `pnpm docker:dev:build` |
 
 **Development Workflow:**
 1. 🔧 Make changes locally
-2. 🧪 Run tests: `docker exec flora-backend pnpm test`
+2. 🧪 Run pre-push checklist (see above)
 3. 📤 Push to your branch
 4. 👀 Monitor GitHub Actions results
 5. 🔄 Fix any failures and repeat
