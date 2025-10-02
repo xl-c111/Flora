@@ -287,7 +287,7 @@ class SubscriptionTester {
       // Test 1: Invalid product ID
       try {
         await this.subscriptionService.createSubscription({
-          userId: `${this.testUserId}_error`,
+          userId: `${this.existingUserId}_error`,
           type: 'RECURRING_WEEKLY',
           shippingAddress: {
             firstName: 'Error',
