@@ -54,11 +54,32 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
     case 'ADD_ITEM': {
-      const newItem: CartItem = {
-        ...action.payload,
-        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-      };
-      const updatedItems = [...state.items, newItem];
+      // Check if the same product with same subscription settings already exists
+      const existingItemIndex = state.items.findIndex(
+        (item) =>
+          item.product.id === action.payload.product.id &&
+          item.isSubscription === action.payload.isSubscription &&
+          item.subscriptionFrequency === action.payload.subscriptionFrequency
+      );
+
+      let updatedItems: CartItem[];
+
+      if (existingItemIndex !== -1) {
+        // Product already exists - increase quantity
+        updatedItems = state.items.map((item, index) =>
+          index === existingItemIndex
+            ? { ...item, quantity: item.quantity + (action.payload.quantity || 1) }
+            : item
+        );
+      } else {
+        // New product - add to cart
+        const newItem: CartItem = {
+          ...action.payload,
+          id: Date.now().toString() + Math.random().toString(36).substring(2, 11),
+        };
+        updatedItems = [...state.items, newItem];
+      }
+
       const total = calculateTotal(updatedItems);
       return { ...state, items: updatedItems, total };
     }

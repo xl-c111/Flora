@@ -53,79 +53,83 @@ export const useCheckout = (): UseCheckoutReturn => {
     setError(null);
 
     try {
-      // Separate items into one-time and subscription items
-      const oneTimeItems = cartItems.filter(item => !item.isSubscription);
+      // Identify subscription items (for creating subscription records for future deliveries)
       const subscriptionItems = cartItems.filter(item => item.isSubscription);
 
-      console.log('🛒 Processing mixed cart:', {
-        oneTimeCount: oneTimeItems.length,
+      console.log('🛒 Processing cart:', {
+        totalItems: cartItems.length,
         subscriptionCount: subscriptionItems.length
       });
 
       let totalOrderId = null;
       let totalClientSecret = null;
 
-      // Process one-time items if any
-      if (oneTimeItems.length > 0) {
-        const orderData: CreateOrderData = {
-          purchaseType: 'ONE_TIME',
-          guestEmail: formData.guestEmail || 'guest@example.com',
-          guestPhone: formData.recipientPhone || '+1234567890',
-          items: oneTimeItems.map((item) => {
-            // Calculate the actual price (including subscription discounts if any)
-            let finalPrice = item.product.priceCents;
-            if (item.isSubscription && item.subscriptionDiscount) {
-              finalPrice = Math.round(finalPrice * (1 - item.subscriptionDiscount / 100));
-            }
-            return {
-              productId: item.product.id,
-              quantity: item.quantity,
-              priceCents: finalPrice,
-            };
-          }),
-          shippingAddress: {
-            firstName: formData.recipientFirstName,
-            lastName: formData.recipientLastName,
-            street1: formData.recipientAddress,
-            street2: formData.recipientApartment,
-            city: formData.recipientCity,
-            state: formData.recipientState,
-            zipCode: formData.recipientZipCode,
-            phone: formData.recipientPhone || '+1234567890',
-          },
-          deliveryType: 'STANDARD',
+      // Create a SINGLE order with ALL items (both one-time and subscription)
+      // Subscription items get their first delivery in this order
+      const allItems = cartItems.map((item) => {
+        // Calculate the actual price (including subscription discounts)
+        let finalPrice = item.product.priceCents;
+        if (item.isSubscription && item.subscriptionDiscount) {
+          finalPrice = Math.round(finalPrice * (1 - item.subscriptionDiscount / 100));
+        }
+        return {
+          productId: item.product.id,
+          quantity: item.quantity,
+          priceCents: finalPrice,
         };
+      });
 
-        console.log('📦 Creating one-time order:', JSON.stringify(orderData, null, 2));
-        const order = await orderService.createOrder(orderData);
-        console.log('One-time order created:', order);
+      const orderData: CreateOrderData = {
+        purchaseType: 'ONE_TIME', // First order is always one-time, subscriptions are for future
+        guestEmail: formData.guestEmail || 'guest@example.com',
+        guestPhone: formData.recipientPhone || '+1234567890',
+        items: allItems,
+        shippingAddress: {
+          firstName: formData.recipientFirstName,
+          lastName: formData.recipientLastName,
+          street1: formData.recipientAddress,
+          street2: formData.recipientApartment,
+          city: formData.recipientCity,
+          state: formData.recipientState,
+          zipCode: formData.recipientZipCode,
+          phone: formData.recipientPhone || '+1234567890',
+        },
+        deliveryType: formData.deliveryType || 'STANDARD',
+      };
 
-        totalOrderId = order.id;
+      console.log('📦 Creating order with all items:', JSON.stringify(orderData, null, 2));
+      const order = await orderService.createOrder(orderData);
+      console.log('Order created:', order);
 
-        // Create payment intent for one-time items
-        const totalInDollars = order.totalCents / 100;
-        console.log('Creating payment intent for amount:', totalInDollars);
-        const paymentIntent = await paymentService.createPaymentIntent({
-          orderId: order.id,
-          amount: totalInDollars,
-        });
-        console.log('Payment intent created:', paymentIntent);
-        totalClientSecret = paymentIntent.clientSecret;
-      }
+      totalOrderId = order.id;
 
-      // Process subscription items if any
+      // Create payment intent for the full order
+      const totalInDollars = order.totalCents / 100;
+      console.log('Creating payment intent for amount:', totalInDollars);
+      const paymentIntent = await paymentService.createPaymentIntent({
+        orderId: order.id,
+        amount: totalInDollars,
+      });
+      console.log('Payment intent created:', paymentIntent);
+      totalClientSecret = paymentIntent.clientSecret;
+
+      // Create subscription records for future recurring deliveries
+      // (The first delivery is already included in the order above)
       if (subscriptionItems.length > 0) {
         const token = await getAccessToken();
         if (!token) {
           throw new Error('SUBSCRIPTION_AUTH_REQUIRED');
         }
 
-        // For now, process subscription items as simple subscription preferences
-        // This creates the subscription record but uses one-time payment
         for (const item of subscriptionItems) {
+          // For subscriptions, PICKUP doesn't make sense (recurring deliveries), so default to STANDARD
+          const subscriptionDeliveryType = formData.deliveryType === 'PICKUP'
+            ? 'STANDARD'
+            : (formData.deliveryType || 'STANDARD');
+
           const subscriptionData: CreateSubscriptionData = {
             type: mapSubscriptionType('recurring', item.subscriptionFrequency || 'monthly'),
-            deliveryType: 'STANDARD',
+            deliveryType: subscriptionDeliveryType as 'STANDARD' | 'EXPRESS',
             shippingAddress: {
               firstName: formData.recipientFirstName,
               lastName: formData.recipientLastName,
@@ -142,20 +146,11 @@ export const useCheckout = (): UseCheckoutReturn => {
             }],
           };
 
-          console.log(`🔄 Creating subscription for ${item.product.name}:`, subscriptionData);
+          console.log(`🔄 Creating subscription record for future deliveries: ${item.product.name}`);
 
-          // Create subscription record (stores preference for future automation)
+          // Create subscription record for future recurring deliveries
           const subscription = await subscriptionService.createSubscription(subscriptionData, token);
           console.log(`Subscription created for ${item.product.name}:`, subscription);
-
-          // For now, we store the subscription but don't process payment automatically
-          // The subscription discount was already applied in the cart total calculation
-        }
-
-        // If only subscription items, create a minimal success response
-        if (!totalOrderId) {
-          totalOrderId = 'subscription_only';
-          totalClientSecret = 'subscription_created';
         }
       }
 
