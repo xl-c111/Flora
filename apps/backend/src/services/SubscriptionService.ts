@@ -228,7 +228,7 @@ export class SubscriptionService {
         where: { id: subscription.id },
         data: {
           nextDeliveryDate: this.calculateNextDelivery(
-            subscription.nextDeliveryDate,
+            subscription.nextDeliveryDate ?? new Date(),
             subscription.type
           ),
         },

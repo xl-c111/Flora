@@ -149,9 +149,9 @@ export class UserService {
   async updateUserPreferences(
     userId: string,
     preferences: {
-      favoriteOccasions?: string[];
-      favoriteColors?: string[];
-      favoriteMoods?: string[];
+      favoriteOccasions?: { set: { id: string }[] };
+      favoriteColors?: { set: { id: string }[] };
+      favoriteMoods?: { set: { id: string }[] };
     }
   ) {
     return await prisma.user.update({

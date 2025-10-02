@@ -3,7 +3,7 @@ import { SubscriptionController } from '../controllers/SubscriptionController';
 import { authMiddleware } from '../middleware/auth';
 import { validateSubscription } from '../middleware/validation/subscriptionValidation';
 
-const router = Router();
+const router: Router = Router();
 const subscriptionController = new SubscriptionController();
 
 // All subscription routes require authentication

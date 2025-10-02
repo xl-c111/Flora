@@ -4,7 +4,7 @@ import { authMiddleware, optionalAuth } from "../middleware/auth";
 // import { adminMiddleware } from "../middleware/admin";
 import { validateOrder } from "../middleware/validation/orderValidation";
 
-const router = Router();
+const router: Router = Router();
 const orderController = new OrderController();
 
 // Public routes with optional auth (guest checkout with user context if logged in)

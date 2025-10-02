@@ -1,7 +1,7 @@
-import express from 'express';
+import express, { Router } from 'express';
 import { ProductController } from '../controllers/ProductController';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // GET /api/products/search/suggestions - Must come before /:id route
 router.get('/search/suggestions', ProductController.getSearchSuggestions);
