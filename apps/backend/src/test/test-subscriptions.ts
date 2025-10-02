@@ -288,9 +288,6 @@ class SubscriptionTester {
       try {
         await this.subscriptionService.createSubscription({
           userId: `${this.testUserId}_error`,
-          email: 'error.test@example.com',
-          firstName: 'Error',
-          lastName: 'Test',
           type: 'RECURRING_WEEKLY',
           shippingAddress: {
             firstName: 'Error',

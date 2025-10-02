@@ -92,25 +92,32 @@ export class DeliveryService {
     return {
       id: zone.id,
       name: zone.name,
-      description: zone.description,
+      description: zone.description ?? undefined,
       zipCodes: zone.zipCodes,
       cities: zone.cities,
       standardCostCents: zone.standardCostCents,
-      expressCostCents: zone.expressCostCents,
-      sameDayCostCents: zone.sameDayCostCents,
+      expressCostCents: zone.expressCostCents ?? undefined,
+      sameDayCostCents: zone.sameDayCostCents ?? undefined,
       standardDeliveryDays: zone.standardDeliveryDays,
       expressDeliveryDays: zone.expressDeliveryDays,
       sameDayAvailable: zone.sameDayAvailable,
-      sameDayCutoffHour: zone.sameDayCutoffHour,
-      freeDeliveryThreshold: zone.freeDeliveryThreshold,
+      sameDayCutoffHour: zone.sameDayCutoffHour ?? undefined,
+      freeDeliveryThreshold: zone.freeDeliveryThreshold ?? undefined,
       weekendDelivery: zone.weekendDelivery,
       holidayDelivery: zone.holidayDelivery,
-      deliveryWindows: zone.deliveryWindows.map((window: any) => ({
+      deliveryWindows: zone.deliveryWindows.map((window: {
+        id: string;
+        name: string;
+        startTime: string;
+        endTime: string;
+        additionalCostCents: number | null;
+        isAvailable: boolean;
+      }) => ({
         id: window.id,
         name: window.name,
         startTime: window.startTime,
         endTime: window.endTime,
-        additionalCostCents: window.additionalCostCents,
+        additionalCostCents: window.additionalCostCents ?? undefined,
         isAvailable: window.isAvailable,
       })),
     };
