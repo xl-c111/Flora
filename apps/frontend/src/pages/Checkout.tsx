@@ -14,7 +14,7 @@ const CheckoutPage: React.FC = () => {
   const { state, clearCart } = useCart();
   const { login } = useAuth();
   const [deliveryInfo, setDeliveryInfo] = useState<DeliveryInfo | null>(null);
-  const [selectedDeliveryType, setSelectedDeliveryType] = useState<'standard' | 'express'>('standard');
+  const [selectedDeliveryType, setSelectedDeliveryType] = useState<'STANDARD' | 'EXPRESS' | 'PICKUP'>('STANDARD');
   const {
     clientSecret,
     orderId,
@@ -39,7 +39,7 @@ const CheckoutPage: React.FC = () => {
 
   const handleFormSubmit = async (formData: CheckoutFormData) => {
     await createOrderAndPaymentIntent(
-      formData,
+      { ...formData, deliveryType: selectedDeliveryType },
       state.items
     );
   };
@@ -70,8 +70,10 @@ const CheckoutPage: React.FC = () => {
 
   // Dynamic shipping cost based on delivery type and backend config
   const getShippingCost = () => {
+    if (selectedDeliveryType === 'PICKUP') return 0; // Pickup is free
     if (!deliveryInfo) return 500; // Fallback to $5 if not loaded yet
-    return deliveryInfo.pricing[selectedDeliveryType].fee;
+    const deliveryKey = selectedDeliveryType.toLowerCase() as 'standard' | 'express';
+    return deliveryInfo.pricing[deliveryKey].fee;
   };
 
   const SHIPPING_COST = getShippingCost();
@@ -113,49 +115,15 @@ const CheckoutPage: React.FC = () => {
           {getErrorDisplay()}
           {isProcessing && <div className="loading-message">Processing...</div>}
 
-          {/* Delivery Options */}
-          {deliveryInfo && (
-            <div className="delivery-options">
-              <h3>Delivery Options</h3>
-              <div className="delivery-type-selector">
-                <label className={`delivery-option ${selectedDeliveryType === 'standard' ? 'active' : ''}`}>
-                  <input
-                    type="radio"
-                    name="deliveryType"
-                    value="standard"
-                    checked={selectedDeliveryType === 'standard'}
-                    onChange={(e) => setSelectedDeliveryType(e.target.value as 'standard' | 'express')}
-                  />
-                  <div className="delivery-details">
-                    <div className="delivery-name">Standard Delivery</div>
-                    <div className="delivery-time">{deliveryInfo.pricing.standard.estimate}</div>
-                    <div className="delivery-price">{deliveryInfo.pricing.standard.display}</div>
-                  </div>
-                </label>
-                <label className={`delivery-option ${selectedDeliveryType === 'express' ? 'active' : ''}`}>
-                  <input
-                    type="radio"
-                    name="deliveryType"
-                    value="express"
-                    checked={selectedDeliveryType === 'express'}
-                    onChange={(e) => setSelectedDeliveryType(e.target.value as 'standard' | 'express')}
-                  />
-                  <div className="delivery-details">
-                    <div className="delivery-name">Express Delivery</div>
-                    <div className="delivery-time">{deliveryInfo.pricing.express.estimate}</div>
-                    <div className="delivery-price">{deliveryInfo.pricing.express.display}</div>
-                  </div>
-                </label>
-              </div>
-            </div>
-          )}
-
           <CheckoutForm
             clientSecret={clientSecret || undefined}
             orderId={orderId || undefined}
             onSubmit={handleFormSubmit}
             onPaymentSuccess={handlePaymentSuccess}
             onPaymentError={handlePaymentError}
+            deliveryInfo={deliveryInfo}
+            selectedDeliveryType={selectedDeliveryType}
+            onDeliveryTypeChange={setSelectedDeliveryType}
           />
         </div>
 

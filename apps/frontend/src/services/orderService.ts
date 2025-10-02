@@ -24,7 +24,7 @@ export interface CreateOrderData {
     zipCode: string;
     phone?: string;
   };
-  deliveryType: 'STANDARD' | 'EXPRESS' | 'NEXT_DAY';
+  deliveryType: 'STANDARD' | 'EXPRESS' | 'NEXT_DAY' | 'PICKUP';
   deliveryNotes?: string;
   requestedDeliveryDate?: Date;
 }
