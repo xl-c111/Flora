@@ -75,8 +75,12 @@ export class OrderService {
     // Calculate totals
     const subtotalCents = orderData.items.reduce((sum, item) => sum + item.priceCents * item.quantity, 0);
 
-    // Fixed shipping fee: $5 AUD
-    const shippingCents = 500;
+    // Calculate shipping based on delivery type and zip code
+    const shippingCents = await this.calculateShipping(
+      orderData.deliveryType,
+      orderData.shippingAddress.zipCode,
+      subtotalCents
+    );
 
     // No additional tax (tax included in item price)
     const taxCents = 0;
@@ -513,18 +517,18 @@ export class OrderService {
       }
     }
 
-    // Fallback pricing
+    // Fallback pricing (matches deliveryService.ts config)
     switch (deliveryType) {
       case DeliveryType.STANDARD:
-        return 995; // $9.95
+        return 899; // $8.99 AUD
       case DeliveryType.EXPRESS:
-        return 1995; // $19.95
+        return 1599; // $15.99 AUD
       case DeliveryType.SAME_DAY:
-        return 2995; // $29.95
+        return 2999; // $29.99 AUD
       case DeliveryType.PICKUP:
-        return 0;
+        return 0; // Free
       default:
-        return 995;
+        return 899;
     }
   }
 

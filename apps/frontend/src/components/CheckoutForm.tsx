@@ -4,6 +4,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import type { Appearance } from '@stripe/stripe-js';
 import PaymentForm from './PaymentForm';
 import { useAuth } from '../contexts/AuthContext';
+import type { DeliveryInfo } from '../services/deliveryService';
 import '../styles/CheckoutForm.css';
 
 const stripePromise = loadStripe(
@@ -11,7 +12,7 @@ const stripePromise = loadStripe(
 );
 
 export interface CheckoutFormData {
-  deliveryMethod: 'ship' | 'pickup';
+  deliveryType?: 'STANDARD' | 'EXPRESS' | 'PICKUP';
   guestEmail: string;
   giftMessageTo?: string;
   giftMessageFrom?: string;
@@ -43,6 +44,9 @@ interface CheckoutFormProps {
   onSubmit: (data: CheckoutFormData) => void;
   onPaymentSuccess: () => void;
   onPaymentError: (error: string) => void;
+  deliveryInfo: DeliveryInfo | null;
+  selectedDeliveryType: 'STANDARD' | 'EXPRESS' | 'PICKUP';
+  onDeliveryTypeChange: (type: 'STANDARD' | 'EXPRESS' | 'PICKUP') => void;
 }
 
 const CheckoutForm: React.FC<CheckoutFormProps> = ({
@@ -51,14 +55,15 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
   onSubmit,
   onPaymentSuccess,
   onPaymentError,
+  deliveryInfo,
+  selectedDeliveryType,
+  onDeliveryTypeChange,
 }) => {
   const { login } = useAuth();
-  const [deliveryMethod, setDeliveryMethod] = useState<'ship' | 'pickup'>('ship');
   const [useSameAddress, setUseSameAddress] = useState(false);
   const [isEditingMessage, setIsEditingMessage] = useState(false);
   const [savedMessage, setSavedMessage] = useState({ to: '', from: '', message: '' });
   const [formData, setFormData] = useState<CheckoutFormData>({
-    deliveryMethod: 'ship',
     guestEmail: '',
     giftMessageTo: '',
     giftMessageFrom: '',
@@ -115,6 +120,9 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
     }
     if (!formData.recipientCity.trim()) {
       newErrors.recipientCity = 'Enter a city';
+    }
+    if (!formData.recipientState.trim()) {
+      newErrors.recipientState = 'Select a state/territory';
     }
     if (!formData.recipientZipCode.trim()) {
       newErrors.recipientZipCode = 'Enter a ZIP / postal code';
@@ -258,42 +266,68 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
         </div>
       </section>
 
-      {/* Delivery Section */}
+      {/* Delivery Options */}
       <section className="checkout-section">
         <h2 className="section-title">Delivery</h2>
 
         <div className="delivery-options">
-          <button
-            type="button"
-            className={`delivery-option ${deliveryMethod === 'ship' ? 'active' : ''}`}
-            onClick={() => {
-              setDeliveryMethod('ship');
-              setFormData((prev) => ({ ...prev, deliveryMethod: 'ship' }));
-            }}
-          >
-            <span className="option-radio"></span>
-            Ship
-          </button>
-          <button
-            type="button"
-            className={`delivery-option ${deliveryMethod === 'pickup' ? 'active' : ''}`}
-            onClick={() => {
-              setDeliveryMethod('pickup');
-              setFormData((prev) => ({ ...prev, deliveryMethod: 'pickup' }));
-            }}
-          >
-            <span className="option-radio"></span>
-            Pick up
-          </button>
-        </div>
-
-        {/* Recipient's Address */}
-        <div className="form-section">
-          <div className="section-header">
-            <span className="info-icon">ⓘ</span>
-            <h3 className="section-subtitle">Recipient's Address</h3>
+          <div className="delivery-type-selector">
+            {deliveryInfo && (
+              <>
+                <label className={`delivery-option ${selectedDeliveryType === 'STANDARD' ? 'active' : ''}`}>
+                  <input
+                    type="radio"
+                    name="deliveryType"
+                    value="STANDARD"
+                    checked={selectedDeliveryType === 'STANDARD'}
+                    onChange={(e) => onDeliveryTypeChange(e.target.value as 'STANDARD' | 'EXPRESS' | 'PICKUP')}
+                  />
+                  <div className="delivery-details">
+                    <div className="delivery-name">Standard Delivery</div>
+                    <div className="delivery-time">{deliveryInfo.pricing.standard.estimate}</div>
+                    <div className="delivery-price">{deliveryInfo.pricing.standard.display}</div>
+                  </div>
+                </label>
+                <label className={`delivery-option ${selectedDeliveryType === 'EXPRESS' ? 'active' : ''}`}>
+                  <input
+                    type="radio"
+                    name="deliveryType"
+                    value="EXPRESS"
+                    checked={selectedDeliveryType === 'EXPRESS'}
+                    onChange={(e) => onDeliveryTypeChange(e.target.value as 'STANDARD' | 'EXPRESS' | 'PICKUP')}
+                  />
+                  <div className="delivery-details">
+                    <div className="delivery-name">Express Delivery</div>
+                    <div className="delivery-time">{deliveryInfo.pricing.express.estimate}</div>
+                    <div className="delivery-price">{deliveryInfo.pricing.express.display}</div>
+                  </div>
+                </label>
+              </>
+            )}
+            <label className={`delivery-option ${selectedDeliveryType === 'PICKUP' ? 'active' : ''}`}>
+              <input
+                type="radio"
+                name="deliveryType"
+                value="PICKUP"
+                checked={selectedDeliveryType === 'PICKUP'}
+                onChange={(e) => onDeliveryTypeChange(e.target.value as 'STANDARD' | 'EXPRESS' | 'PICKUP')}
+              />
+              <div className="delivery-details">
+                <div className="delivery-name">Pick Up</div>
+                <div className="delivery-time">Available anytime</div>
+                <div className="delivery-price">Free</div>
+              </div>
+            </label>
           </div>
-          <p className="section-description">Please add the recipient's details below.</p>
+        </div>
+      </section>
+
+      {/* Recipient's Address Section */}
+      <section className="checkout-section">
+        <h2 className="section-title">Recipient's Address</h2>
+        <p className="section-description">Please add the recipient's details below.</p>
+
+        <div className="form-section">
 
           <div className="form-field">
             <label className="form-label-top">Country</label>
@@ -390,7 +424,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
             <div className="form-field">
               <select
                 name="recipientState"
-                className="form-input"
+                className={`form-input ${errors.recipientState ? 'error' : ''}`}
                 value={formData.recipientState}
                 onChange={handleInputChange}
               >
@@ -404,6 +438,9 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
                 <option value="VIC">Victoria</option>
                 <option value="WA">Western Australia</option>
               </select>
+              {errors.recipientState && (
+                <span className="field-error">{errors.recipientState}</span>
+              )}
             </div>
             <div className="form-field">
               <input
