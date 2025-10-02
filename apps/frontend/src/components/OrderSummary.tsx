@@ -70,15 +70,31 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             </div>
             <div className="order-item-details">
               <h3>{item.product.name}</h3>
-              {item.product.category && (
-                <p className="item-category">{item.product.category}</p>
+
+              {/* Purchase Type */}
+              {item.isSubscription ? (
+                <div className="item-subscription-info">
+                  <p className="item-type subscription">
+                    <span className="badge">Subscription</span>
+                  </p>
+                  {item.subscriptionFrequency && (
+                    <p className="item-frequency">
+                      Every {item.subscriptionFrequency === 'weekly' ? '1 week' :
+                             item.subscriptionFrequency === 'fortnightly' ? '2 weeks' :
+                             '1 month'} {item.subscriptionDiscount && `• Save ${item.subscriptionDiscount}%`}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <p className="item-type one-time">One-time purchase</p>
               )}
+
+              {/* Delivery Date */}
               {item.selectedDate && (
                 <p className="item-delivery-date">
                   Delivery: {new Date(item.selectedDate).toLocaleDateString('en-US', {
-                    weekday: 'long',
+                    month: 'short',
                     day: 'numeric',
-                    month: 'long',
                     year: 'numeric'
                   })}
                 </p>
@@ -114,7 +130,14 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
               )}
             </div>
             <div className="order-item-price">
-              {formatPrice(item.product.priceCents * item.quantity)}
+              {(() => {
+                // Calculate the actual price with subscription discount if applicable
+                let itemTotalCents = item.product.priceCents * item.quantity;
+                if (item.isSubscription && item.subscriptionDiscount) {
+                  itemTotalCents = Math.round(itemTotalCents * (1 - item.subscriptionDiscount / 100));
+                }
+                return formatPrice(itemTotalCents);
+              })()}
             </div>
           </div>
         ))}
