@@ -87,7 +87,8 @@ export class SubscriptionController {
       });
 
       // Step 2: Create Stripe subscription with payment setup
-      const customerName = `${req.user?.firstName || ''} ${req.user?.lastName || ''}`.trim() || 'Flora Customer';
+      // Use email prefix as customer name since we don't track user profiles
+      const customerName = userEmail.split('@')[0] || 'Flora Customer';
 
       const stripeResult = await this.paymentService.createSubscriptionWithPaymentSetup({
         email: userEmail,

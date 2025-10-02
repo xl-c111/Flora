@@ -147,6 +147,7 @@ export class SubscriptionService {
       status: SubscriptionStatus;
       deliveryType: DeliveryType;
       deliveryNotes: string;
+      stripeSubscriptionId: string;
     }>
   ): Promise<Subscription> {
     const subscription = await prisma.subscription.update({
