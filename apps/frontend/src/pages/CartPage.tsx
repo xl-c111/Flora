@@ -8,14 +8,10 @@ const CartPage: React.FC = () => {
     state: cartState,
     updateQuantity,
     removeItem,
-    setPurchaseType,
-    setFrequency,
     setGiftMessage
   } = useCart();
 
   // Use cart state instead of local state
-  const purchaseType = cartState.purchaseType;
-  const frequency = cartState.frequency;
   const giftMessage = cartState.giftMessage || { to: '', from: '', message: '' };
 
   const handleCheckout = () => {

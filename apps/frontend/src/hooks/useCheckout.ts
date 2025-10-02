@@ -9,10 +9,6 @@ import type { CartItem } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 
 // Type mapping functions
-const mapPurchaseType = (frontendType: 'one-time' | 'recurring' | 'spontaneous'): 'ONE_TIME' | 'SUBSCRIPTION' => {
-  return frontendType === 'one-time' ? 'ONE_TIME' : 'SUBSCRIPTION';
-};
-
 const mapSubscriptionType = (
   purchaseType: 'one-time' | 'recurring' | 'spontaneous',
   frequency: 'weekly' | 'fortnightly' | 'monthly'
