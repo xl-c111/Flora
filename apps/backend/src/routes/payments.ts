@@ -3,7 +3,7 @@ import { PaymentController } from "../controllers/PaymentController";
 import { authMiddleware, optionalAuth } from "../middleware/auth";
 // import { adminMiddleware } from "../middleware/admin";
 
-const router = Router();
+const router: Router = Router();
 const paymentController = new PaymentController();
 
 // Protected routes (require authentication)
