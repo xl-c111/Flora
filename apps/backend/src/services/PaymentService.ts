@@ -246,6 +246,22 @@ export class PaymentService {
     let orderId = paymentIntent.metadata.orderId;
     console.log(`💳 Payment intent succeeded: ${paymentIntent.id}, orderId: ${orderId || "NOT SET"}`);
 
+    // Extract payment method details
+    let paymentMethod: string | undefined;
+    let last4: string | undefined;
+
+    if (paymentIntent.payment_method) {
+      try {
+        const pm = await stripe.paymentMethods.retrieve(paymentIntent.payment_method as string);
+        if (pm.card) {
+          paymentMethod = pm.card.brand.charAt(0).toUpperCase() + pm.card.brand.slice(1); // Capitalize brand name
+          last4 = pm.card.last4;
+        }
+      } catch (error) {
+        console.error("Failed to retrieve payment method details:", error);
+      }
+    }
+
     // FOR DEMO: Create a test order if none exists
     if (!orderId) {
       console.log("🎯 Creating demo order for webhook testing...");
@@ -293,10 +309,16 @@ export class PaymentService {
           amountCents: paymentIntent.amount,
           currency: paymentIntent.currency.toUpperCase(),
           stripePaymentIntentId: paymentIntent.id,
+          stripePaymentMethodId: paymentIntent.payment_method as string | undefined,
+          paymentMethod,
+          last4,
           status: "succeeded",
           paidAt: new Date(),
         },
         update: {
+          stripePaymentMethodId: paymentIntent.payment_method as string | undefined,
+          paymentMethod,
+          last4,
           status: "succeeded",
           paidAt: new Date(),
         },
@@ -452,6 +474,22 @@ export class PaymentService {
     const paymentIntent = await stripe.paymentIntents.confirm(paymentIntentId);
 
     if (paymentIntent.status === "succeeded") {
+      // Extract payment method details
+      let paymentMethod: string | undefined;
+      let last4: string | undefined;
+
+      if (paymentIntent.payment_method) {
+        try {
+          const pm = await stripe.paymentMethods.retrieve(paymentIntent.payment_method as string);
+          if (pm.card) {
+            paymentMethod = pm.card.brand.charAt(0).toUpperCase() + pm.card.brand.slice(1);
+            last4 = pm.card.last4;
+          }
+        } catch (error) {
+          console.error("Failed to retrieve payment method details:", error);
+        }
+      }
+
       // Update order status
       await prisma.order.update({
         where: { id: orderId },
@@ -470,10 +508,16 @@ export class PaymentService {
           amountCents: paymentIntent.amount,
           currency: paymentIntent.currency.toUpperCase(),
           stripePaymentIntentId: paymentIntentId,
+          stripePaymentMethodId: paymentIntent.payment_method as string | undefined,
+          paymentMethod,
+          last4,
           status: "succeeded",
           paidAt: new Date(),
         },
         update: {
+          stripePaymentMethodId: paymentIntent.payment_method as string | undefined,
+          paymentMethod,
+          last4,
           status: "succeeded",
           paidAt: new Date(),
         },
@@ -490,6 +534,64 @@ export class PaymentService {
     } catch (error) {
       console.error("Error retrieving payment:", error);
       return null;
+    }
+  }
+
+  // Sync payment details from Stripe to database
+  async syncPaymentDetails(orderId: string): Promise<void> {
+    try {
+      // Get the payment intent from the order's payments
+      const order = await prisma.order.findUnique({
+        where: { id: orderId },
+        include: {
+          payments: true,
+        },
+      });
+
+      if (!order || !order.payments || order.payments.length === 0) {
+        console.log('No payments found for order:', orderId);
+        return;
+      }
+
+      const payment = order.payments[0];
+
+      // If payment already has card details, skip
+      if (payment.paymentMethod && payment.last4) {
+        console.log('Payment already has card details');
+        return;
+      }
+
+      // If no Stripe payment intent ID, skip
+      if (!payment.stripePaymentIntentId) {
+        console.log('No Stripe payment intent ID found');
+        return;
+      }
+
+      // Retrieve payment intent from Stripe
+      const paymentIntent = await stripe.paymentIntents.retrieve(payment.stripePaymentIntentId);
+
+      if (!paymentIntent.payment_method) {
+        console.log('No payment method attached to payment intent');
+        return;
+      }
+
+      // Retrieve payment method details
+      const pm = await stripe.paymentMethods.retrieve(paymentIntent.payment_method as string);
+
+      if (pm.card) {
+        // Update payment record with card details
+        await prisma.payment.update({
+          where: { id: payment.id },
+          data: {
+            paymentMethod: pm.card.brand.charAt(0).toUpperCase() + pm.card.brand.slice(1),
+            last4: pm.card.last4,
+            stripePaymentMethodId: paymentIntent.payment_method as string,
+          },
+        });
+        console.log(`✅ Synced payment details for order ${orderId}: ${pm.card.brand} ****${pm.card.last4}`);
+      }
+    } catch (error) {
+      console.error('Error syncing payment details:', error);
     }
   }
 
