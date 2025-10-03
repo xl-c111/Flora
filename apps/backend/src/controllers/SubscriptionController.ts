@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { SubscriptionService } from '../services/SubscriptionService';
 import { PaymentService } from '../services/PaymentService';
 import { ApiResponse } from '../types/api';
@@ -44,11 +44,12 @@ export class SubscriptionController {
         message: 'Subscription created successfully',
       };
       res.status(201).json(response);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Create subscription error:', error);
       res.status(500).json({
         success: false,
-        error: 'Failed to create subscription',
+        error: error.message || 'Failed to create subscription',
+        details: process.env.NODE_ENV === 'development' ? error.stack : undefined,
       });
     }
   };

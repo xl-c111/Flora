@@ -30,6 +30,7 @@ export interface CreateOrderData {
     city: string;
     state: string;
     zipCode: string;
+    country?: string;
     phone?: string;
   };
   deliveryType: DeliveryType;
@@ -117,6 +118,7 @@ export class OrderService {
           shippingCity: orderData.shippingAddress.city,
           shippingState: orderData.shippingAddress.state,
           shippingZipCode: orderData.shippingAddress.zipCode,
+          shippingCountry: orderData.shippingAddress.country || 'AU',
           shippingPhone: orderData.shippingAddress.phone,
           items: {
             create: orderData.items,
@@ -470,20 +472,11 @@ export class OrderService {
     const today = new Date();
     const dateStr = today.toISOString().slice(0, 10).replace(/-/g, "");
 
-    // Get count of orders today
-    const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    const endOfDay = new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000);
+    // Use timestamp + random to ensure uniqueness even with concurrent requests
+    const timestamp = Date.now().toString().slice(-6); // Last 6 digits of timestamp
+    const random = Math.floor(Math.random() * 1000).toString().padStart(3, "0");
 
-    const todayOrderCount = await prisma.order.count({
-      where: {
-        createdAt: {
-          gte: startOfDay,
-          lt: endOfDay,
-        },
-      },
-    });
-
-    const orderNumber = `FLR${dateStr}${(todayOrderCount + 1).toString().padStart(4, "0")}`;
+    const orderNumber = `FLR${dateStr}${timestamp}${random}`;
     return orderNumber;
   }
 

@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import type { Appearance } from '@stripe/stripe-js';
 import PaymentForm from './PaymentForm';
 import { useAuth } from '../contexts/AuthContext';
+import { useCart } from '../contexts/CartContext';
 import type { DeliveryInfo } from '../services/deliveryService';
 import '../styles/CheckoutForm.css';
 
@@ -25,6 +26,7 @@ export interface CheckoutFormData {
   recipientCity: string;
   recipientState: string;
   recipientZipCode: string;
+  recipientCountry?: string;
   recipientPhone?: string;
   senderFirstName: string;
   senderLastName: string;
@@ -60,6 +62,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
   onDeliveryTypeChange,
 }) => {
   const { login } = useAuth();
+  const { state: cartState, setGiftMessage } = useCart();
   const [useSameAddress, setUseSameAddress] = useState(false);
   const [isEditingMessage, setIsEditingMessage] = useState(false);
   const [savedMessage, setSavedMessage] = useState({ to: '', from: '', message: '' });
@@ -90,6 +93,26 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
   });
 
   const [errors, setErrors] = useState<Partial<Record<keyof CheckoutFormData, string>>>({});
+
+  // Load gift message from cart on mount and when cart changes
+  useEffect(() => {
+    if (cartState.giftMessage && (cartState.giftMessage.to || cartState.giftMessage.from || cartState.giftMessage.message)) {
+      const messageData = {
+        to: cartState.giftMessage.to || '',
+        from: cartState.giftMessage.from || '',
+        message: cartState.giftMessage.message || '',
+      };
+      setSavedMessage(messageData);
+      setFormData(prev => ({
+        ...prev,
+        giftMessageTo: messageData.to,
+        giftMessageFrom: messageData.from,
+        giftMessage: messageData.message,
+      }));
+      // Start with the message shown (not in edit mode)
+      setIsEditingMessage(false);
+    }
+  }, [cartState.giftMessage]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -140,11 +163,13 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
   };
 
   const handleSaveMessage = () => {
-    setSavedMessage({
+    const messageData = {
       to: formData.giftMessageTo || '',
       from: formData.giftMessageFrom || '',
       message: formData.giftMessage || '',
-    });
+    };
+    setSavedMessage(messageData);
+    setGiftMessage(messageData); // Sync to cart context
     setIsEditingMessage(false);
   };
 

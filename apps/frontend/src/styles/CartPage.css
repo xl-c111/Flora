@@ -26,29 +26,37 @@
   border-radius: 12px;
   padding: 2rem;
   margin-bottom: 3rem;
+  overflow-x: auto;
 }
 
 .cart-header {
-  display: grid;
-  grid-template-columns: 120px 2fr 150px 100px 80px;
-  gap: 1.5rem;
+  display: table;
+  width: 100%;
+  table-layout: fixed;
   padding-bottom: 1.5rem;
   border-bottom: 2px solid #d4d4c8;
   margin-bottom: 2rem;
 }
 
 .header-col {
+  display: table-cell;
   font-size: 0.95rem;
   color: #8a8a7a;
   font-weight: 500;
   text-transform: capitalize;
+  padding: 0 1rem;
 }
 
+.header-col:nth-child(1) { width: 180px; }
+.header-col:nth-child(2) { width: auto; }
+.header-col:nth-child(3) { width: 200px; text-align: center; }
+.header-col:nth-child(4) { width: 150px; text-align: center; }
+.header-col:nth-child(5) { width: 100px; text-align: center; }
+
 .cart-item {
-  display: grid;
-  grid-template-columns: 120px 2fr 150px 100px 80px;
-  gap: 1.5rem;
-  align-items: center;
+  display: table;
+  width: 100%;
+  table-layout: fixed;
   padding: 2rem 0;
   border-bottom: 1px solid #e8e8e0;
 }
@@ -58,17 +66,29 @@
 }
 
 .item-image {
-  width: 120px;
-  height: 140px;
-  border-radius: 16px;
-  overflow: hidden;
-  background-color: #f5f5f0;
+  display: table-cell;
+  width: 180px;
+  padding: 0 1rem;
+  vertical-align: top;
 }
 
 .item-image img {
-  width: 100%;
-  height: 100%;
+  width: 150px;
+  height: 180px;
+  border-radius: 16px;
   object-fit: cover;
+  display: block;
+}
+
+.subscription-badge {
+  display: none;
+}
+
+.item-description {
+  display: table-cell;
+  width: auto;
+  padding: 0 1rem;
+  vertical-align: top;
 }
 
 .item-description h3 {
@@ -82,9 +102,61 @@
   font-size: 0.9rem;
   color: #8a8a7a;
   line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+.subscription-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+.subscription-label {
+  font-size: 0.85rem;
+  color: #5a5a4f;
+}
+
+.savings-amount {
+  font-size: 0.85rem;
+  color: #5a5a4f;
+  font-weight: 500;
+}
+
+.subscription-frequency {
+  font-size: 0.8rem;
+  color: #8a8a7a;
+  margin-top: 0.25rem;
+}
+
+.price-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.current-price {
+  font-size: 1.1rem;
+  color: #5a5a4f;
+  font-weight: 500;
+}
+
+.original-price {
+  font-size: 0.9rem;
+  color: #a8a89a;
+  text-decoration: line-through;
 }
 
 .item-quantity {
+  display: table-cell;
+  width: 200px;
+  padding: 0 1rem;
+  vertical-align: top;
+  text-align: center;
+}
+
+.item-quantity > div {
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -116,13 +188,21 @@
 }
 
 .item-price {
+  display: table-cell;
+  width: 150px;
+  padding: 0 1rem;
+  vertical-align: top;
+  text-align: center;
   font-size: 1.1rem;
   color: #5a5a4f;
   font-weight: 500;
-  text-align: center;
 }
 
 .item-delete {
+  display: table-cell;
+  width: 100px;
+  padding: 0 1rem;
+  vertical-align: top;
   text-align: center;
 }
 
@@ -139,6 +219,58 @@
 
 .delete-btn:hover {
   color: #5a5a4f;
+}
+
+/* Cart Summary */
+.cart-summary {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  max-width: 400px;
+  margin-left: auto;
+}
+
+.summary-section h3 {
+  font-size: 1.5rem;
+  color: #5a5a4f;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  font-size: 1rem;
+  color: #5a5a4f;
+}
+
+.savings-line {
+  color: #6a9a6a;
+}
+
+.total-line {
+  border-top: 2px solid #d4d4c8;
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  font-weight: 600;
+  font-size: 1.125rem;
+}
+
+.total-amount {
+  color: #5a5a4f;
+  font-weight: 700;
+}
+
+.savings-note {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background-color: #e8f0e8;
+  border-radius: 8px;
+  color: #5a5a4f;
+  font-size: 0.9rem;
+  text-align: center;
 }
 
 /* Purchase Type and Message Options */
