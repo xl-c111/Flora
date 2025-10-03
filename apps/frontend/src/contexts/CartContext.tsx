@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
 import type { Product } from '../types';
 
 export interface CartItem {
@@ -207,45 +207,45 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [state.giftMessage, isInitialized]);
 
-  const addItem = (item: Omit<CartItem, 'id'>) => {
+  const addItem = useCallback((item: Omit<CartItem, 'id'>) => {
     dispatch({ type: 'ADD_ITEM', payload: item });
-  };
+  }, []);
 
-  const removeItem = (id: string) => {
+  const removeItem = useCallback((id: string) => {
     dispatch({ type: 'REMOVE_ITEM', payload: id });
-  };
+  }, []);
 
-  const updateQuantity = (id: string, quantity: number) => {
+  const updateQuantity = useCallback((id: string, quantity: number) => {
     if (quantity <= 0) {
-      removeItem(id);
+      dispatch({ type: 'REMOVE_ITEM', payload: id });
     } else {
       dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } });
     }
-  };
+  }, []);
 
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     dispatch({ type: 'CLEAR_CART' });
-  };
+  }, []);
 
-  const toggleCart = () => {
+  const toggleCart = useCallback(() => {
     dispatch({ type: 'TOGGLE_CART' });
-  };
+  }, []);
 
-  const getItemCount = () => {
+  const getItemCount = useCallback(() => {
     return state.items.reduce((count, item) => count + item.quantity, 0);
-  };
+  }, [state.items]);
 
-  const setPurchaseType = (type: 'one-time' | 'recurring' | 'spontaneous') => {
+  const setPurchaseType = useCallback((type: 'one-time' | 'recurring' | 'spontaneous') => {
     dispatch({ type: 'SET_PURCHASE_TYPE', payload: type });
-  };
+  }, []);
 
-  const setFrequency = (frequency: 'weekly' | 'fortnightly' | 'monthly') => {
+  const setFrequency = useCallback((frequency: 'weekly' | 'fortnightly' | 'monthly') => {
     dispatch({ type: 'SET_FREQUENCY', payload: frequency });
-  };
+  }, []);
 
-  const setGiftMessage = (message: { to: string; from: string; message: string }) => {
+  const setGiftMessage = useCallback((message: { to: string; from: string; message: string }) => {
     dispatch({ type: 'SET_GIFT_MESSAGE', payload: message });
-  };
+  }, []);
 
   const value = {
     state,
