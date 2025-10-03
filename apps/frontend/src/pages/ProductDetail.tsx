@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { SUBSCRIPTION_OPTIONS, calculateSubscriptionPrice, formatSubscriptionSavings } from '../config/subscriptionConfig';
 import { apiService, getImageUrl } from '../services/api';
 import type { Product } from '../types';
+import DatePicker from '../components/DatePicker';
 import '../styles/ProductDetail.css';
 
 const ProductDetail: React.FC = () => {
@@ -22,6 +23,20 @@ const ProductDetail: React.FC = () => {
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [similarProducts, setSimilarProducts] = useState<Product[]>([]);
   const [similarProductsLoading, setSimilarProductsLoading] = useState(false);
+  const [purchaseType, setPurchaseType] = useState<'one-time' | 'recurring' | 'spontaneous'>('one-time');
+  const [likesCount] = useState(256); // Placeholder for likes feature
+  const [openAccordion, setOpenAccordion] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+
+  // Toggle accordion sections
+  const toggleAccordion = (section: string) => {
+    setOpenAccordion(openAccordion === section ? null : section);
+  };
+
+  // Handle date selection
+  const handleDateSelect = (date: Date | undefined) => {
+    setSelectedDate(date);
+  };
 
   // Fetch product data
   useEffect(() => {
@@ -145,7 +160,8 @@ const ProductDetail: React.FC = () => {
       quantity,
       isSubscription,
       subscriptionFrequency: isSubscription ? selectedFrequency : undefined,
-      subscriptionDiscount
+      subscriptionDiscount,
+      selectedDate
     });
 
     const message = isSubscription
@@ -181,75 +197,87 @@ const ProductDetail: React.FC = () => {
 
           {/* Product Details */}
           <div className="product-details-section">
-            <h1 className="product-title">{product.name}</h1>
-
-            {/* Price Display */}
-            <div className="price-section">
-              <div className="current-price">
-                {getDisplayPrice()}
-                {isSubscription && (
-                  <span className="original-price">{formatPrice(product.priceCents)}</span>
-                )}
+            {/* Header: Title, Price, Likes */}
+            <div className="product-header">
+              <div className="header-top">
+                <h1 className="product-title">{product.name}</h1>
+                <div className="product-price">{formatPrice(product.priceCents)}</div>
               </div>
-              {getSubscriptionInfo()}
+              <div className="likes-count">{likesCount} Likes</div>
             </div>
 
             {/* Description */}
             <div className="description-section">
               <p className="product-description">{product.description}</p>
+
+              <p className="product-description">
+                Daffodils, the heart of this bouquet, are nature's timeless symbol of new beginnings and hope. Paired with daisies and airy accents, this arrangement celebrates the season of growth, when the world awakens from winter's rest and blossoms with possibility.
+              </p>
+
+              <p className="product-description">
+                Perfect for brightening your home, office, or loved one, or celebrating a fresh chapter, this bouquet isn't just flowers—it's a reminder that every season brings renewal and light.
+              </p>
             </div>
 
-            {/* Attributes */}
-            <div className="attributes-section">
-              {product.occasions && product.occasions.length > 0 && (
-                <div className="attribute-row">
-                  <strong>Perfect for:</strong> {formatAttributes(product.occasions)}
-                </div>
-              )}
-              {product.colors && product.colors.length > 0 && (
-                <div className="attribute-row">
-                  <strong>Colors:</strong> {formatAttributes(product.colors)}
-                </div>
-              )}
-              {product.moods && product.moods.length > 0 && (
-                <div className="attribute-row">
-                  <strong>Mood:</strong> {formatAttributes(product.moods)}
-                </div>
-              )}
+            {/* Select a Delivery Date */}
+            <div className="date-selector-section">
+              <h3>Select a Delivery Date</h3>
+              <DatePicker
+                selectedDate={selectedDate}
+                onDateSelect={handleDateSelect}
+                minDaysFromNow={1}
+                maxDaysFromNow={90}
+              />
             </div>
 
-            {/* Purchase Options */}
-            <div className="purchase-options">
-              <h3>Purchase Options</h3>
+            {/* Select a Purchase Type */}
+            <div className="purchase-type-section">
+              <h3>Select a Purchase Type</h3>
 
-              {/* One-time vs Subscription Toggle */}
-              <div className="purchase-type-toggle">
-                <label className={`toggle-option ${!isSubscription ? 'active' : ''}`}>
-                  <input
-                    type="radio"
-                    name="purchaseType"
-                    checked={!isSubscription}
-                    onChange={() => setIsSubscription(false)}
-                  />
-                  One-time Purchase
-                </label>
-                <label className={`toggle-option ${isSubscription ? 'active' : ''}`}>
-                  <input
-                    type="radio"
-                    name="purchaseType"
-                    checked={isSubscription}
-                    onChange={() => setIsSubscription(true)}
-                  />
-                  Subscribe & Save
-                </label>
+              {/* Three Purchase Type Options */}
+              <div className="purchase-type-grid">
+                {/* One-time Purchase */}
+                <button
+                  className={`purchase-type-btn ${purchaseType === 'one-time' ? 'active' : ''}`}
+                  onClick={() => {
+                    setPurchaseType('one-time');
+                    setIsSubscription(false);
+                  }}
+                >
+                  One-time
+                </button>
+
+                {/* Recurring Subscription */}
+                <button
+                  className={`purchase-type-btn ${purchaseType === 'recurring' ? 'active' : ''}`}
+                  onClick={() => {
+                    setPurchaseType('recurring');
+                    setIsSubscription(true);
+                  }}
+                >
+                  Reoccurring Subscription
+                </button>
+
+                {/* Spontaneous Subscription */}
+                <button
+                  className={`purchase-type-btn ${purchaseType === 'spontaneous' ? 'active' : ''}`}
+                  onClick={() => {
+                    setPurchaseType('spontaneous');
+                    setIsSubscription(true);
+                  }}
+                >
+                  Spontaneous Subscription
+                </button>
               </div>
 
-              {/* Subscription Frequency Options */}
-              {isSubscription && (
-                <div className="frequency-options">
-                  <h4>Delivery Frequency</h4>
+              {/* Frequency Options for Recurring Subscription */}
+              {purchaseType === 'recurring' && (
+                <div className="frequency-selector">
                   {SUBSCRIPTION_OPTIONS.map(option => (
-                    <label key={option.frequency} className={`frequency-option ${selectedFrequency === option.frequency ? 'active' : ''}`}>
+                    <label
+                      key={option.frequency}
+                      className={`frequency-option-card ${selectedFrequency === option.frequency ? 'active' : ''}`}
+                    >
                       <input
                         type="radio"
                         name="frequency"
@@ -257,39 +285,164 @@ const ProductDetail: React.FC = () => {
                         checked={selectedFrequency === option.frequency}
                         onChange={(e) => setSelectedFrequency(e.target.value as any)}
                       />
-                      <div className="option-details">
-                        <span className="option-label">{option.label}</span>
-                        <span className="option-description">{option.description}</span>
-                        <span className="option-price">
-                          {formatPrice(calculateSubscriptionPrice(product.priceCents, option.frequency))}
+                      <div className="frequency-option-details">
+                        <span className="frequency-option-label">{option.label}</span>
+                        <span className="frequency-option-description">{option.description}</span>
+                        <span className="frequency-option-savings">
+                          {formatSubscriptionSavings(product.priceCents, option.frequency)} with subscription
                         </span>
+                      </div>
+                      <div className="frequency-option-price">
+                        {formatPrice(calculateSubscriptionPrice(product.priceCents, option.frequency))}
                       </div>
                     </label>
                   ))}
                 </div>
               )}
 
-              {/* Quantity Selector */}
-              <div className="quantity-section">
-                <label htmlFor="quantity">Quantity:</label>
-                <input
-                  id="quantity"
-                  type="number"
-                  min="1"
-                  value={quantity}
-                  onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                  className="quantity-input"
-                />
+              {/* Frequency Options for Spontaneous Subscription */}
+              {purchaseType === 'spontaneous' && (
+                <div className="frequency-selector">
+                  {SUBSCRIPTION_OPTIONS.map(option => (
+                    <label
+                      key={option.frequency}
+                      className={`frequency-option-card ${selectedFrequency === option.frequency ? 'active' : ''}`}
+                    >
+                      <input
+                        type="radio"
+                        name="frequency-spontaneous"
+                        value={option.frequency}
+                        checked={selectedFrequency === option.frequency}
+                        onChange={(e) => setSelectedFrequency(e.target.value as any)}
+                      />
+                      <div className="frequency-option-details">
+                        <span className="frequency-option-label">{option.label}</span>
+                        <span className="frequency-option-description">{option.description}</span>
+                        <span className="frequency-option-savings">
+                          {formatSubscriptionSavings(product.priceCents, option.frequency)} with subscription
+                        </span>
+                      </div>
+                      <div className="frequency-option-price">
+                        {formatPrice(calculateSubscriptionPrice(product.priceCents, option.frequency))}
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Add to Cart Button */}
+            <button
+              className="add-to-cart-btn"
+              onClick={handleAddToCart}
+              disabled={!product.inStock}
+            >
+              {product.inStock ? (() => {
+                // Calculate dynamic price based on purchase type
+                if (purchaseType === 'one-time') {
+                  return `Add to Cart - ${formatPrice(product.priceCents)}`;
+                } else {
+                  // For subscriptions (recurring or spontaneous)
+                  const discountedPrice = calculateSubscriptionPrice(product.priceCents, selectedFrequency);
+                  return `Add to Cart - ${formatPrice(discountedPrice)}`;
+                }
+              })() : 'Out of Stock'}
+            </button>
+
+            {/* Accordion Sections */}
+            <div className="accordion-sections">
+              {/* Subscription Types */}
+              <div className="accordion-item">
+                <button
+                  className={`accordion-header ${openAccordion === 'subscription' ? 'active' : ''}`}
+                  onClick={() => toggleAccordion('subscription')}
+                >
+                  <span>Subscription Types</span>
+                  <span className="accordion-icon">{openAccordion === 'subscription' ? '−' : '+'}</span>
+                </button>
+                {openAccordion === 'subscription' && (
+                  <div className="accordion-content">
+                    <h4>Reoccurring Subscription</h4>
+                    <p>
+                      Bring beauty and joy into your everyday with our flower subscription service. Whether
+                      you're treating yourself, brightening your home, or surprising someone special, our
+                      handcrafted bouquets arrive fresh and full of seasonal charm—right to your door.
+                    </p>
+                    <p>
+                      Choose the plan that fits your lifestyle: weekly, bi-weekly, or monthly deliveries,
+                      available in petite, standard, or lux sizes. Each arrangement is thoughtfully designed by
+                      our florists using the freshest blooms of the season, ensuring every delivery feels unique
+                      and special.
+                    </p>
+                    <p>
+                      Let us take care of the details, so you can simply enjoy the beauty. Your next bouquet is
+                      just a subscription away.
+                    </p>
+
+                    <h4>Spontaneous Subscription</h4>
+                    <p>
+                      Love surprises? Our spontaneous subscription is made for your loved one. Instead of a
+                      set delivery day, you'll choose how often you'd like flowers—weekly, fortnightly, or
+                      monthly—and we'll surprise your loved one with a beautiful bouquet on a random day
+                      within that timeframe.
+                    </p>
+                    <p>
+                      It's the perfect way to keep life blooming with unexpected joy. They'll never know
+                      exactly when your flowers will arrive, but they can always count on them to be fresh,
+                      seasonal, and thoughtfully arranged by our florists.
+                    </p>
+                    <p>
+                      Bring a little mystery (and a lot of beauty) into their routine with flowers that show up
+                      when they least expect them—but always right on time to brighten their day.
+                    </p>
+                  </div>
+                )}
               </div>
 
-              {/* Add to Cart Button */}
-              <button
-                className="add-to-cart-btn"
-                onClick={handleAddToCart}
-                disabled={!product.inStock}
-              >
-                {product.inStock ? 'Add to Cart' : 'Out of Stock'}
-              </button>
+              {/* Delivery */}
+              <div className="accordion-item">
+                <button
+                  className={`accordion-header ${openAccordion === 'delivery' ? 'active' : ''}`}
+                  onClick={() => toggleAccordion('delivery')}
+                >
+                  <span>Delivery</span>
+                  <span className="accordion-icon">{openAccordion === 'delivery' ? '−' : '+'}</span>
+                </button>
+                {openAccordion === 'delivery' && (
+                  <div className="accordion-content">
+                    <p>
+                      We deliver fresh flowers straight to your door for a flat fee of $19.95. Place your order
+                      before 10:00 AM and enjoy same-day delivery—perfect for birthdays, anniversaries, or
+                      just because.
+                    </p>
+                    <p>Reliable, fast, and always handled with care.</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Different Everyday */}
+              <div className="accordion-item">
+                <button
+                  className={`accordion-header ${openAccordion === 'different' ? 'active' : ''}`}
+                  onClick={() => toggleAccordion('different')}
+                >
+                  <span>Different Everyday</span>
+                  <span className="accordion-icon">{openAccordion === 'different' ? '−' : '+'}</span>
+                </button>
+                {openAccordion === 'different' && (
+                  <div className="accordion-content">
+                    <p>
+                      We work with the freshest flowers available each day, which means your bouquet may
+                      not look exactly like the photos shown. Flower types, colors, and arrangements can vary
+                      depending on seasonal availability and supply.
+                    </p>
+                    <p>
+                      What never changes is our promise: every bouquet is thoughtfully designed by our
+                      florists to be fresh, beautiful, and full of charm—no matter the season.
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

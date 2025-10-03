@@ -312,6 +312,10 @@ model OrderItem {
   quantity      Int
   priceCents    Int     // Price at time of order
 
+  // Item-specific delivery and subscription details
+  subscriptionType      SubscriptionType?  // Item's subscription type (if subscription)
+  requestedDeliveryDate DateTime?          // Item's requested delivery date
+
   order         Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product       Product @relation(fields: [productId], references: [id])
 
