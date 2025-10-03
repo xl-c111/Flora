@@ -129,6 +129,17 @@
   margin-top: 0.25rem;
 }
 
+.delivery-date-info {
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background-color: #f0fff4;
+  border-left: 3px solid #48bb78;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  color: #2d3748;
+  font-weight: 500;
+}
+
 .price-display {
   display: flex;
   flex-direction: column;
