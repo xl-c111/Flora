@@ -44,9 +44,27 @@
 .product-image-container {
   position: relative;
   width: 100%;
-  height: 220px;
+  height: 280px;
   overflow: hidden;
   background: #f8f9fa;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+/* Hover overlay for better badge visibility */
+.product-image-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.3s ease;
+  pointer-events: none;
+}
+
+.product-card:hover .product-image-container::after {
+  background: rgba(0, 0, 0, 0.08);
 }
 
 .product-image {
@@ -85,6 +103,8 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .stock-badge.in-stock {
@@ -207,6 +227,7 @@
   gap: 0.5rem;
   opacity: 0;
   transition: opacity 0.3s ease;
+  z-index: 2;
 }
 
 .product-card:hover .quick-actions {
@@ -252,10 +273,39 @@
   color: white;
 }
 
+/* Loading Skeleton with Shimmer Effect */
+.product-image.loading {
+  position: relative;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Image Loading State */
+.product-image {
+  opacity: 0;
+  animation: fadeIn 0.3s ease-in forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .product-image-container {
-    height: 200px;
+    height: 240px;
   }
 
   .product-info {
@@ -293,7 +343,7 @@
   }
 
   .product-image-container {
-    height: 180px;
+    height: 200px;
   }
 
   .product-info {

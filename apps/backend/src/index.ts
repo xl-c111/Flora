@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express, { Application } from "express";
+import path from "path";
 import { prisma } from "./config/database";
 
 // Middleware
@@ -31,6 +32,9 @@ app.use("/api/webhooks", webhookRoutes);
 
 // JSON parsing for all other routes
 app.use(express.json());
+
+// Serve static images from the images directory
+app.use('/images', express.static(path.join(__dirname, '../images')));
 
 // Routes
 app.use("/api/products", productRoutes);

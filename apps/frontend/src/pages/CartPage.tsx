@@ -1,5 +1,6 @@
 import React from 'react';
 import { useCart } from '../contexts/CartContext';
+import { getImageUrl } from '../services/api';
 import { SUBSCRIPTION_OPTIONS } from '../config/subscriptionConfig';
 import '../styles/CartPage.css';
 
@@ -93,7 +94,7 @@ const CartPage: React.FC = () => {
             return (
               <div key={item.id} className={`cart-item ${isSubscription ? 'subscription-item' : 'one-time-item'}`}>
                 <div className="item-image">
-                  <img src={item.product.imageUrl} alt={item.product.name} />
+                  <img src={getImageUrl(item.product.imageUrl)} alt={item.product.name} />
                   {isSubscription && (
                     <div className="subscription-badge">
                       📅 {subscriptionOption?.label}
