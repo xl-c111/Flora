@@ -13,10 +13,17 @@ const CartPage: React.FC = () => {
 
   // Use cart state instead of local state
   const giftMessage = cartState.giftMessage || { to: '', from: '', message: '' };
+  const [showSaveConfirmation, setShowSaveConfirmation] = React.useState(false);
 
   const handleCheckout = () => {
     // Save message to cart items if needed
     window.location.href = '/checkout';
+  };
+
+  const handleSaveMessage = () => {
+    // Message is already saved via setGiftMessage in onChange
+    setShowSaveConfirmation(true);
+    setTimeout(() => setShowSaveConfirmation(false), 2000);
   };
 
   const calculateTotal = () => {
@@ -112,19 +119,21 @@ const CartPage: React.FC = () => {
                 </div>
 
                 <div className="item-quantity">
-                  <button
-                    className="qty-btn"
-                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                  >
-                    -
-                  </button>
-                  <span className="qty-value">{item.quantity}</span>
-                  <button
-                    className="qty-btn"
-                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                  >
-                    +
-                  </button>
+                  <div>
+                    <button
+                      className="qty-btn"
+                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                    >
+                      -
+                    </button>
+                    <span className="qty-value">{item.quantity}</span>
+                    <button
+                      className="qty-btn"
+                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
 
                 <div className="item-price">
@@ -206,7 +215,9 @@ const CartPage: React.FC = () => {
                 onChange={(e) => setGiftMessage({ ...giftMessage, message: e.target.value })}
                 rows={4}
               />
-              <button className="save-message-btn">Save</button>
+              <button className="save-message-btn" onClick={handleSaveMessage}>
+                {showSaveConfirmation ? '✓ Saved!' : 'Save'}
+              </button>
             </div>
           </div>
         </div>
