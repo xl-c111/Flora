@@ -58,6 +58,7 @@ services:
       - VITE_API_URL=http://localhost:3001/api
       - VITE_AUTH0_DOMAIN=dev-ijvur34mojpovh8e.us.auth0.com
       - VITE_AUTH0_CLIENT_ID=tegmEuc40IvXfYFDLIRnJmbsa1izkTVL
+      - VITE_AUTH0_AUDIENCE=https://flora-api.com
     depends_on:
       - backend
     networks:
