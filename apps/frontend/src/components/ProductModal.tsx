@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { Product } from '../types';
 import { useCart } from '../contexts/CartContext';
+import { getImageUrl } from '../services/api';
 import { SUBSCRIPTION_OPTIONS, calculateSubscriptionPrice, formatSubscriptionSavings } from '../config/subscriptionConfig';
 import './ProductModal.css';
 
@@ -116,7 +117,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
           {/* Product Image */}
           <div className="modal-image">
             {product.imageUrl ? (
-              <img src={product.imageUrl} alt={product.name} />
+              <img src={getImageUrl(product.imageUrl)} alt={product.name} />
             ) : (
               <div className="image-placeholder">🌸</div>
             )}

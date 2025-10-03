@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import type { CartItem } from '../contexts/CartContext';
+import { getImageUrl } from '../services/api';
 import '../styles/OrderSummary.css';
 
 interface OrderSummaryProps {
@@ -57,7 +58,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             <div className="order-item-image">
               {item.product.imageUrl ? (
                 <img
-                  src={item.product.imageUrl}
+                  src={getImageUrl(item.product.imageUrl)}
                   alt={item.product.name}
                   onError={(e) => {
                     e.currentTarget.src = '/placeholder-flower.png';

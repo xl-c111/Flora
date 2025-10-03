@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import type { Product } from '../types';
 import { useCart } from '../contexts/CartContext';
+import { getImageUrl } from '../services/api';
 import './ProductCard.css';
 
 /**
@@ -67,7 +68,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <div className="product-image-container">
           {product.imageUrl ? (
             <img
-              src={product.imageUrl}
+              src={getImageUrl(product.imageUrl)}
               alt={product.name}
               className="product-image"
               loading="lazy"
