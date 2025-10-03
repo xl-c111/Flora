@@ -21,6 +21,8 @@ export interface CreateOrderData {
     productId: string;
     quantity: number;
     priceCents: number;
+    subscriptionType?: SubscriptionType;     // Item-level subscription type
+    requestedDeliveryDate?: Date;            // Item-level delivery date
   }>;
   shippingAddress: {
     firstName: string;
@@ -121,7 +123,13 @@ export class OrderService {
           shippingCountry: orderData.shippingAddress.country || 'AU',
           shippingPhone: orderData.shippingAddress.phone,
           items: {
-            create: orderData.items,
+            create: orderData.items.map(item => ({
+              productId: item.productId,
+              quantity: item.quantity,
+              priceCents: item.priceCents,
+              subscriptionType: item.subscriptionType,
+              requestedDeliveryDate: item.requestedDeliveryDate,
+            })),
           },
         },
         include: {

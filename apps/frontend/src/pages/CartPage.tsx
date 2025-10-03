@@ -2,6 +2,7 @@ import React from 'react';
 import { useCart } from '../contexts/CartContext';
 import { getImageUrl } from '../services/api';
 import { SUBSCRIPTION_OPTIONS } from '../config/subscriptionConfig';
+import { format } from 'date-fns';
 import '../styles/CartPage.css';
 
 const CartPage: React.FC = () => {
@@ -115,6 +116,11 @@ const CartPage: React.FC = () => {
                           Save ${((originalPrice - displayPrice) / 100).toFixed(2)}
                         </span>
                       )}
+                    </div>
+                  )}
+                  {item.selectedDate && (
+                    <div className="delivery-date-info">
+                      📅 Delivery: {format(item.selectedDate, 'PPP')}
                     </div>
                   )}
                 </div>
