@@ -92,6 +92,7 @@ export const useCheckout = (): UseCheckoutReturn => {
           city: formData.recipientCity,
           state: formData.recipientState,
           zipCode: formData.recipientZipCode,
+          country: formData.recipientCountry || 'AU',
           phone: formData.recipientPhone || '+1234567890',
         },
         deliveryType: formData.deliveryType || 'STANDARD',

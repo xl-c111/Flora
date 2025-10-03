@@ -24,6 +24,7 @@ describe('EmailService Tests', () => {
     // Create mock transporter
     mockTransporter = {
       sendMail: jest.fn().mockResolvedValue({ messageId: 'test-message-id' }),
+      verify: jest.fn((callback: (error: Error | null) => void) => callback(null)),
     } as any;
 
     mockNodemailer.createTransport.mockReturnValue(mockTransporter);
@@ -332,7 +333,7 @@ describe('EmailService Tests', () => {
       await emailService.sendPasswordReset('user@example.com', 'reset-token-123');
 
       expect(mockTransporter.sendMail).toHaveBeenCalledWith({
-        from: process.env.FROM_EMAIL || 'noreply@flora.com',
+        from: '"Flora Marketplace" <test@flora.com>',
         to: 'user@example.com',
         subject: 'Reset Your Flora Password',
         html: expect.stringContaining('https://flora.example.com/auth/reset-password?token=reset-token-123'),
@@ -362,9 +363,10 @@ describe('EmailService Tests', () => {
       // Check submission email to support
       const submissionEmail = mockTransporter.sendMail.mock.calls[0][0];
       expect(submissionEmail).toEqual({
-        from: process.env.FROM_EMAIL || 'noreply@flora.com',
+        from: '"Flora Marketplace" <test@flora.com>',
         to: 'support@flora.com',
         subject: 'Contact Form: Question about flowers',
+        replyTo: 'john@example.com',
         html: expect.stringContaining('John Doe'),
       });
       expect(submissionEmail.html).toContain('john@example.com');
@@ -373,7 +375,7 @@ describe('EmailService Tests', () => {
       // Check confirmation email to user
       const confirmationEmail = mockTransporter.sendMail.mock.calls[1][0];
       expect(confirmationEmail).toEqual({
-        from: process.env.FROM_EMAIL || 'noreply@flora.com',
+        from: '"Flora Marketplace" <test@flora.com>',
         to: 'john@example.com',
         subject: 'We Received Your Message - Flora',
         html: expect.stringContaining('Dear John Doe'),

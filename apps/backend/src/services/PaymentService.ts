@@ -246,6 +246,7 @@ export class PaymentService {
     let orderId = paymentIntent.metadata.orderId;
     console.log(`💳 Payment intent succeeded: ${paymentIntent.id}, orderId: ${orderId || "NOT SET"}`);
 
+
     // FOR DEMO: Create a test order if none exists
     if (!orderId) {
       console.log("🎯 Creating demo order for webhook testing...");
@@ -293,10 +294,12 @@ export class PaymentService {
           amountCents: paymentIntent.amount,
           currency: paymentIntent.currency.toUpperCase(),
           stripePaymentIntentId: paymentIntent.id,
+          stripePaymentMethodId: paymentIntent.payment_method as string | undefined,
           status: "succeeded",
           paidAt: new Date(),
         },
         update: {
+          stripePaymentMethodId: paymentIntent.payment_method as string | undefined,
           status: "succeeded",
           paidAt: new Date(),
         },
@@ -470,10 +473,12 @@ export class PaymentService {
           amountCents: paymentIntent.amount,
           currency: paymentIntent.currency.toUpperCase(),
           stripePaymentIntentId: paymentIntentId,
+          stripePaymentMethodId: paymentIntent.payment_method as string | undefined,
           status: "succeeded",
           paidAt: new Date(),
         },
         update: {
+          stripePaymentMethodId: paymentIntent.payment_method as string | undefined,
           status: "succeeded",
           paidAt: new Date(),
         },
@@ -490,6 +495,57 @@ export class PaymentService {
     } catch (error) {
       console.error("Error retrieving payment:", error);
       return null;
+    }
+  }
+
+  // Sync payment details from Stripe to database
+  async syncPaymentDetails(orderId: string): Promise<void> {
+    try {
+      // Get the payment intent from the order's payments
+      const order = await prisma.order.findUnique({
+        where: { id: orderId },
+        include: {
+          payments: true,
+        },
+      });
+
+      if (!order || !order.payments || order.payments.length === 0) {
+        console.log('No payments found for order:', orderId);
+        return;
+      }
+
+      const payment = order.payments[0];
+
+      // If no Stripe payment intent ID, skip
+      if (!payment.stripePaymentIntentId) {
+        console.log('No Stripe payment intent ID found');
+        return;
+      }
+
+      // If payment already has payment method ID, skip
+      if (payment.stripePaymentMethodId) {
+        console.log('Payment already has payment method ID');
+        return;
+      }
+
+      // Retrieve payment intent from Stripe
+      const paymentIntent = await stripe.paymentIntents.retrieve(payment.stripePaymentIntentId);
+
+      if (!paymentIntent.payment_method) {
+        console.log('No payment method attached to payment intent');
+        return;
+      }
+
+      // Update payment record with payment method ID
+      await prisma.payment.update({
+        where: { id: payment.id },
+        data: {
+          stripePaymentMethodId: paymentIntent.payment_method as string,
+        },
+      });
+      console.log(`✅ Synced payment method ID for order ${orderId}`);
+    } catch (error) {
+      console.error('Error syncing payment details:', error);
     }
   }
 

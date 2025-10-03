@@ -159,6 +159,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   // Load cart from localStorage on mount
   useEffect(() => {
     const savedCart = localStorage.getItem('flora-cart');
+    const savedGiftMessage = localStorage.getItem('flora-cart-gift-message');
     console.log('🛒 Loading cart from localStorage. Raw data:', savedCart);
     if (savedCart) {
       try {
@@ -174,6 +175,17 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     } else {
       console.log('🛒 No saved cart found in localStorage');
     }
+
+    // Load gift message
+    if (savedGiftMessage) {
+      try {
+        const parsedMessage = JSON.parse(savedGiftMessage);
+        dispatch({ type: 'SET_GIFT_MESSAGE', payload: parsedMessage });
+      } catch (error) {
+        console.error('Error loading gift message from localStorage:', error);
+      }
+    }
+
     setIsInitialized(true);
   }, []);
 
@@ -185,6 +197,15 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     console.log('🛒 Cart items:', JSON.stringify(state.items, null, 2));
     localStorage.setItem('flora-cart', JSON.stringify(state.items));
   }, [state.items, isInitialized]);
+
+  // Save gift message to localStorage whenever it changes
+  useEffect(() => {
+    if (!isInitialized) return;
+
+    if (state.giftMessage) {
+      localStorage.setItem('flora-cart-gift-message', JSON.stringify(state.giftMessage));
+    }
+  }, [state.giftMessage, isInitialized]);
 
   const addItem = (item: Omit<CartItem, 'id'>) => {
     dispatch({ type: 'ADD_ITEM', payload: item });
