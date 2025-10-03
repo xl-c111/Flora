@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 import { SUBSCRIPTION_OPTIONS, calculateSubscriptionPrice, formatSubscriptionSavings } from '../config/subscriptionConfig';
-import { apiService } from '../services/api';
+import { apiService, getImageUrl } from '../services/api';
 import type { Product } from '../types';
 import '../styles/ProductDetail.css';
 
@@ -173,7 +173,7 @@ const ProductDetail: React.FC = () => {
           {/* Product Image */}
           <div className="product-image-section">
             {product.imageUrl ? (
-              <img src={product.imageUrl} alt={product.name} className="product-image" />
+              <img src={getImageUrl(product.imageUrl)} alt={product.name} className="product-image" />
             ) : (
               <div className="image-placeholder">🌸</div>
             )}
@@ -306,7 +306,7 @@ const ProductDetail: React.FC = () => {
                     onClick={() => navigate(`/products/${similarProduct.id}`)}
                   >
                     {similarProduct.imageUrl ? (
-                      <img src={similarProduct.imageUrl} alt={similarProduct.name} />
+                      <img src={getImageUrl(similarProduct.imageUrl)} alt={similarProduct.name} />
                     ) : (
                       <div className="similar-product-placeholder">🌸</div>
                     )}
