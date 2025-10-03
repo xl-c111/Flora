@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Link, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import './App.css';
 import { useAuth } from './contexts/AuthContext';
 import { useAuth0 } from '@auth0/auth0-react';
@@ -89,7 +89,11 @@ function App() {
 
 function AppContent({ loading, useAPI, user, authLoading, login, logout, getItemCount }: any) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { isLoading: auth0Loading, isAuthenticated } = useAuth0();
+
+  // Check if we're on the order confirmation or checkout page
+  const hideHeader = location.pathname.startsWith('/order-confirmation') || location.pathname.startsWith('/checkout');
 
   useEffect(() => {
     // Handle Auth0 redirect callback - wait until Auth0 finishes processing
@@ -110,122 +114,125 @@ function AppContent({ loading, useAPI, user, authLoading, login, logout, getItem
 
   return (
       <div className="app">
-        <header className="header">
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <div>
-              <Link
-                to="/"
-                style={{ textDecoration: 'none', color: 'inherit' }}
-              >
-                <h1>🌸 Flora</h1>
-                <p>Flowers & Plants Marketplace</p>
-              </Link>
-            </div>
+        {/* Hide header on order confirmation and checkout pages */}
+        {!hideHeader && (
+          <header className="header">
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <div>
+                <Link
+                  to="/"
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                >
+                  <h1>🌸 Flora</h1>
+                  <p>Flowers & Plants Marketplace</p>
+                </Link>
+              </div>
 
-            <nav style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-              <Link
-                to="/products"
-                style={{
-                  padding: '0.5rem 1rem',
-                  backgroundColor: '#10b981',
-                  color: 'white',
-                  textDecoration: 'none',
-                  borderRadius: '4px',
-                }}
-              >
-                Browse Products
-              </Link>
-
-              <Link
-                to="/cart"
-                style={{
-                  padding: '0.5rem 1rem',
-                  backgroundColor: '#7a2e4a',
-                  color: 'white',
-                  textDecoration: 'none',
-                  borderRadius: '4px',
-                  position: 'relative',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                }}
-              >
-                🛒 Cart
-                {getItemCount() > 0 && (
-                  <span style={{
-                    backgroundColor: '#dc2626',
+              <nav style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                <Link
+                  to="/products"
+                  style={{
+                    padding: '0.5rem 1rem',
+                    backgroundColor: '#10b981',
                     color: 'white',
-                    borderRadius: '50%',
-                    width: '20px',
-                    height: '20px',
+                    textDecoration: 'none',
+                    borderRadius: '4px',
+                  }}
+                >
+                  Browse Products
+                </Link>
+
+                <Link
+                  to="/cart"
+                  style={{
+                    padding: '0.5rem 1rem',
+                    backgroundColor: '#7a2e4a',
+                    color: 'white',
+                    textDecoration: 'none',
+                    borderRadius: '4px',
+                    position: 'relative',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.75rem',
-                    fontWeight: 'bold',
-                  }}>
-                    {getItemCount()}
-                  </span>
-                )}
-              </Link>
-
-              <div className="auth-section">
-                {/* Show loading spinner while Auth0 is loading */}
-                {authLoading ? (
-                  <div>Loading...</div>
-                ) : user ? (
-                  <div
-                    style={{
+                    gap: '0.5rem',
+                  }}
+                >
+                  🛒 Cart
+                  {getItemCount() > 0 && (
+                    <span style={{
+                      backgroundColor: '#dc2626',
+                      color: 'white',
+                      borderRadius: '50%',
+                      width: '20px',
+                      height: '20px',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '1rem',
-                    }}
-                  >
-                    {/* Show user's email from Auth0 profile */}
-                    <span>Welcome, {user.email}</span>
+                      justifyContent: 'center',
+                      fontSize: '0.75rem',
+                      fontWeight: 'bold',
+                    }}>
+                      {getItemCount()}
+                    </span>
+                  )}
+                </Link>
+
+                <div className="auth-section">
+                  {/* Show loading spinner while Auth0 is loading */}
+                  {authLoading ? (
+                    <div>Loading...</div>
+                  ) : user ? (
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '1rem',
+                      }}
+                    >
+                      {/* Show user's email from Auth0 profile */}
+                      <span>Welcome, {user.email}</span>
+                      <button
+                        onClick={logout}
+                        style={{
+                          padding: '0.5rem 1rem',
+                          backgroundColor: '#dc2626',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        Sign Out
+                      </button>
+                    </div>
+                  ) : (
                     <button
-                      onClick={logout}
+                      onClick={login}
                       style={{
                         padding: '0.5rem 1rem',
-                        backgroundColor: '#dc2626',
+                        backgroundColor: '#10b981',
                         color: 'white',
                         border: 'none',
                         borderRadius: '4px',
                         cursor: 'pointer',
                       }}
                     >
-                      Sign Out
+                      Sign In
                     </button>
-                  </div>
-                ) : (
-                  <button
-                    onClick={login}
-                    style={{
-                      padding: '0.5rem 1rem',
-                      backgroundColor: '#10b981',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    Sign In
-                  </button>
-                )}
-              </div>
-            </nav>
-          </div>
+                  )}
+                </div>
+              </nav>
+            </div>
 
-          {!useAPI && (
-            <div className="demo-badge">🚧 Demo Mode - API Not Available</div>
-          )}
-        </header>
+            {!useAPI && (
+              <div className="demo-badge">🚧 Demo Mode - API Not Available</div>
+            )}
+          </header>
+        )}
 
         <main className="main">
           {/* Define app routes. AuthCallback is not needed with Auth0 React SDK */}

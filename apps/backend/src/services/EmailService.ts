@@ -36,6 +36,15 @@ export class EmailService {
     };
 
     this.transporter = nodemailer.createTransport(config);
+
+    // Verify connection on startup
+    this.transporter.verify((error) => {
+      if (error) {
+        console.error("❌ SMTP connection failed:", error.message);
+      } else {
+        console.log("✅ SMTP server is ready to send emails");
+      }
+    });
   }
 
   // Helper method to get professional sender format
@@ -207,7 +216,7 @@ export class EmailService {
 
   async sendSubscriptionReminder(subscription: Subscription & { user: User }): Promise<void> {
     const mailOptions = {
-      from: process.env.FROM_EMAIL || "noreply@flora.com",
+      from: this.getProfessionalSender(),
       to: subscription.user.email,
       subject: "Your Flora Delivery is Coming Soon!",
       html: `
@@ -236,7 +245,7 @@ export class EmailService {
     const resetUrl = `${process.env.FRONTEND_URL}/auth/reset-password?token=${resetToken}`;
 
     const mailOptions = {
-      from: process.env.FROM_EMAIL || "noreply@flora.com",
+      from: this.getProfessionalSender(),
       to: email,
       subject: "Reset Your Flora Password",
       html: `
@@ -267,9 +276,10 @@ export class EmailService {
     message: string;
   }): Promise<void> {
     const mailOptions = {
-      from: process.env.FROM_EMAIL || "noreply@flora.com",
+      from: this.getProfessionalSender(),
       to: process.env.CONTACT_EMAIL || "support@flora.com",
       subject: `Contact Form: ${data.subject}`,
+      replyTo: data.email,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h1 style="color: #16a34a;">New Contact Form Submission</h1>
@@ -289,7 +299,7 @@ export class EmailService {
 
     // Send confirmation to user
     const confirmationOptions = {
-      from: process.env.FROM_EMAIL || "noreply@flora.com",
+      from: this.getProfessionalSender(),
       to: data.email,
       subject: "We Received Your Message - Flora",
       html: `
