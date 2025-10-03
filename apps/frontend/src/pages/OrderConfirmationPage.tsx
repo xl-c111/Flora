@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { useCart } from "../contexts/CartContext";
 import orderService from "../services/orderService";
 import type { Order } from "../services/orderService";
+import { getImageUrl } from "../services/api";
 import "../styles/OrderConfirmationPage.css";
 
 const OrderConfirmationPage: React.FC = () => {
@@ -107,45 +108,54 @@ const OrderConfirmationPage: React.FC = () => {
               <p className="order-date">{formatDate(order.createdAt)}</p>
 
               {order.items && order.items.length > 0 && (
-                <div className="order-item-card">
-                  <div className="item-image-container">
-                    {order.items[0].product.imageUrl ? (
-                      <img src={order.items[0].product.imageUrl} alt={order.items[0].product.name} />
-                    ) : (
-                      <div className="placeholder-image"></div>
-                    )}
-                  </div>
-                  <div className="item-details-container">
-                    <div className="item-header">
-                      <h3>{order.items[0].product.name}</h3>
-                      <span className="item-price">{formatPrice(order.items[0].priceCents * order.items[0].quantity)}</span>
+                <>
+                  {/* Loop through all order items */}
+                  {order.items.map((item) => (
+                    <div key={item.id} className="order-item-card">
+                      <div className="item-image-container">
+                        {item.product.imageUrl ? (
+                          <img src={getImageUrl(item.product.imageUrl)} alt={item.product.name} />
+                        ) : (
+                          <div className="placeholder-image"></div>
+                        )}
+                      </div>
+                      <div className="item-details-container">
+                        <div className="item-header">
+                          <h3>{item.product.name}</h3>
+                          <span className="item-price">
+                            {formatPrice(item.priceCents * item.quantity)}
+                            {item.quantity > 1 && <span className="quantity"> × {item.quantity}</span>}
+                          </span>
+                        </div>
+                        <div className="item-info-list">
+                          <p>Suburb: {order.shippingCity || "N/A"}</p>
+                          <p>Postcode: {order.shippingZipCode || "N/A"}</p>
+                          <p>
+                            Delivery Date:{" "}
+                            {order.requestedDeliveryDate ? formatDate(order.requestedDeliveryDate) : "TBD"}
+                          </p>
+                          <p>Subscription: {order.subscriptionType || "One-time purchase"}</p>
+                        </div>
+                      </div>
                     </div>
-                    <div className="item-info-list">
-                      <p>Suburb: {order.shippingCity || "N/A"}</p>
-                      <p>Postcode: {order.shippingZipCode || "N/A"}</p>
-                      <p>
-                        Delivery Date:{" "}
-                        {order.requestedDeliveryDate ? formatDate(order.requestedDeliveryDate) : "TBD"}
-                      </p>
-                      <p>Subscription: {order.subscriptionType || "One-time purchase"}</p>
-                    </div>
+                  ))}
 
-                    <div className="price-breakdown">
-                      <div className="price-row">
-                        <span>Subtotal</span>
-                        <span>{formatPrice(order.subtotalCents)}</span>
-                      </div>
-                      <div className="price-row">
-                        <span>Shipping</span>
-                        <span>{formatPrice(order.shippingCents)}</span>
-                      </div>
-                      <div className="price-row total-row">
-                        <span>Total</span>
-                        <span>{formatPrice(order.totalCents)}</span>
-                      </div>
+                  {/* Price breakdown shown once after all items */}
+                  <div className="price-breakdown">
+                    <div className="price-row">
+                      <span>Subtotal</span>
+                      <span>{formatPrice(order.subtotalCents)}</span>
+                    </div>
+                    <div className="price-row">
+                      <span>Shipping</span>
+                      <span>{formatPrice(order.shippingCents)}</span>
+                    </div>
+                    <div className="price-row total-row">
+                      <span>Total</span>
+                      <span>{formatPrice(order.totalCents)}</span>
                     </div>
                   </div>
-                </div>
+                </>
               )}
             </div>
 
