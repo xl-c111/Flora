@@ -167,8 +167,8 @@ const ProductsPage: React.FC = () => {
     <div className="products-page">
       {/* Page Header with Search */}
       <header className="page-header">
-        <div className="container">
-          <h1>Shop All Flowers</h1>
+        <div className="header-container">
+          <h1>Shop All Flowers products.tsx</h1>
           <SearchBar
             onSearchChange={handleSearchChange}
             currentSearch={selectedFilters.search || ''}

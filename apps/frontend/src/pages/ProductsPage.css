@@ -40,6 +40,7 @@
   font-size: 2.5rem;
   font-weight: 300;
   margin: 0;
+  border-style:double;
 }
 
 /* Page Content */
@@ -49,11 +50,15 @@
 
 .container {
   max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
+  /* background-color: red; */
+  border-style: dashed;
+  /* margin: 0 auto; */
+  /* padding: 0 1rem; */
+  /*if something is broken dont use this*/
 }
 
 .content-wrapper {
+  border-style:dotted;
   display: grid;
   grid-template-columns: 300px 1fr;
   gap: 2rem;
