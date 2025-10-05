@@ -21,6 +21,7 @@
     --banner-colour-1: #C8D7C4;
     --banner-colour-2: #C8D7C480; /*banner colour with 50% opacity*/
     --button-colour: #E3EAE1;
+    --border-colour: var(--text-colour);
     --radius-tile: 10px;
     --radius-image: 50px;
     --radius-button: 50px;

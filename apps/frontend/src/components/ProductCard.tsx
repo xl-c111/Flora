@@ -180,6 +180,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           } ${product.name}`}
           style={{
             float: 'left',
+            border:'1px solid',
+            borderColor: 'var(--border-colour)',
           }}>
           <h4>{product.inStock ? 'View Details' : 'Out of Stock'}</h4>
         </button>
@@ -198,6 +200,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             title="Buy Now"
             style={{
             float: 'right',
+            border:'1px solid',
+            borderColor: 'var(--border-colour)',
             }}
           >
           <h4>Buy Now</h4>
