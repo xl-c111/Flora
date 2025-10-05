@@ -59,7 +59,7 @@ function App() {
     }
   };
 
-  if (loading) {
+  if (!loading) {
     return (
       <div className="app">
         <div className="loading">🌸 Loading Flora marketplace...</div>

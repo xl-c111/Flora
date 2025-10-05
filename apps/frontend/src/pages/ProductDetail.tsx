@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { SUBSCRIPTION_OPTIONS, calculateSubscriptionPrice, formatSubscriptionSavings } from '../config/subscriptionConfig';
 import { apiService, getImageUrl } from '../services/api';
 import type { Product } from '../types';
-import DatePicker from '../components/DatePicker';
+// import DatePicker from '../components/DatePicker';
 import '../styles/ProductDetail.css';
 
 const ProductDetail: React.FC = () => {
@@ -221,7 +221,7 @@ const ProductDetail: React.FC = () => {
             </div>
 
             {/* Select a Delivery Date */}
-            <div className="date-selector-section">
+            {/* <div className="date-selector-section">
               <h3>Select a Delivery Date</h3>
               <DatePicker
                 selectedDate={selectedDate}
@@ -229,7 +229,7 @@ const ProductDetail: React.FC = () => {
                 minDaysFromNow={1}
                 maxDaysFromNow={90}
               />
-            </div>
+            </div> */}
 
             {/* Select a Purchase Type */}
             <div className="purchase-type-section">
