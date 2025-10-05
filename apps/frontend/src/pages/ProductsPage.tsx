@@ -166,7 +166,10 @@ const ProductsPage: React.FC = () => {
   return (
     <div className="products-page">
       {/* Page Header with Search */}
-      <div className="banner-container">
+      <div className="banner-container"
+      style={{
+        marginTop:'16px',
+      }}>
         <div className="page-header">
           <div className="header-container">
                 <div className="banner-container" 

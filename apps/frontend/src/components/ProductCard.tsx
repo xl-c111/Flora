@@ -133,9 +133,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </div>
 
           {/* Product Attributes - show a few key ones */}
-          {/* <div className="product-attributes"> */}
-            {/* Occasions */}
-            {/* {product.occasions && product.occasions.length > 0 && (
+          <div className="product-attributes">
+            Occasions
+            {product.occasions && product.occasions.length > 0 && (
               <div className="attribute-group">
                 <span className="attribute-label">Perfect for: product card.tsx</span>
                 <span className="attribute-value">
@@ -144,10 +144,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 </span>
                 product attributes
               </div>
-            )} */}
+            )}
 
             {/* Colors */}
-            {/* {product.colors && product.colors.length > 0 && (
+            {product.colors && product.colors.length > 0 && (
               <div className="attribute-group">
                 <span className="attribute-label">Colors:</span>
                 <span className="attribute-value">
@@ -155,17 +155,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                   {product.colors.length > 3 && '...'}
                 </span>
               </div>
-            )}*/}
-          {/* </div> */}
+            )}
+          </div>
 
           {/* Product Description - truncated */}
-          {/* {product.description && (
+          {product.description && (
             <div className="product-description">
               {product.description.length > 100
                 ? `${product.description.substring(0, 100)}...`
                 : product.description}
             </div>
-          )} */}
+          )}
         </div>
       </Link>
 
@@ -178,12 +178,31 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           aria-label={`${
             product.inStock ? 'View details for' : 'Out of stock:'
           } ${product.name}`}
-        >
-          {product.inStock ? 'View Details' : 'Out of Stock'}
+          style={{
+            float: 'left',
+          }}>
+          <h4>{product.inStock ? 'View Details' : 'Out of Stock'}</h4>
         </button>
-        <button>
-          Buy Now
-        </button>
+
+        {product.inStock && (
+          <button
+            className="buy-now-button"
+            onClick={(e) => {
+              e.preventDefault();
+              addItem({
+                product,
+                quantity: 1,
+              });
+              alert(`Added ${product.name} to cart!`);
+            }}
+            title="Buy Now"
+            style={{
+            float: 'right',
+            }}
+          >
+          <h4>Buy Now</h4>
+          </button>
+        )}
       </div>
 
 {/* favourite button OUT OF SCOPE */}
