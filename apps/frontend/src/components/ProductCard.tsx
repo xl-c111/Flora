@@ -99,7 +99,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             {/* Occasions */}
             {product.occasions && product.occasions.length > 0 && (
               <div className="attribute-group">
-                <span className="attribute-label">Perfect for:</span>
+                <span className="attribute-label">Perfect for: product card.tsx</span>
                 <span className="attribute-value">
                   {formatAttributes(product.occasions.slice(0, 2))}
                   {product.occasions.length > 2 && '...'}
