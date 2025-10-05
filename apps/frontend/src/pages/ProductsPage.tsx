@@ -166,15 +166,61 @@ const ProductsPage: React.FC = () => {
   return (
     <div className="products-page">
       {/* Page Header with Search */}
-      <header className="page-header">
-        <div className="header-container">
-          <h1>Shop All Flowers products.tsx</h1>
-          <SearchBar
-            onSearchChange={handleSearchChange}
-            currentSearch={selectedFilters.search || ''}
-          />
+      <div className="banner-container">
+        <div className="page-header">
+          <div className="header-container">
+                <div className="banner-container" 
+                style={{
+                  width: 'auto',
+                  /* height: 240px; */
+                  /* background-color:blue; */
+                  marginBottom: '5rem',
+                }}>
+                  <div className="banner-menu">
+                      <ul>
+                          <li>
+                              <a href="#">Shop All Flowers</a>
+                          </li>
+                          <li>
+                              <a href="#">Shop By Colour</a>
+                          </li>
+                          <li>
+                              <a href="#">Shop By Occasion</a>
+                          </li>
+                          <li>
+                              <a href="#">Bundle Up and Save</a>
+                          </li>
+                      </ul>
+                  </div>
+                  <div className="banner-image">
+                  </div>
+                  <div className="banner-menu">
+                      <ul>
+                        <li>
+                              <a href="#">Romantic / Love</a>
+                        </li> 
+                        <li>
+                              <a href="#">Cheerful / Everyday Joy</a>
+                        </li> 
+                        <li>
+                              <a href="#">Elegant / Sophisticated</a>
+                        </li> 
+                        <li>
+                              <a href="#">Seasonal / Nature Inspired</a>
+                        </li> 
+                        <li>
+                              <a href="#">Special Occasion</a>
+                        </li> 
+                      </ul>
+                  </div>
+              </div>
+            <SearchBar
+              onSearchChange={handleSearchChange}
+              currentSearch={selectedFilters.search || ''}
+            />
+          </div>
         </div>
-      </header>
+      </div>
 
       {/* Main Content Area */}
       <main className="page-content">
