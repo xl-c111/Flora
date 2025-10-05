@@ -1,3 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond&display=swap');
+
+
+/* Flora Marketplace Styles */
+:root {
+  --primary-color: #10b981;
+  --primary-light: #34d399;
+  --primary-dark: #047857;
+  --secondary-color: #f59e0b;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --background: #ffffff;
+  --background-light: #f9fafb;
+  --border: #e5e7eb;
+  --border-light: #f3f4f6;
+  --shadow: rgba(0, 0, 0, 0.1);
+
+    --background-colour: #F6F5F4;
+    --text-colour: #595E4E;
+    --banner-colour-1: #C8D7C4;
+    --banner-colour-2: #C8D7C480; /*banner colour with 50% opacity*/
+    --button-colour: #E3EAE1;
+    --radius-tile: 10px;
+    --radius-image: 50px;
+    --radius-button: 50px;
+
+    --primary-font-web-copy: "EB Garamond",Georgia, serif;
+    --primary-font-body-copy: "Outfit", Arial, sans-serif;
+}
+/* @import "tailwindcss"; */
+
 /* Modern CSS Reset */
 *,
 *::before,
@@ -12,6 +44,9 @@
 body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+    font-family: var(--primary-font-body-copy);
+    background-color: var(--background-colour);
+    color: var(--text-colour);
 }
 
 img,
@@ -38,6 +73,42 @@ h4,
 h5,
 h6 {
   overflow-wrap: break-word;
+}
+
+
+h1 {
+    font-family: var(--primary-font-web-copy);
+    letter-spacing: 0.1em;
+    font-size: 128px;
+    font-weight: normal;
+}
+
+h2 {
+    font-family: var(--primary-font-web-copy);
+    font-size: 64px;
+    font-weight:bold;
+}
+
+h3 {
+    font-family: var(--primary-font-web-copy);
+    font-size: 20px;
+    font-weight: bold;
+}
+
+h4 {
+    font-family: var(--primary-font-web-copy);
+    font-size: 16px;
+    font-weight: bold;
+}
+
+h5 {
+    font-size: 20px;
+    font-weight: normal; 
+}
+
+h6 {
+    font-size: 16px;
+    font-weight: normal;
 }
 
 #root {
