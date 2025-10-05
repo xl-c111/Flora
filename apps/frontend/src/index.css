@@ -8,9 +8,9 @@
   --primary-light: #34d399;
   --primary-dark: #047857;
   --secondary-color: #f59e0b;
-  --text-primary: #1f2937;
-  --text-secondary: #6b7280;
-  --background: #ffffff;
+  /* --text-primary: red; */
+  --text-secondary: red;
+  --background: #030303;
   --background-light: #f9fafb;
   --border: #e5e7eb;
   --border-light: #f3f4f6;
@@ -111,7 +111,6 @@ h6 {
     font-weight: normal;
 }
 
-
 a {
     text-decoration: underline;
     color: var(--text-colour);
@@ -120,6 +119,17 @@ a {
     font-weight: bold;
     display: flex;
 }
+
+.top-nav-bar button{
+    text-decoration: underline;
+    color: var(--text-colour);
+    font-family: var(--primary-font-web-copy);
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    border: none;
+    cursor: pointer;
+} */
 
 a img{
     width:30px;
