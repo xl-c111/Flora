@@ -57,7 +57,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       className={`product-card ${!product.inStock ? 'out-of-stock' : ''}`}
       role="group"
       aria-label={`${product.name} - ${formatPrice(product.priceCents)}`}
-    >
+      style={{
+        width: '400px',
+        height: '740px',
+        padding: '40px',
+        alignContent: 'center',
+        margin: '20px',
+        border: 'dashed',
+      }}>
       {/* Product Link - makes entire card clickable */}
       <Link
         to={`/products/${product.id}`}
@@ -72,7 +79,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               alt={product.name}
               className="product-image"
               loading="lazy"
-            />
+              style={{
+                width:'100%',
+                height: '100%',
+                objectFit: 'cover',
+                borderRadius: 'var(--radius-image)',
+              }} />
           ) : (
             /* Placeholder if no image */
             <div className="product-image-placeholder">
@@ -87,28 +99,55 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </div>
 
         {/* Product Information */}
-        <div className="product-info">
-          {/* Product Name */}
-          <h3 className="product-name">{product.name}</h3>
-
-          {/* Product Price */}
-          <div className="product-price">{formatPrice(product.priceCents)}</div>
+        <div className="product-info"
+        style={{
+              // paddingLeft: '25px',
+              // paddingRight: '25px',
+              marginTop: '15px',
+              marginBottom: '15px',
+              // maxHeight: '120px',
+              // overflow: 'hidden',
+              borderStyle:"dotted",
+        }}>
+          <div className="product-header"
+                style={{
+                height: '25px',
+                display:'block',
+          }}>
+            {/* Product Name */}
+            <h4 className="product-name"
+                style={{
+                float: 'left',
+                display:'block',
+            }}>
+              {product.name}
+            </h4>
+            {/* Product Price */}
+            <h4 className="product-price"
+                style={{
+                float:'right',
+                display:'block',
+            }}>
+              {formatPrice(product.priceCents)}
+            </h4>
+        </div>
 
           {/* Product Attributes - show a few key ones */}
-          <div className="product-attributes">
+          {/* <div className="product-attributes"> */}
             {/* Occasions */}
-            {product.occasions && product.occasions.length > 0 && (
+            {/* {product.occasions && product.occasions.length > 0 && (
               <div className="attribute-group">
                 <span className="attribute-label">Perfect for: product card.tsx</span>
                 <span className="attribute-value">
                   {formatAttributes(product.occasions.slice(0, 2))}
                   {product.occasions.length > 2 && '...'}
                 </span>
+                product attributes
               </div>
-            )}
+            )} */}
 
             {/* Colors */}
-            {product.colors && product.colors.length > 0 && (
+            {/* {product.colors && product.colors.length > 0 && (
               <div className="attribute-group">
                 <span className="attribute-label">Colors:</span>
                 <span className="attribute-value">
@@ -116,17 +155,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                   {product.colors.length > 3 && '...'}
                 </span>
               </div>
-            )}
-          </div>
+            )}*/}
+          {/* </div> */}
 
           {/* Product Description - truncated */}
-          {product.description && (
+          {/* {product.description && (
             <div className="product-description">
               {product.description.length > 100
                 ? `${product.description.substring(0, 100)}...`
                 : product.description}
             </div>
-          )}
+          )} */}
         </div>
       </Link>
 
@@ -142,8 +181,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         >
           {product.inStock ? 'View Details' : 'Out of Stock'}
         </button>
+        <button>
+          Buy Now
+        </button>
       </div>
 
+{/* favourite button OUT OF SCOPE */}
       {/* Quick Action Buttons (outside the link so they don't trigger navigation) */}
       <div className="quick-actions">
         <button

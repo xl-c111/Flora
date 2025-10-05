@@ -118,11 +118,11 @@ body {
 }
 
 .product-info {
-  padding: 1.5rem;
+  /* padding: 1.5rem; */
 }
 
 .product-info h4 {
-  font-size: 1.3rem;
+  /* font-size: 1.3rem; */
   color: var(--text-primary);
   margin-bottom: 0.5rem;
 }
