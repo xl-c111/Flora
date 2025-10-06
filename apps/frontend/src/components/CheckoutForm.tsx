@@ -1,19 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
-import type { Appearance } from '@stripe/stripe-js';
-import PaymentForm from './PaymentForm';
-import { useAuth } from '../contexts/AuthContext';
-import { useCart } from '../contexts/CartContext';
-import type { DeliveryInfo } from '../services/deliveryService';
-import '../styles/CheckoutForm.css';
+import React, { useState, useEffect } from "react";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import type { Appearance } from "@stripe/stripe-js";
+import PaymentForm from "./PaymentForm";
+import { useAuth } from "../contexts/AuthContext";
+import { useCart } from "../contexts/CartContext";
+import type { DeliveryInfo } from "../services/deliveryService";
+import "../styles/CheckoutForm.css";
 
-const stripePromise = loadStripe(
-  import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || ''
-);
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "");
 
 export interface CheckoutFormData {
-  deliveryType?: 'STANDARD' | 'EXPRESS' | 'PICKUP';
+  deliveryType?: "STANDARD" | "EXPRESS" | "PICKUP";
   guestEmail: string;
   giftMessageTo?: string;
   giftMessageFrom?: string;
@@ -47,8 +45,8 @@ interface CheckoutFormProps {
   onPaymentSuccess: () => void;
   onPaymentError: (error: string) => void;
   deliveryInfo: DeliveryInfo | null;
-  selectedDeliveryType: 'STANDARD' | 'EXPRESS' | 'PICKUP';
-  onDeliveryTypeChange: (type: 'STANDARD' | 'EXPRESS' | 'PICKUP') => void;
+  selectedDeliveryType: "STANDARD" | "EXPRESS" | "PICKUP";
+  onDeliveryTypeChange: (type: "STANDARD" | "EXPRESS" | "PICKUP") => void;
 }
 
 const CheckoutForm: React.FC<CheckoutFormProps> = ({
@@ -65,30 +63,30 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
   const { state: cartState, setGiftMessage } = useCart();
   const [useSameAddress, setUseSameAddress] = useState(false);
   const [isEditingMessage, setIsEditingMessage] = useState(false);
-  const [savedMessage, setSavedMessage] = useState({ to: '', from: '', message: '' });
+  const [savedMessage, setSavedMessage] = useState({ to: "", from: "", message: "" });
   const [formData, setFormData] = useState<CheckoutFormData>({
-    guestEmail: '',
-    giftMessageTo: '',
-    giftMessageFrom: '',
-    giftMessage: '',
-    recipientFirstName: '',
-    recipientLastName: '',
-    recipientBusinessName: '',
-    recipientAddress: '',
-    recipientApartment: '',
-    recipientCity: '',
-    recipientState: '',
-    recipientZipCode: '',
-    recipientPhone: '',
-    senderFirstName: '',
-    senderLastName: '',
-    senderBusinessName: '',
-    senderAddress: '',
-    senderApartment: '',
-    senderCity: '',
-    senderState: '',
-    senderZipCode: '',
-    senderPhone: '',
+    guestEmail: "",
+    giftMessageTo: "",
+    giftMessageFrom: "",
+    giftMessage: "",
+    recipientFirstName: "",
+    recipientLastName: "",
+    recipientBusinessName: "",
+    recipientAddress: "",
+    recipientApartment: "",
+    recipientCity: "",
+    recipientState: "",
+    recipientZipCode: "",
+    recipientPhone: "",
+    senderFirstName: "",
+    senderLastName: "",
+    senderBusinessName: "",
+    senderAddress: "",
+    senderApartment: "",
+    senderCity: "",
+    senderState: "",
+    senderZipCode: "",
+    senderPhone: "",
     useSameAddress: false,
   });
 
@@ -96,14 +94,17 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
 
   // Load gift message from cart on mount and when cart changes
   useEffect(() => {
-    if (cartState.giftMessage && (cartState.giftMessage.to || cartState.giftMessage.from || cartState.giftMessage.message)) {
+    if (
+      cartState.giftMessage &&
+      (cartState.giftMessage.to || cartState.giftMessage.from || cartState.giftMessage.message)
+    ) {
       const messageData = {
-        to: cartState.giftMessage.to || '',
-        from: cartState.giftMessage.from || '',
-        message: cartState.giftMessage.message || '',
+        to: cartState.giftMessage.to || "",
+        from: cartState.giftMessage.from || "",
+        message: cartState.giftMessage.message || "",
       };
       setSavedMessage(messageData);
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         giftMessageTo: messageData.to,
         giftMessageFrom: messageData.from,
@@ -114,9 +115,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
     }
   }, [cartState.giftMessage]);
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name as keyof CheckoutFormData]) {
@@ -128,27 +127,27 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
     const newErrors: Partial<Record<keyof CheckoutFormData, string>> = {};
 
     if (!formData.guestEmail.trim()) {
-      newErrors.guestEmail = 'Enter an email address';
+      newErrors.guestEmail = "Enter an email address";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.guestEmail)) {
-      newErrors.guestEmail = 'Enter a valid email address';
+      newErrors.guestEmail = "Enter a valid email address";
     }
     if (!formData.recipientFirstName.trim()) {
-      newErrors.recipientFirstName = 'Enter a first name';
+      newErrors.recipientFirstName = "Enter a first name";
     }
     if (!formData.recipientLastName.trim()) {
-      newErrors.recipientLastName = 'Enter a last name';
+      newErrors.recipientLastName = "Enter a last name";
     }
     if (!formData.recipientAddress.trim()) {
-      newErrors.recipientAddress = 'Enter an address';
+      newErrors.recipientAddress = "Enter an address";
     }
     if (!formData.recipientCity.trim()) {
-      newErrors.recipientCity = 'Enter a city';
+      newErrors.recipientCity = "Enter a city";
     }
     if (!formData.recipientState.trim()) {
-      newErrors.recipientState = 'Select a state/territory';
+      newErrors.recipientState = "Select a state/territory";
     }
     if (!formData.recipientZipCode.trim()) {
-      newErrors.recipientZipCode = 'Enter a ZIP / postal code';
+      newErrors.recipientZipCode = "Enter a ZIP / postal code";
     }
 
     setErrors(newErrors);
@@ -164,9 +163,9 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
 
   const handleSaveMessage = () => {
     const messageData = {
-      to: formData.giftMessageTo || '',
-      from: formData.giftMessageFrom || '',
-      message: formData.giftMessage || '',
+      to: formData.giftMessageTo || "",
+      from: formData.giftMessageFrom || "",
+      message: formData.giftMessage || "",
     };
     setSavedMessage(messageData);
     setGiftMessage(messageData); // Sync to cart context
@@ -178,15 +177,15 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
   };
 
   const appearance: Appearance = {
-    theme: 'stripe',
+    theme: "stripe",
     variables: {
-      colorPrimary: '#7a2e4a',
-      colorBackground: '#ffffff',
-      colorText: '#30313d',
-      colorDanger: '#df1b41',
-      fontFamily: 'system-ui, sans-serif',
-      spacingUnit: '4px',
-      borderRadius: '8px',
+      colorPrimary: "#7a2e4a",
+      colorBackground: "#ffffff",
+      colorText: "#30313d",
+      colorDanger: "#df1b41",
+      fontFamily: "system-ui, sans-serif",
+      spacingUnit: "4px",
+      borderRadius: "8px",
     },
   };
 
@@ -199,33 +198,72 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
 
   return (
     <div className="checkout-form-container">
+      {/* Email Section */}
+      <section className="checkout-section email-section">
+        <div className="section-header-with-link">
+          <h2 className="section-title">Email</h2>
+          <button type="button" onClick={login} className="sign-in-link">
+            Sign In
+          </button>
+        </div>
+
+        <div className="email-banner">Enter your email below.</div>
+
+        <div className="form-section">
+          <div className="form-field">
+            <input
+              type="email"
+              name="guestEmail"
+              className={`form-input ${errors.guestEmail ? "error" : ""}`}
+              placeholder="Email:"
+              value={formData.guestEmail}
+              onChange={handleInputChange}
+            />
+            {errors.guestEmail && <span className="field-error">{errors.guestEmail}</span>}
+          </div>
+        </div>
+      </section>
+
       {/* Gift Message Section */}
       <section className="checkout-section gift-message-section">
-        <h2 className="section-title">Your Gift Message</h2>
-        <div className="message-actions">
-          <p className="section-description">Update Your Message Below</p>
-          <button type="button" className="update-cart-link" onClick={() => window.location.href = '/cart'}>
+        <div className="message-header">
+          <h2 className="section-title">Leave a Message</h2>
+          <button type="button" className="update-cart-link" onClick={() => (window.location.href = "/cart")}>
             Or Update In The Cart
           </button>
         </div>
 
+        <div className="message-banner">Leave a message below.</div>
+
         {!isEditingMessage && (savedMessage.to || savedMessage.from || savedMessage.message) ? (
           <div className="saved-message-display">
-            {savedMessage.to && <p><strong>To:</strong> {savedMessage.to}</p>}
-            {savedMessage.from && <p><strong>From:</strong> {savedMessage.from}</p>}
-            {savedMessage.message && <p><strong>Message:</strong> {savedMessage.message}</p>}
+            {savedMessage.to && (
+              <p>
+                <strong>To:</strong> {savedMessage.to}
+              </p>
+            )}
+            {savedMessage.from && (
+              <p>
+                <strong>From:</strong> {savedMessage.from}
+              </p>
+            )}
+            {savedMessage.message && (
+              <p>
+                <strong>Message:</strong> {savedMessage.message}
+              </p>
+            )}
             <button type="button" className="edit-message-button" onClick={handleUpdateMessage}>
               Edit Message
             </button>
           </div>
         ) : (
-          <div className="form-section">
+          <div className="message-form-container">
             <div className="form-field">
               <input
                 type="text"
                 name="giftMessageTo"
-                className="form-input"
-                placeholder="To"
+                className="form-input message-input"
+                placeholder="To:"
                 value={formData.giftMessageTo}
                 onChange={handleInputChange}
               />
@@ -235,8 +273,8 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
               <input
                 type="text"
                 name="giftMessageFrom"
-                className="form-input"
-                placeholder="From"
+                className="form-input message-input"
+                placeholder="From:"
                 value={formData.giftMessageFrom}
                 onChange={handleInputChange}
               />
@@ -245,9 +283,9 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
             <div className="form-field">
               <textarea
                 name="giftMessage"
-                className="form-input gift-message-textarea"
-                placeholder="Message"
-                rows={4}
+                className="form-input message-input message-textarea"
+                placeholder="Message:"
+                rows={5}
                 value={formData.giftMessage}
                 onChange={handleInputChange}
               />
@@ -260,52 +298,23 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
         )}
       </section>
 
-      {/* How we will reach you Section */}
-      <section className="checkout-section">
-        <div className="section-header-with-link">
-          <h2 className="section-title">How we will reach you</h2>
-          <button type="button" onClick={login} className="sign-in-link">Sign in</button>
-        </div>
-
-        <div className="form-section">
-          <div className="form-field">
-            <input
-              type="email"
-              name="guestEmail"
-              className={`form-input ${errors.guestEmail ? 'error' : ''}`}
-              placeholder="Your email address"
-              value={formData.guestEmail}
-              onChange={handleInputChange}
-            />
-            {errors.guestEmail && (
-              <span className="field-error">{errors.guestEmail}</span>
-            )}
-          </div>
-
-          <div className="form-field checkbox-field">
-            <input type="checkbox" id="emailOptIn" />
-            <label htmlFor="emailOptIn">
-              Flora in your inbox. Little joys, every day.
-            </label>
-          </div>
-        </div>
-      </section>
-
       {/* Delivery Options */}
-      <section className="checkout-section">
-        <h2 className="section-title">Delivery</h2>
+      <section className="checkout-section delivery-section">
+        <h2 className="section-title">Shipping</h2>
+
+        <div className="delivery-banner">Select your delivery option below.</div>
 
         <div className="delivery-options">
           <div className="delivery-type-selector">
             {deliveryInfo && (
               <>
-                <label className={`delivery-option ${selectedDeliveryType === 'STANDARD' ? 'active' : ''}`}>
+                <label className={`delivery-option ${selectedDeliveryType === "STANDARD" ? "active" : ""}`}>
                   <input
                     type="radio"
                     name="deliveryType"
                     value="STANDARD"
-                    checked={selectedDeliveryType === 'STANDARD'}
-                    onChange={(e) => onDeliveryTypeChange(e.target.value as 'STANDARD' | 'EXPRESS' | 'PICKUP')}
+                    checked={selectedDeliveryType === "STANDARD"}
+                    onChange={(e) => onDeliveryTypeChange(e.target.value as "STANDARD" | "EXPRESS" | "PICKUP")}
                   />
                   <div className="delivery-details">
                     <div className="delivery-name">Standard Delivery</div>
@@ -313,13 +322,13 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
                     <div className="delivery-price">{deliveryInfo.pricing.standard.display}</div>
                   </div>
                 </label>
-                <label className={`delivery-option ${selectedDeliveryType === 'EXPRESS' ? 'active' : ''}`}>
+                <label className={`delivery-option ${selectedDeliveryType === "EXPRESS" ? "active" : ""}`}>
                   <input
                     type="radio"
                     name="deliveryType"
                     value="EXPRESS"
-                    checked={selectedDeliveryType === 'EXPRESS'}
-                    onChange={(e) => onDeliveryTypeChange(e.target.value as 'STANDARD' | 'EXPRESS' | 'PICKUP')}
+                    checked={selectedDeliveryType === "EXPRESS"}
+                    onChange={(e) => onDeliveryTypeChange(e.target.value as "STANDARD" | "EXPRESS" | "PICKUP")}
                   />
                   <div className="delivery-details">
                     <div className="delivery-name">Express Delivery</div>
@@ -329,13 +338,13 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
                 </label>
               </>
             )}
-            <label className={`delivery-option ${selectedDeliveryType === 'PICKUP' ? 'active' : ''}`}>
+            <label className={`delivery-option ${selectedDeliveryType === "PICKUP" ? "active" : ""}`}>
               <input
                 type="radio"
                 name="deliveryType"
                 value="PICKUP"
-                checked={selectedDeliveryType === 'PICKUP'}
-                onChange={(e) => onDeliveryTypeChange(e.target.value as 'STANDARD' | 'EXPRESS' | 'PICKUP')}
+                checked={selectedDeliveryType === "PICKUP"}
+                onChange={(e) => onDeliveryTypeChange(e.target.value as "STANDARD" | "EXPRESS" | "PICKUP")}
               />
               <div className="delivery-details">
                 <div className="delivery-name">Pick Up</div>
@@ -348,22 +357,15 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
       </section>
 
       {/* Recipient's Address Section */}
-      <section className="checkout-section">
-        <h2 className="section-title">Recipient's Address</h2>
-        <p className="section-description">Please add the recipient's details below.</p>
+      <section className="checkout-section recipient-section">
+        <h2 className="section-title">Delivery</h2>
 
-        <div className="form-section">
+        <div className="recipient-banner">Please enter the recipient's details below.</div>
 
+        <div className="form-section recipient-form">
           <div className="form-field">
             <label className="form-label-top">Country</label>
-            <input
-              type="text"
-              name="country"
-              className="form-input"
-              value="Australia"
-              readOnly
-              disabled
-            />
+            <input type="text" name="country" className="form-input" value="Australia" readOnly disabled />
           </div>
 
           <div className="form-row">
@@ -371,27 +373,23 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
               <input
                 type="text"
                 name="recipientFirstName"
-                className={`form-input ${errors.recipientFirstName ? 'error' : ''}`}
+                className={`form-input ${errors.recipientFirstName ? "error" : ""}`}
                 placeholder="First Name"
                 value={formData.recipientFirstName}
                 onChange={handleInputChange}
               />
-              {errors.recipientFirstName && (
-                <span className="field-error">{errors.recipientFirstName}</span>
-              )}
+              {errors.recipientFirstName && <span className="field-error">{errors.recipientFirstName}</span>}
             </div>
             <div className="form-field">
               <input
                 type="text"
                 name="recipientLastName"
-                className={`form-input ${errors.recipientLastName ? 'error' : ''}`}
+                className={`form-input ${errors.recipientLastName ? "error" : ""}`}
                 placeholder="Last Name"
                 value={formData.recipientLastName}
                 onChange={handleInputChange}
               />
-              {errors.recipientLastName && (
-                <span className="field-error">{errors.recipientLastName}</span>
-              )}
+              {errors.recipientLastName && <span className="field-error">{errors.recipientLastName}</span>}
             </div>
           </div>
 
@@ -410,15 +408,13 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
             <input
               type="text"
               name="recipientAddress"
-              className={`form-input ${errors.recipientAddress ? 'error' : ''}`}
+              className={`form-input ${errors.recipientAddress ? "error" : ""}`}
               placeholder="Address"
               value={formData.recipientAddress}
               onChange={handleInputChange}
             />
             <p className="field-hint">Add a house number if you have one</p>
-            {errors.recipientAddress && (
-              <span className="field-error">{errors.recipientAddress}</span>
-            )}
+            {errors.recipientAddress && <span className="field-error">{errors.recipientAddress}</span>}
           </div>
 
           <div className="form-field">
@@ -437,19 +433,17 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
               <input
                 type="text"
                 name="recipientCity"
-                className={`form-input ${errors.recipientCity ? 'error' : ''}`}
+                className={`form-input ${errors.recipientCity ? "error" : ""}`}
                 placeholder="Suburb"
                 value={formData.recipientCity}
                 onChange={handleInputChange}
               />
-              {errors.recipientCity && (
-                <span className="field-error">{errors.recipientCity}</span>
-              )}
+              {errors.recipientCity && <span className="field-error">{errors.recipientCity}</span>}
             </div>
             <div className="form-field">
               <select
                 name="recipientState"
-                className={`form-input ${errors.recipientState ? 'error' : ''}`}
+                className={`form-input ${errors.recipientState ? "error" : ""}`}
                 value={formData.recipientState}
                 onChange={handleInputChange}
               >
@@ -463,22 +457,18 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
                 <option value="VIC">Victoria</option>
                 <option value="WA">Western Australia</option>
               </select>
-              {errors.recipientState && (
-                <span className="field-error">{errors.recipientState}</span>
-              )}
+              {errors.recipientState && <span className="field-error">{errors.recipientState}</span>}
             </div>
             <div className="form-field">
               <input
                 type="text"
                 name="recipientZipCode"
-                className={`form-input ${errors.recipientZipCode ? 'error' : ''}`}
+                className={`form-input ${errors.recipientZipCode ? "error" : ""}`}
                 placeholder="Postcode"
                 value={formData.recipientZipCode}
                 onChange={handleInputChange}
               />
-              {errors.recipientZipCode && (
-                <span className="field-error">{errors.recipientZipCode}</span>
-              )}
+              {errors.recipientZipCode && <span className="field-error">{errors.recipientZipCode}</span>}
             </div>
           </div>
 
@@ -499,16 +489,11 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
       {clientSecret && orderId && (
         <section className="checkout-section payment-section">
           <h2 className="section-title">Payment</h2>
-          <p className="payment-security-notice">
-            All transactions are secure and encrypted.
-          </p>
+
+          <div className="payment-banner">All transactions are secure and encrypted.</div>
 
           <Elements stripe={stripePromise} options={elementsOptions}>
-            <PaymentForm
-              orderId={orderId}
-              onPaymentSuccess={onPaymentSuccess}
-              onPaymentError={onPaymentError}
-            />
+            <PaymentForm orderId={orderId} onPaymentSuccess={onPaymentSuccess} onPaymentError={onPaymentError} />
           </Elements>
 
           {/* Sender's Details (Billing Address) */}
@@ -522,23 +507,14 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
                 checked={useSameAddress}
                 onChange={(e) => setUseSameAddress(e.target.checked)}
               />
-              <label htmlFor="useSameAddress">
-                Use shipping address as billing address
-              </label>
+              <label htmlFor="useSameAddress">Use shipping address as billing address</label>
             </div>
 
             {!useSameAddress && (
               <>
                 <div className="form-field">
                   <label className="form-label-top">Country</label>
-                  <input
-                    type="text"
-                    name="senderCountry"
-                    className="form-input"
-                    value="Australia"
-                    readOnly
-                    disabled
-                  />
+                  <input type="text" name="senderCountry" className="form-input" value="Australia" readOnly disabled />
                 </div>
 
                 <div className="form-row">
@@ -604,11 +580,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
 
       {/* Continue button if no client secret yet */}
       {!clientSecret && (
-        <button
-          type="button"
-          onClick={handleProceedToPayment}
-          className="continue-button"
-        >
+        <button type="button" onClick={handleProceedToPayment} className="continue-button">
           Continue to Payment
         </button>
       )}
