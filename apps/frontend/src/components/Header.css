@@ -1,0 +1,206 @@
+.flora-header {
+  width: 100%;
+  background: white;
+}
+
+.flora-header-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* Top Navigation Bar */
+.top-nav {
+  background: white;
+  padding: 0.4rem 2rem;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.top-nav-links {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.top-nav-link {
+  color: #333;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+}
+
+.top-nav-link:hover {
+  color: #7a9b7a;
+}
+
+.auth-button {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.cart-icon-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #333;
+  text-decoration: none;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.cart-icon-wrapper:hover {
+  color: #7a9b7a;
+}
+
+.cart-counter {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Main Menu Bar */
+.main-menu {
+  background: #7a9b7a;
+  padding: 0.4rem 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+}
+
+.menu-link {
+  color: white;
+  text-decoration: underline;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  transition: opacity 0.2s ease;
+  letter-spacing: 0.3px;
+}
+
+.menu-link:hover {
+  opacity: 0.8;
+}
+
+/* Floral Background Section */
+.floral-background {
+  background: linear-gradient(135deg, #f5f5f0 0%, #e8f0e8 50%, #f5f5f0 100%);
+  position: relative;
+  overflow: hidden;
+  height: 60px;
+}
+
+.floral-illustration {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Secondary Menu Bar */
+.secondary-menu {
+  background: #7a9b7a;
+  padding: 0.4rem 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.secondary-link {
+  color: white;
+  text-decoration: underline;
+  font-size: 0.95rem;
+  font-weight: 700;
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+}
+
+.secondary-link:hover {
+  opacity: 0.8;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .main-menu,
+  .secondary-menu {
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .menu-link,
+  .secondary-link {
+    font-size: 0.9rem;
+  }
+
+  .floral-background {
+    height: 50px;
+  }
+}
+
+@media (max-width: 768px) {
+  .top-nav-links {
+    gap: 1rem;
+    font-size: 0.85rem;
+  }
+
+  .main-menu,
+  .secondary-menu {
+    padding: 0.75rem 1rem;
+    gap: 1rem;
+  }
+
+  .menu-link,
+  .secondary-link {
+    font-size: 0.8rem;
+  }
+
+  .floral-background {
+    height: 45px;
+  }
+
+  .auth-button {
+    max-width: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .top-nav {
+    padding: 0.5rem 1rem;
+  }
+
+  .top-nav-links {
+    gap: 0.75rem;
+  }
+
+  .top-nav-link {
+    font-size: 0.75rem;
+  }
+
+  .main-menu,
+  .secondary-menu {
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .menu-link,
+  .secondary-link {
+    font-size: 0.7rem;
+  }
+
+  .floral-background {
+    height: 40px;
+  }
+}

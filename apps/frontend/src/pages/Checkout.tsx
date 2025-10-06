@@ -111,7 +111,7 @@ const CheckoutPage: React.FC = () => {
     <div className="checkout-page">
       <div className="checkout-container">
         <div className="checkout-left">
-          <h1>Checkout</h1>
+          <div className="checkout-logo-placeholder">logo here</div>
           {getErrorDisplay()}
           {isProcessing && <div className="loading-message">Processing...</div>}
 
