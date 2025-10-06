@@ -73,6 +73,31 @@ const OrderConfirmationPage: React.FC = () => {
     return "Valued Customer";
   };
 
+  const formatSubscriptionType = (subscriptionType?: string) => {
+    if (!subscriptionType) return "One-time purchase";
+
+    const typeMap: Record<string, string> = {
+      'RECURRING_WEEKLY': 'Weekly Subscription',
+      'RECURRING_BIWEEKLY': 'Fortnightly Subscription',
+      'RECURRING_MONTHLY': 'Monthly Subscription',
+      'RECURRING_QUARTERLY': 'Quarterly Subscription',
+      'RECURRING_YEARLY': 'Yearly Subscription',
+      'SPONTANEOUS': 'Spontaneous Subscription',
+    };
+
+    return typeMap[subscriptionType] || subscriptionType;
+  };
+
+  const getDeliveryEstimate = (deliveryType?: string) => {
+    const estimates: Record<string, string> = {
+      'STANDARD': 'Standard delivery (3-5 business days)',
+      'EXPRESS': 'Express delivery (1-2 business days)',
+      'SAME_DAY': 'Same-day delivery',
+      'PICKUP': 'Pickup (date to be arranged)',
+    };
+    return estimates[deliveryType || 'STANDARD'] || 'Standard delivery (3-5 business days)';
+  };
+
   if (loading) {
     return (
       <div className="order-confirmation-loading">
@@ -132,9 +157,9 @@ const OrderConfirmationPage: React.FC = () => {
                           <p>Postcode: {order.shippingZipCode || "N/A"}</p>
                           <p>
                             Delivery Date:{" "}
-                            {order.requestedDeliveryDate ? formatDate(order.requestedDeliveryDate) : "TBD"}
+                            {item.requestedDeliveryDate ? formatDate(item.requestedDeliveryDate) : getDeliveryEstimate(order.deliveryType)}
                           </p>
-                          <p>Subscription: {order.subscriptionType || "One-time purchase"}</p>
+                          <p>Subscription: {formatSubscriptionType(item.subscriptionType)}</p>
                         </div>
                       </div>
                     </div>

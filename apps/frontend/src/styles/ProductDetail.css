@@ -132,12 +132,42 @@
   gap: 2rem;
 }
 
+/* Product Header with Title, Price, and Likes */
+.product-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
 .product-title {
   font-size: 2.25rem;
-  font-weight: 700;
-  color: #1f2937;
+  font-weight: 600;
+  color: #4a5568;
   margin: 0;
-  line-height: 1.2;
+  line-height: 1.3;
+  flex: 1;
+}
+
+.product-price {
+  font-size: 2.25rem;
+  font-weight: 600;
+  color: #4a5568;
+  white-space: nowrap;
+}
+
+.likes-count {
+  font-size: 0.9375rem;
+  color: #718096;
+  font-weight: 400;
 }
 
 /* Price Section */
@@ -188,15 +218,17 @@
 /* Description & Attributes */
 .description-section {
   padding: 1.5rem 0;
-  border-top: 1px solid #e5e7eb;
-  border-bottom: 1px solid #e5e7eb;
 }
 
 .product-description {
-  font-size: 1.125rem;
-  line-height: 1.7;
-  color: #374151;
-  margin: 0;
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #4a5568;
+  margin: 0 0 1.25rem 0;
+}
+
+.product-description:last-child {
+  margin-bottom: 0;
 }
 
 .attributes-section {
@@ -216,122 +248,135 @@
   font-weight: 600;
 }
 
-/* Purchase Options */
-.purchase-options {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  padding: 2rem;
-  background-color: #f9fafb;
-  border-radius: 12px;
-  border: 2px solid #e5e7eb;
+/* Date Selector Section */
+.date-selector-section {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid #e5e7eb;
 }
 
-.purchase-options h3,
-.purchase-options h4 {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #1f2937;
-}
-
-.purchase-options h4 {
+.date-selector-section h3 {
+  margin: 0 0 1rem 0;
   font-size: 1.125rem;
+  font-weight: 600;
+  color: #2d3748;
 }
 
-/* Purchase Type Toggle */
-.purchase-type-toggle {
+.date-selector-placeholder {
+  padding: 3rem 2rem;
+  background-color: #f7fafc;
+  border: 2px dashed #cbd5e0;
+  border-radius: 8px;
+  text-align: center;
+}
+
+/* Purchase Type Section */
+.purchase-type-section {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.purchase-type-section h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+/* Purchase Type Grid (3 buttons in one row) */
+.purchase-type-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1rem;
 }
 
-.toggle-option {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 10px;
+.purchase-type-btn {
+  padding: 0.875rem 0.5rem;
+  background-color: #e2e8f0;
+  color: #4a5568;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-weight: 500;
   text-align: center;
-  background: white;
 }
 
-.toggle-option input {
-  display: none;
+.purchase-type-btn:hover {
+  background-color: #cbd5e0;
 }
 
-.toggle-option:hover {
-  border-color: #d1d5db;
-  background-color: #f9fafb;
-}
-
-.toggle-option.active {
-  border-color: #10b981;
-  background-color: #ecfdf5;
-  color: #065f46;
+.purchase-type-btn.active {
+  background-color: #48bb78;
+  color: white;
   font-weight: 600;
 }
 
-/* Frequency Options */
-.frequency-options {
+/* Frequency Selector (nested under subscription types) - Detailed version */
+.frequency-selector {
+  margin-top: 0.75rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
-.frequency-option {
+.frequency-option-card {
   display: flex;
   align-items: center;
-  padding: 1.25rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 10px;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  background-color: #f7fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
-  background: white;
 }
 
-.frequency-option input {
+.frequency-option-card:hover {
+  border-color: #cbd5e0;
+  background-color: #edf2f7;
+}
+
+.frequency-option-card.active {
+  border-color: #48bb78;
+  background-color: #f0fff4;
+}
+
+.frequency-option-card input[type="radio"] {
   margin-right: 1rem;
-  transform: scale(1.2);
+  cursor: pointer;
 }
 
-.frequency-option:hover {
-  border-color: #d1d5db;
-  background-color: #f9fafb;
-}
-
-.frequency-option.active {
-  border-color: #10b981;
-  background-color: #ecfdf5;
-}
-
-.option-details {
+.frequency-option-details {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-  flex-grow: 1;
 }
 
-.option-label {
+.frequency-option-label {
   font-weight: 600;
-  color: #1f2937;
-  font-size: 1.125rem;
+  color: #2d3748;
+  font-size: 1rem;
 }
 
-.option-description {
+.frequency-option-description {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: #718096;
 }
 
-.option-price {
+.frequency-option-price {
   font-weight: 700;
-  color: #10b981;
-  margin-left: auto;
-  font-size: 1.25rem;
+  color: #48bb78;
+  font-size: 1.125rem;
+  white-space: nowrap;
+}
+
+.frequency-option-savings {
+  font-size: 0.8125rem;
+  color: #38a169;
+  font-weight: 500;
 }
 
 /* Quantity Section */
@@ -364,22 +409,23 @@
 
 /* Add to Cart Button */
 .add-to-cart-btn {
-  background-color: #10b981;
+  background-color: #5a6c7d;
   color: white;
   border: none;
-  padding: 1.25rem 2rem;
-  border-radius: 10px;
-  font-size: 1.25rem;
+  padding: 1.125rem 2rem;
+  border-radius: 8px;
+  font-size: 1.125rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   width: 100%;
+  margin-top: 1.5rem;
 }
 
 .add-to-cart-btn:hover:not(:disabled) {
-  background-color: #059669;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  background-color: #4a5a6a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(90, 108, 125, 0.3);
 }
 
 .add-to-cart-btn:disabled {
@@ -387,6 +433,81 @@
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+}
+
+/* Accordion Sections */
+.accordion-sections {
+  margin-top: 2rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.accordion-item {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.accordion-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2d3748;
+  text-align: left;
+  transition: color 0.2s ease;
+}
+
+.accordion-header:hover {
+  color: #1a202c;
+}
+
+.accordion-header.active {
+  color: #2d3748;
+}
+
+.accordion-icon {
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #718096;
+  transition: transform 0.2s ease;
+}
+
+.accordion-content {
+  padding: 0 0 1.5rem 0;
+  animation: slideDown 0.3s ease-out;
+}
+
+.accordion-content h4 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.accordion-content p {
+  margin: 0 0 1rem 0;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: #4a5568;
+}
+
+.accordion-content p:last-child {
+  margin-bottom: 0;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Responsive Design */
