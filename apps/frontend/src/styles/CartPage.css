@@ -232,14 +232,20 @@
   color: #5a5a4f;
 }
 
+/* Cart Bottom Section - Message and Summary Side by Side */
+.cart-bottom-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  align-items: start;
+}
+
 /* Cart Summary */
 .cart-summary {
-  background-color: #ffffff;
+  background-color: transparent;
   border-radius: 12px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  max-width: 400px;
-  margin-left: auto;
+  padding: 0;
 }
 
 .summary-section h3 {
@@ -247,26 +253,32 @@
   color: #5a5a4f;
   margin-bottom: 1.5rem;
   font-weight: 500;
+  margin-top: 0;
 }
 
 .summary-line {
   display: flex;
   justify-content: space-between;
-  padding: 0.75rem 0;
+  padding: 0.875rem 1.25rem;
   font-size: 1rem;
   color: #5a5a4f;
+  background-color: #e8f0e8;
+  border: 1px solid #d4dcd4;
+  border-radius: 10px;
+  margin-bottom: 1rem;
 }
 
 .savings-line {
-  color: #6a9a6a;
+  color: #5a5a4f;
 }
 
 .total-line {
-  border-top: 2px solid #d4d4c8;
-  margin-top: 0.5rem;
-  padding-top: 1rem;
+  border: 1px solid #d4dcd4;
+  margin-top: 0;
+  padding: 0.875rem 1.25rem;
   font-weight: 600;
   font-size: 1.125rem;
+  background-color: #e8f0e8;
 }
 
 .total-amount {
@@ -299,6 +311,7 @@
   color: #5a5a4f;
   margin-bottom: 1.5rem;
   font-weight: 500;
+  margin-top: 0;
 }
 
 .purchase-options-grid {
@@ -495,6 +508,11 @@
 
 /* Responsive Design */
 @media (max-width: 1024px) {
+  .cart-bottom-section {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
   .cart-options {
     grid-template-columns: 1fr;
     gap: 2rem;

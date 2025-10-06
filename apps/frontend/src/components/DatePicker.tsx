@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { DayPicker } from 'react-day-picker';
 import { format, addDays, addMonths } from 'date-fns';
-import 'react-day-picker/dist/style.css';
+import 'react-day-picker/src/style.css';
 import '../styles/DatePicker.css';
 
 interface DatePickerProps {
