@@ -13,6 +13,8 @@ export interface CreateOrderData {
     productId: string;
     quantity: number;
     priceCents: number;
+    subscriptionType?: string;
+    requestedDeliveryDate?: Date;
   }>;
   shippingAddress: {
     firstName: string;
@@ -57,6 +59,8 @@ export interface Order {
     productId: string;
     quantity: number;
     priceCents: number;
+    subscriptionType?: string;        // Item-level subscription type
+    requestedDeliveryDate?: string;   // Item-level delivery date
     product: {
       id: string;
       name: string;

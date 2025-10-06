@@ -72,10 +72,19 @@ export const useCheckout = (): UseCheckoutReturn => {
         if (item.isSubscription && item.subscriptionDiscount) {
           finalPrice = Math.round(finalPrice * (1 - item.subscriptionDiscount / 100));
         }
+
+        // Determine subscription type for this item
+        let itemSubscriptionType = undefined;
+        if (item.isSubscription && item.subscriptionFrequency) {
+          itemSubscriptionType = mapSubscriptionType('recurring', item.subscriptionFrequency);
+        }
+
         return {
           productId: item.product.id,
           quantity: item.quantity,
           priceCents: finalPrice,
+          subscriptionType: itemSubscriptionType,
+          requestedDeliveryDate: item.selectedDate,
         };
       });
 

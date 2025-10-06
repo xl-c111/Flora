@@ -1,0 +1,158 @@
+/* DatePicker Component Styles */
+
+.date-picker-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem 0;
+  background-color: #f7fafc;
+  border: 2px dashed #cbd5e0;
+  border-radius: 8px;
+}
+
+/* Override react-day-picker default styles to match Flora design */
+
+.rdp {
+  --rdp-cell-size: 45px;
+  --rdp-accent-color: #48bb78;
+  --rdp-background-color: #f0fff4;
+  --rdp-accent-color-dark: #38a169;
+  --rdp-background-color-dark: #c6f6d5;
+  --rdp-outline: 2px solid var(--rdp-accent-color);
+  --rdp-outline-selected: 2px solid var(--rdp-accent-color);
+  margin: 0;
+}
+
+/* Month navigation */
+.rdp-caption {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 0 1rem 0;
+}
+
+.rdp-caption_label {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.rdp-nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.rdp-nav_button {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background-color: white;
+  color: #4a5568;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.rdp-nav_button:hover:not(:disabled) {
+  background-color: #edf2f7;
+  border-color: #cbd5e0;
+}
+
+.rdp-nav_button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Weekday headers */
+.rdp-head_cell {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #718096;
+  text-transform: uppercase;
+  padding: 0.5rem 0;
+}
+
+/* Day cells */
+.rdp-cell {
+  padding: 0.25rem;
+}
+
+.rdp-button {
+  width: var(--rdp-cell-size);
+  height: var(--rdp-cell-size);
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #2d3748;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.rdp-button:hover:not(:disabled):not(.rdp-day_selected) {
+  background-color: #edf2f7;
+  border-color: #cbd5e0;
+}
+
+/* Selected day */
+.rdp-day_selected {
+  background-color: var(--rdp-accent-color) !important;
+  color: white !important;
+  font-weight: 700;
+  border-color: var(--rdp-accent-color) !important;
+}
+
+.rdp-day_selected:hover {
+  background-color: var(--rdp-accent-color-dark) !important;
+}
+
+/* Today's date */
+.rdp-day_today:not(.rdp-day_selected) {
+  background-color: #fff5f5;
+  border-color: #feb2b2;
+  color: #c53030;
+  font-weight: 600;
+}
+
+/* Disabled days */
+.rdp-day_disabled {
+  opacity: 0.3;
+  cursor: not-allowed !important;
+}
+
+.rdp-day_disabled:hover {
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+
+/* Outside month days */
+.rdp-day_outside {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Footer message */
+.date-picker-footer {
+  margin: 1rem 0 0 0;
+  padding: 0.75rem 1rem;
+  background-color: #edf2f7;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #4a5568;
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .rdp {
+    --rdp-cell-size: 38px;
+  }
+
+  .rdp-caption_label {
+    font-size: 1rem;
+  }
+
+  .rdp-button {
+    font-size: 0.875rem;
+  }
+}
