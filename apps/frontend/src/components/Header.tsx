@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 import './Header.css';
@@ -7,14 +7,9 @@ import './Header.css';
 const Header: React.FC = () => {
   const { getItemCount } = useCart();
   const { user, login, logout, loading: authLoading } = useAuth();
-  const location = useLocation();
-
-  // Check if we're on the homepage
-  const isHomePage = location.pathname === '/' || location.pathname === '/products';
-  const headerClass = isHomePage ? 'flora-header' : 'flora-header flora-header-sticky';
 
   return (
-    <header className={headerClass}>
+    <header className="flora-header flora-header-sticky">
       {/* Top Navigation Bar */}
       <div className="top-nav">
         <div className="top-nav-links">

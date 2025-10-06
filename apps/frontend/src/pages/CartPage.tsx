@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { getImageUrl } from '../services/api';
 import { SUBSCRIPTION_OPTIONS } from '../config/subscriptionConfig';
@@ -6,6 +7,7 @@ import { format } from 'date-fns';
 import '../styles/CartPage.css';
 
 const CartPage: React.FC = () => {
+  const navigate = useNavigate();
   const {
     state: cartState,
     updateQuantity,
@@ -16,6 +18,10 @@ const CartPage: React.FC = () => {
   // Use cart state instead of local state
   const giftMessage = cartState.giftMessage || { to: '', from: '', message: '' };
   const [showSaveConfirmation, setShowSaveConfirmation] = React.useState(false);
+
+  const handleProductClick = (productId: number) => {
+    navigate(`/products/${productId}`);
+  };
 
   const handleCheckout = () => {
     // Save message to cart items if needed
@@ -94,7 +100,11 @@ const CartPage: React.FC = () => {
 
             return (
               <div key={item.id} className={`cart-item ${isSubscription ? 'subscription-item' : 'one-time-item'}`}>
-                <div className="item-image">
+                <div
+                  className="item-image"
+                  onClick={() => handleProductClick(item.product.id)}
+                  style={{ cursor: 'pointer' }}
+                >
                   <img src={getImageUrl(item.product.imageUrl)} alt={item.product.name} />
                   {isSubscription && (
                     <div className="subscription-badge">
@@ -104,7 +114,12 @@ const CartPage: React.FC = () => {
                 </div>
 
                 <div className="item-description">
-                  <h3>{item.product.name}</h3>
+                  <h3
+                    onClick={() => handleProductClick(item.product.id)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    {item.product.name}
+                  </h3>
                   <p>{item.product.description}</p>
                   {isSubscription && (
                     <div className="subscription-details">
@@ -170,35 +185,9 @@ const CartPage: React.FC = () => {
           })}
         </div>
 
-        {/* Cart Summary Section */}
-        <div className="cart-summary">
-          <div className="summary-section">
-            <h3>Order Summary</h3>
-            <div className="summary-line">
-              <span>Subtotal ({cartState.items.length} items)</span>
-              <span>{formatPrice(calculateTotal() + calculateSavings())}</span>
-            </div>
-            {calculateSavings() > 0 && (
-              <div className="summary-line savings-line">
-                <span>Subscription Savings</span>
-                <span className="savings-amount">-{formatPrice(calculateSavings())}</span>
-              </div>
-            )}
-            <div className="summary-line total-line">
-              <span>Total</span>
-              <span className="total-amount">{formatPrice(calculateTotal())}</span>
-            </div>
-            {calculateSavings() > 0 && (
-              <div className="savings-note">
-                🎉 You're saving {formatPrice(calculateSavings())} with subscriptions!
-              </div>
-            )}
-          </div>
-
-        </div>
-
-        {/* Optional Gift Message Section */}
-        <div className="cart-options">
+        {/* Message and Summary Section - Side by Side */}
+        <div className="cart-bottom-section">
+          {/* Optional Gift Message Section */}
           <div className="message-section">
             <h3>Leave a Message</h3>
             <div className="message-inputs">
@@ -225,6 +214,32 @@ const CartPage: React.FC = () => {
               <button className="save-message-btn" onClick={handleSaveMessage}>
                 {showSaveConfirmation ? '✓ Saved!' : 'Save'}
               </button>
+            </div>
+          </div>
+
+          {/* Cart Summary Section */}
+          <div className="cart-summary">
+            <div className="summary-section">
+              <h3>Order Summary</h3>
+              <div className="summary-line">
+                <span>Subtotal ({cartState.items.length} items)</span>
+                <span>{formatPrice(calculateTotal() + calculateSavings())}</span>
+              </div>
+              {calculateSavings() > 0 && (
+                <div className="summary-line savings-line">
+                  <span>Subscription Savings</span>
+                  <span className="savings-amount">-{formatPrice(calculateSavings())}</span>
+                </div>
+              )}
+              <div className="summary-line total-line">
+                <span>Total</span>
+                <span className="total-amount">{formatPrice(calculateTotal())}</span>
+              </div>
+              {calculateSavings() > 0 && (
+                <div className="savings-note">
+                  🎉 You're saving {formatPrice(calculateSavings())} with subscriptions!
+                </div>
+              )}
             </div>
           </div>
         </div>

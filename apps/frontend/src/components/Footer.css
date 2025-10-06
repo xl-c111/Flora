@@ -35,15 +35,15 @@
 /* Main Footer Content */
 .footer-main {
   display: flex;
-  justify-content: space-between;
   align-items: flex-end;
   max-width: 1200px;
-  gap: 2rem;
+  gap: 3rem;
+  justify-content: center;
 }
 
 /* Brand Name */
 .footer-brand {
-  flex: 1;
+  flex-shrink: 0;
 }
 
 .footer-brand h2 {
@@ -59,7 +59,6 @@
 .footer-links {
   display: flex;
   gap: 3rem;
-  flex: 1;
   justify-content: center;
 }
 
@@ -117,6 +116,7 @@
 
   .footer-main {
     flex-wrap: wrap;
+    gap: 1.5rem;
   }
 
   .footer-brand h2 {
@@ -141,17 +141,8 @@
     gap: 1.5rem;
   }
 
-  .footer-brand {
-    order: 1;
-  }
-
   .footer-links {
-    order: 2;
     gap: 2rem;
-  }
-
-  .social-icons {
-    order: 3;
   }
 
   .footer-brand h2 {
