@@ -74,15 +74,20 @@ export interface Order {
 }
 
 class OrderService {
-  private getAuthHeader = async () => {
-    // If user is logged in, we could add auth token here
-    // For now, supporting guest checkout
-    return {};
+  /**
+   * Create authorization headers from JWT token
+   * @param token - Optional JWT access token for authenticated requests
+   */
+  private getAuthHeader = (token?: string) => {
+    if (token) {
+      return { Authorization: `Bearer ${token}` };
+    }
+    return {}; // Guest checkout - no auth header
   };
 
-  async createOrder(orderData: CreateOrderData): Promise<Order> {
+  async createOrder(orderData: CreateOrderData, token?: string): Promise<Order> {
     try {
-      const headers = await this.getAuthHeader();
+      const headers = this.getAuthHeader(token);
       const response = await axios.post(`${API_URL}/orders`, orderData, {
         headers,
       });
@@ -93,9 +98,9 @@ class OrderService {
     }
   }
 
-  async getOrder(orderId: string): Promise<Order> {
+  async getOrder(orderId: string, token?: string): Promise<Order> {
     try {
-      const headers = await this.getAuthHeader();
+      const headers = this.getAuthHeader(token);
       const response = await axios.get(`${API_URL}/orders/${orderId}`, {
         headers,
       });
@@ -108,10 +113,11 @@ class OrderService {
 
   async confirmOrder(
     orderId: string,
-    paymentIntentId: string
+    paymentIntentId: string,
+    token?: string
   ): Promise<Order> {
     try {
-      const headers = await this.getAuthHeader();
+      const headers = this.getAuthHeader(token);
       const response = await axios.post(
         `${API_URL}/orders/${orderId}/confirm`,
         { paymentIntentId },
@@ -124,9 +130,15 @@ class OrderService {
     }
   }
 
-  async getUserOrders(page: number = 1, limit: number = 10): Promise<any> {
+  /**
+   * Get paginated order history for authenticated user
+   * @param token - JWT access token (required for this endpoint)
+   * @param page - Page number (default: 1)
+   * @param limit - Items per page (default: 10)
+   */
+  async getUserOrders(token: string, page: number = 1, limit: number = 10): Promise<any> {
     try {
-      const headers = await this.getAuthHeader();
+      const headers = this.getAuthHeader(token);
       const response = await axios.get(`${API_URL}/orders/user`, {
         params: { page, limit },
         headers,
