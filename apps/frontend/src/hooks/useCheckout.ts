@@ -43,7 +43,7 @@ export const useCheckout = (): UseCheckoutReturn => {
   const [error, setError] = useState<string | null>(null);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const { getAccessToken } = useAuth();
+  const { user, getAccessToken } = useAuth();
 
   const createOrderAndPaymentIntent = async (
     formData: CheckoutFormData,
@@ -88,9 +88,14 @@ export const useCheckout = (): UseCheckoutReturn => {
         };
       });
 
+      // Get user token if logged in
+      const token = await getAccessToken();
+
       const orderData: CreateOrderData = {
         purchaseType: 'ONE_TIME', // First order is always one-time, subscriptions are for future
-        guestEmail: formData.guestEmail || 'guest@example.com',
+        // If user is logged in, use their ID; otherwise guest checkout
+        userId: user?.sub,  // Auth0 user ID
+        guestEmail: formData.guestEmail || user?.email || 'guest@example.com',
         guestPhone: formData.recipientPhone || '+1234567890',
         items: allItems,
         shippingAddress: {
@@ -108,7 +113,8 @@ export const useCheckout = (): UseCheckoutReturn => {
       };
 
       console.log('📦 Creating order with all items:', JSON.stringify(orderData, null, 2));
-      const order = await orderService.createOrder(orderData);
+      console.log('🔑 User logged in:', !!user, 'User ID:', user?.sub);
+      const order = await orderService.createOrder(orderData, token);
       console.log('Order created:', order);
 
       totalOrderId = order.id;
@@ -126,7 +132,6 @@ export const useCheckout = (): UseCheckoutReturn => {
       // Create subscription records for future recurring deliveries
       // (The first delivery is already included in the order above)
       if (subscriptionItems.length > 0) {
-        const token = await getAccessToken();
         if (!token) {
           throw new Error('SUBSCRIPTION_AUTH_REQUIRED');
         }

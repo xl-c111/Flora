@@ -19,6 +19,7 @@ import subscriptionRoutes from "./routes/subscriptions";
 import paymentRoutes from "./routes/payments";
 import webhookRoutes from "./routes/webhooks";
 import deliveryInfoRoutes from "./routes/deliveryInfo";
+import userRoutes from "./routes/users";
 
 // Initialize Express app
 const app: Application = express();
@@ -43,6 +44,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/subscriptions", subscriptionRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/delivery", deliveryInfoRoutes);
+app.use("/api/users", userRoutes);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
@@ -66,6 +68,7 @@ app.get("/", (req, res) => {
       subscriptions: "/api/subscriptions",
       payments: "/api/payments",
       webhooks: "/api/webhooks",
+      users: "/api/users",
     },
   });
 });

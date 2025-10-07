@@ -8,6 +8,8 @@ import Footer from "./components/Footer";
 import ProductsPage from "./pages/ProductsPage";
 import ProductDetail from "./pages/ProductDetail";
 import SubscriptionsPage from "./pages/SubscriptionsPage";
+import UserProfile from "./pages/UserProfile";
+import OrderHistory from "./pages/OrderHistory";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/Checkout";
 import OrderConfirmationPage from "./pages/OrderConfirmationPage";
@@ -112,6 +114,8 @@ function AppContent({ useAPI }: any) {
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/subscriptions" element={<SubscriptionsPage />} />
+          <Route path="/profile" element={<UserProfile />} />
+          <Route path="/orders" element={<OrderHistory />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/order-confirmation/:orderId" element={<OrderConfirmationPage />} />
