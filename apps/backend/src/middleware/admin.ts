@@ -8,7 +8,7 @@ export const adminMiddleware = async (
 ) => {
   try {
     // User should already be authenticated by authMiddleware
-    if (!req.user) {
+    if (!req.user || !req.user.email) {
       return res.status(401).json({
         success: false,
         error: 'Authentication required'

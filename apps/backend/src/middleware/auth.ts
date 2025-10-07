@@ -14,8 +14,11 @@ import jwksClient from 'jwks-rsa';
  */
 export interface AuthRequest extends Request {
   user?: {
-    id: string;      // Auth0 user ID (from 'sub' claim)
-    email?: string;  // User's email address
+    id: string;              // Auth0 user ID (from 'sub' claim)
+    email?: string;          // User's email address
+    name?: string;           // User's full name
+    picture?: string;        // User's profile picture URL
+    email_verified?: boolean; // Whether email is verified
   };
 }
 
@@ -81,10 +84,20 @@ function verifyToken(token: string, cb: (err: any, decoded?: JwtPayload) => void
 /**
  * Extracts user info from verified JWT token payload
  */
-function attachUser(decoded: JwtPayload): { id: string; email?: string } {
+function attachUser(decoded: JwtPayload): {
+  id: string;
+  email?: string;
+  name?: string;
+  picture?: string;
+  email_verified?: boolean;
+} {
+  const payload = decoded as any;
   return {
     id: decoded.sub as string, // Auth0 user ID (format: "auth0|123456" or "google-oauth2|123456")
-    email: (decoded as any).email ?? (decoded as any)['https://your-app/email'], // Email from token
+    email: payload.email ?? payload['https://your-app/email'], // Email from token
+    name: payload.name ?? payload['https://your-app/name'], // Full name from token
+    picture: payload.picture ?? payload['https://your-app/picture'], // Profile picture URL
+    email_verified: payload.email_verified ?? payload['https://your-app/email_verified'], // Email verification status
   };
 }
 
@@ -104,6 +117,7 @@ export const authMiddleware = (
   // Check if Authorization header exists and has correct format
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     console.warn('⚠️ Missing or malformed authorization header');
+    console.warn('   Received header:', authHeader);
     res.status(401).json({
       error: 'Missing or invalid authorization header',
       message: 'Please provide a valid Bearer token'
@@ -113,21 +127,39 @@ export const authMiddleware = (
 
   // Extract token from "Bearer <token>" format
   const token = authHeader.split(' ')[1];
+  console.log('🔍 Verifying token for route:', req.method, req.path);
+  console.log('   Token preview:', token.substring(0, 30) + '...');
+  console.log('   Expected audience:', process.env.AUTH0_AUDIENCE);
+  console.log('   Expected issuer:', `https://${process.env.AUTH0_DOMAIN}/`);
 
   // Verify the JWT token
   verifyToken(token, (err, decoded) => {
     if (err || !decoded) {
-      console.warn('⚠️ Token verification failed for protected route');
+      console.error('⚠️ Token verification failed for protected route');
+      console.error('   Route:', req.method, req.path);
+      console.error('   Error:', err?.message);
+      console.error('   Error name:', err?.name);
       res.status(401).json({
         error: 'Invalid token',
-        message: 'Token is expired, malformed, or not signed by Auth0'
+        message: 'Token is expired, malformed, or not signed by Auth0',
+        details: process.env.NODE_ENV === 'development' ? err?.message : undefined
       });
       return;
     }
 
+    // Log token claims for debugging
+    console.log('📋 Token claims received:', JSON.stringify({
+      sub: decoded.sub,
+      email: (decoded as any).email,
+      name: (decoded as any).name,
+      email_verified: (decoded as any).email_verified,
+      allClaims: Object.keys(decoded)
+    }, null, 2));
+
     // Attach user info to request for use in route handlers
     req.user = attachUser(decoded);
     console.log('✅ User authenticated:', req.user.id);
+    console.log('   Email extracted:', req.user.email || 'NO EMAIL');
     next();
   });
 };

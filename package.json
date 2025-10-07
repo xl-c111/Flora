@@ -24,13 +24,7 @@
     "docker:restart-frontend": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml restart frontend",
     "docker:restart-backend": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml restart backend",
     "docker:clean": "docker-compose down -v",
-    "docker:clean-project": "docker-compose down --rmi all -v",
-    "docker:windows": "docker-compose -f docker-compose.yml -f docker-compose.windows.yml up -d",
-    "docker:windows:build": "docker-compose -f docker-compose.yml -f docker-compose.windows.yml up --build",
-    "docker:windows:logs": "docker-compose -f docker-compose.yml -f docker-compose.windows.yml logs -f",
-    "docker:windows:stop": "docker-compose -f docker-compose.yml -f docker-compose.windows.yml down",
-    "docker:windows:restart-backend": "docker-compose -f docker-compose.yml -f docker-compose.windows.yml restart backend",
-    "docker:windows:restart-frontend": "docker-compose -f docker-compose.yml -f docker-compose.windows.yml restart frontend"
+    "docker:clean-project": "docker-compose down --rmi all -v"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

@@ -3,7 +3,7 @@ import { SubscriptionController } from '../controllers/SubscriptionController';
 import { authMiddleware } from '../middleware/auth';
 import { validateSubscription } from '../middleware/validation/subscriptionValidation';
 
-const router = Router();
+const router: Router = Router();
 const subscriptionController = new SubscriptionController();
 
 // All subscription routes require authentication
@@ -14,6 +14,19 @@ router.post(
   '/',
   validateSubscription,
   subscriptionController.createSubscription
+);
+
+// NEW: Create subscription with Stripe payment setup (safe addition)
+router.post(
+  '/with-payment',
+  validateSubscription,
+  subscriptionController.createSubscriptionWithPayment
+);
+
+// Create subscription from product (convenience endpoint for frontend)
+router.post(
+  '/from-product',
+  subscriptionController.createSubscriptionFromProduct
 );
 
 // Get user's subscriptions

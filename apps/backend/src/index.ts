@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express, { Application } from "express";
+import path from "path";
 import { prisma } from "./config/database";
 
 // Middleware
@@ -13,11 +14,12 @@ import { notFoundHandler } from "./middleware/notFoundHandler";
 // Routes
 import productRoutes from "./routes/products";
 import categoryRoutes from "./routes/categories";
-import authTestRoutes from "./routes/auth-test";
 import orderRoutes from "./routes/orders";
 import subscriptionRoutes from "./routes/subscriptions";
 import paymentRoutes from "./routes/payments";
 import webhookRoutes from "./routes/webhooks";
+import deliveryInfoRoutes from "./routes/deliveryInfo";
+import userRoutes from "./routes/users";
 
 // Initialize Express app
 const app: Application = express();
@@ -32,13 +34,17 @@ app.use("/api/webhooks", webhookRoutes);
 // JSON parsing for all other routes
 app.use(express.json());
 
+// Serve static images from the images directory
+app.use('/images', express.static(path.join(__dirname, '../images')));
+
 // Routes
 app.use("/api/products", productRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/subscriptions", subscriptionRoutes);
 app.use("/api/payments", paymentRoutes);
-app.use("/api/auth-test", authTestRoutes);
+app.use("/api/delivery", deliveryInfoRoutes);
+app.use("/api/users", userRoutes);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
@@ -62,6 +68,7 @@ app.get("/", (req, res) => {
       subscriptions: "/api/subscriptions",
       payments: "/api/payments",
       webhooks: "/api/webhooks",
+      users: "/api/users",
     },
   });
 });
@@ -83,4 +90,6 @@ process.on("SIGINT", async () => {
   process.exit(0);
 });
 
+// Export for use in routes and tests
+export { prisma } from "./config/database";
 export default app;

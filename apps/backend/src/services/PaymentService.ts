@@ -90,6 +90,77 @@ export class PaymentService {
     return subscription;
   }
 
+  // NEW: Safe subscription creation with payment setup for Flora subscriptions
+  async createSubscriptionWithPaymentSetup(data: {
+    email: string;
+    name: string;
+    subscriptionType: 'RECURRING_WEEKLY' | 'RECURRING_MONTHLY' | 'SPONTANEOUS';
+    floraSubscriptionId: string;
+    metadata?: Record<string, string>;
+  }): Promise<{
+    subscription: Stripe.Subscription;
+    clientSecret: string;
+  }> {
+    const { email, name, subscriptionType, floraSubscriptionId, metadata } = data;
+
+    // Step 1: Create or get customer
+    let customer: Stripe.Customer;
+    const existingCustomers = await stripe.customers.list({
+      email: email,
+      limit: 1,
+    });
+
+    if (existingCustomers.data.length > 0) {
+      customer = existingCustomers.data[0];
+    } else {
+      customer = await stripe.customers.create({
+        email,
+        name,
+        metadata: {
+          floraSubscriptionId,
+          ...metadata,
+        },
+      });
+    }
+
+    // Step 2: Get price ID for subscription type
+    const priceId = this.getSubscriptionPriceId(subscriptionType);
+
+    // Step 3: Create subscription with payment setup
+    const subscription = await stripe.subscriptions.create({
+      customer: customer.id,
+      items: [{ price: priceId }],
+      payment_behavior: 'default_incomplete',
+      payment_settings: { save_default_payment_method: 'on_subscription' },
+      expand: ['latest_invoice.payment_intent'],
+      metadata: {
+        floraSubscriptionId,
+        subscriptionType,
+        ...metadata,
+      },
+    });
+
+    const invoice = subscription.latest_invoice as Stripe.Invoice;
+    const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
+
+    return {
+      subscription,
+      clientSecret: paymentIntent.client_secret!,
+    };
+  }
+
+  // Helper: Map Flora subscription types to Stripe price IDs
+  private getSubscriptionPriceId(subscriptionType: string): string {
+    // TODO: Replace with actual Stripe price IDs once products are created
+    const priceMapping = {
+      'RECURRING_WEEKLY': process.env.STRIPE_WEEKLY_PRICE_ID || 'price_weekly_placeholder',
+      'RECURRING_MONTHLY': process.env.STRIPE_MONTHLY_PRICE_ID || 'price_monthly_placeholder',
+      'SPONTANEOUS': process.env.STRIPE_SPONTANEOUS_PRICE_ID || 'price_spontaneous_placeholder',
+    };
+
+    return priceMapping[subscriptionType as keyof typeof priceMapping];
+  }
+
   async cancelSubscription(localSubscriptionId: string): Promise<Stripe.Subscription> {
     const localSubscription = await prisma.subscription.findUnique({
       where: { id: localSubscriptionId },
@@ -175,6 +246,7 @@ export class PaymentService {
     let orderId = paymentIntent.metadata.orderId;
     console.log(`💳 Payment intent succeeded: ${paymentIntent.id}, orderId: ${orderId || "NOT SET"}`);
 
+
     // FOR DEMO: Create a test order if none exists
     if (!orderId) {
       console.log("🎯 Creating demo order for webhook testing...");
@@ -222,10 +294,12 @@ export class PaymentService {
           amountCents: paymentIntent.amount,
           currency: paymentIntent.currency.toUpperCase(),
           stripePaymentIntentId: paymentIntent.id,
+          stripePaymentMethodId: paymentIntent.payment_method as string | undefined,
           status: "succeeded",
           paidAt: new Date(),
         },
         update: {
+          stripePaymentMethodId: paymentIntent.payment_method as string | undefined,
           status: "succeeded",
           paidAt: new Date(),
         },
@@ -399,10 +473,12 @@ export class PaymentService {
           amountCents: paymentIntent.amount,
           currency: paymentIntent.currency.toUpperCase(),
           stripePaymentIntentId: paymentIntentId,
+          stripePaymentMethodId: paymentIntent.payment_method as string | undefined,
           status: "succeeded",
           paidAt: new Date(),
         },
         update: {
+          stripePaymentMethodId: paymentIntent.payment_method as string | undefined,
           status: "succeeded",
           paidAt: new Date(),
         },
@@ -419,6 +495,57 @@ export class PaymentService {
     } catch (error) {
       console.error("Error retrieving payment:", error);
       return null;
+    }
+  }
+
+  // Sync payment details from Stripe to database
+  async syncPaymentDetails(orderId: string): Promise<void> {
+    try {
+      // Get the payment intent from the order's payments
+      const order = await prisma.order.findUnique({
+        where: { id: orderId },
+        include: {
+          payments: true,
+        },
+      });
+
+      if (!order || !order.payments || order.payments.length === 0) {
+        console.log('No payments found for order:', orderId);
+        return;
+      }
+
+      const payment = order.payments[0];
+
+      // If no Stripe payment intent ID, skip
+      if (!payment.stripePaymentIntentId) {
+        console.log('No Stripe payment intent ID found');
+        return;
+      }
+
+      // If payment already has payment method ID, skip
+      if (payment.stripePaymentMethodId) {
+        console.log('Payment already has payment method ID');
+        return;
+      }
+
+      // Retrieve payment intent from Stripe
+      const paymentIntent = await stripe.paymentIntents.retrieve(payment.stripePaymentIntentId);
+
+      if (!paymentIntent.payment_method) {
+        console.log('No payment method attached to payment intent');
+        return;
+      }
+
+      // Update payment record with payment method ID
+      await prisma.payment.update({
+        where: { id: payment.id },
+        data: {
+          stripePaymentMethodId: paymentIntent.payment_method as string,
+        },
+      });
+      console.log(`✅ Synced payment method ID for order ${orderId}`);
+    } catch (error) {
+      console.error('Error syncing payment details:', error);
     }
   }
 

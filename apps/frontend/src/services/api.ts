@@ -4,10 +4,27 @@ import type { Product, ProductResponse } from '../types';
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
+// Backend server URL (without /api suffix) for serving static files like images
+const BACKEND_URL = API_BASE_URL.replace('/api', '');
+
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,
 });
+
+/**
+ * Convert relative image URL to absolute URL
+ * @param imageUrl - Relative path like "/images/Roses.jpg"
+ * @returns Absolute URL like "http://localhost:3001/images/Roses.jpg"
+ */
+export const getImageUrl = (imageUrl: string): string => {
+  // If already absolute URL (starts with http/https), return as-is
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    return imageUrl;
+  }
+  // Convert relative path to absolute URL
+  return `${BACKEND_URL}${imageUrl}`;
+};
 
 export const apiService = {
   // Products

@@ -1,10 +1,10 @@
-import express from "express";
+import express, { Router } from "express";
 import dotenv from "dotenv";
 import { PaymentService } from "../services/PaymentService";
 
 dotenv.config();
 
-const router = express.Router();
+const router: Router = express.Router();
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
 // Enhanced webhook endpoint using PaymentService

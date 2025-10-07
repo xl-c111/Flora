@@ -1,0 +1,185 @@
+.flora-footer {
+  background: #d4dcd4;
+  padding: 2rem 3rem 1.5rem;
+  width: 100%;
+  color: #333;
+}
+
+/* Acknowledgment Section */
+.acknowledgment-section {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+  max-width: 1200px;
+}
+
+.flags {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.aboriginal-flag,
+.torres-strait-flag {
+  border: 1px solid #999;
+}
+
+.acknowledgment-text {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #333;
+  margin: 0;
+}
+
+/* Main Footer Content */
+.footer-main {
+  display: flex;
+  align-items: flex-end;
+  max-width: 1200px;
+  gap: 3rem;
+  justify-content: center;
+}
+
+/* Brand Name */
+.footer-brand {
+  flex-shrink: 0;
+}
+
+.footer-brand h2 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 2.5rem;
+  font-weight: 400;
+  margin: 0;
+  color: #333;
+  font-style: italic;
+}
+
+/* Navigation Links */
+.footer-links {
+  display: flex;
+  gap: 3rem;
+  justify-content: center;
+}
+
+.footer-links-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.footer-link {
+  color: #333;
+  text-decoration: underline;
+  font-size: 0.9rem;
+  transition: opacity 0.2s ease;
+}
+
+.footer-link:hover {
+  opacity: 0.7;
+}
+
+/* Social Media Icons */
+.social-icons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.social-icon {
+  width: 45px;
+  height: 45px;
+  background: #000;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: background 0.2s ease;
+}
+
+.social-icon:hover {
+  background: #333;
+}
+
+.social-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .flora-footer {
+    padding: 1.5rem 2rem 1rem;
+  }
+
+  .footer-main {
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .footer-brand h2 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .flora-footer {
+    padding: 1.5rem 1.5rem 1rem;
+  }
+
+  .acknowledgment-section {
+    flex-direction: column;
+    margin-bottom: 2rem;
+  }
+
+  .footer-main {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .footer-links {
+    gap: 2rem;
+  }
+
+  .footer-brand h2 {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .flora-footer {
+    padding: 1rem;
+  }
+
+  .acknowledgment-text {
+    font-size: 0.8rem;
+  }
+
+  .footer-links {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .footer-link {
+    font-size: 0.85rem;
+  }
+
+  .footer-brand h2 {
+    font-size: 1.5rem;
+  }
+
+  .social-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .social-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+}
