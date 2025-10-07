@@ -17,9 +17,9 @@ export const SUBSCRIPTION_OPTIONS: SubscriptionOption[] = [
   },
   {
     frequency: 'fortnightly',
-    discountPercentage: 12,
+    discountPercentage: 18,
     label: 'Fortnightly Delivery',
-    description: 'Save 12% with bi-weekly deliveries'
+    description: 'Save 18% with bi-weekly deliveries'
   },
   {
     frequency: 'monthly',
