@@ -1,7 +1,7 @@
-import express from 'express';
+import express, { Router } from 'express';
 import { prisma } from '../index';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // GET /api/categories - Get all categories
 router.get('/', async (req, res) => {

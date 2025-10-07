@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "type-check": "tsc -b --noEmit",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -18,6 +19,7 @@
     "clsx": "^2.0.0",
     "date-fns": "^3.0.0",
     "react": "^19.1.1",
+    "react-day-picker": "^9.4.4",
     "react-dom": "^19.1.1",
     "react-hook-form": "^7.48.2",
     "react-query": "^3.39.3",

@@ -1,162 +1,177 @@
 import { prisma } from '../config/database';
-import { User, Address } from '@prisma/client';
+import { User, Occasion, Color, Mood } from '@prisma/client';
+
+// Interface for Auth0 user data (from JWT token)
+export interface Auth0UserData {
+  sub: string; // Auth0 user ID (e.g., "google-oauth2|102320438631690408711")
+  email: string;
+  name?: string;
+  picture?: string;
+  email_verified?: boolean;
+}
+
+// Interface for updating user profile
+export interface UpdateUserData {
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+}
+
+// Interface for user preferences
+export interface UserPreferences {
+  favoriteOccasions?: Occasion[];
+  favoriteColors?: Color[];
+  favoriteMoods?: Mood[];
+}
 
 export class UserService {
-  // Get user by ID
-  async getUserById(id: string): Promise<User | null> {
-    return await prisma.user.findUnique({
-      where: { id },
-      include: {
-        addresses: true,
-      },
-    });
-  }
+  /**
+   * Sync user from Auth0 - Create or update user profile
+   * Called when user logs in to ensure database has latest Auth0 data
+   */
+  async syncUser(auth0Data: Auth0UserData): Promise<User> {
+    console.log('👤 Syncing user from Auth0:', auth0Data.sub);
 
-  // Create or update user from Supabase auth
-  async upsertUser(userData: {
-    id: string;
-    email: string;
-    firstName?: string;
-    lastName?: string;
-    phone?: string;
-  }): Promise<User> {
-    return await prisma.user.upsert({
-      where: { email: userData.email },
+    // Parse name into firstName/lastName if available
+    let firstName: string | null = null;
+    let lastName: string | null = null;
+
+    if (auth0Data.name) {
+      const nameParts = auth0Data.name.split(' ');
+      firstName = nameParts[0] || null;
+      lastName = nameParts.slice(1).join(' ') || null;
+    }
+
+    // Upsert user (create if not exists, update if exists)
+    const user = await prisma.user.upsert({
+      where: { id: auth0Data.sub },
       update: {
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-        phone: userData.phone,
+        email: auth0Data.email,
+        // Only update name if we have new data
+        ...(firstName && { firstName }),
+        ...(lastName && { lastName }),
+        updatedAt: new Date(),
       },
       create: {
-        id: userData.id,
-        email: userData.email,
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-        phone: userData.phone,
-      },
-    });
-  }
-
-  // Update user profile
-  async updateUser(id: string, updateData: Partial<User>): Promise<User> {
-    return await prisma.user.update({
-      where: { id },
-      data: updateData,
-    });
-  }
-
-  // Create user address
-  async createAddress(
-    userId: string,
-    addressData: {
-      label?: string;
-      firstName: string;
-      lastName: string;
-      company?: string;
-      street1: string;
-      street2?: string;
-      city: string;
-      state: string;
-      zipCode: string;
-      phone?: string;
-      isDefault?: boolean;
-    }
-  ): Promise<Address> {
-    // If this is set as default, unset other default addresses
-    if (addressData.isDefault) {
-      await prisma.address.updateMany({
-        where: { userId },
-        data: { isDefault: false },
-      });
-    }
-
-    return await prisma.address.create({
-      data: {
-        userId,
-        ...addressData,
-      },
-    });
-  }
-
-  // Get user addresses
-  async getUserAddresses(userId: string): Promise<Address[]> {
-    return await prisma.address.findMany({
-      where: { userId },
-      orderBy: [{ isDefault: 'desc' }, { createdAt: 'desc' }],
-    });
-  }
-
-  // Update address
-  async updateAddress(
-    addressId: string,
-    userId: string,
-    updateData: Partial<Address>
-  ): Promise<Address> {
-    // Verify address belongs to user
-    const address = await prisma.address.findFirst({
-      where: { id: addressId, userId },
-    });
-
-    if (!address) {
-      throw new Error('Address not found');
-    }
-
-    // If setting as default, unset other defaults
-    if (updateData.isDefault) {
-      await prisma.address.updateMany({
-        where: { userId },
-        data: { isDefault: false },
-      });
-    }
-
-    return await prisma.address.update({
-      where: { id: addressId },
-      data: updateData,
-    });
-  }
-
-  // Delete address
-  async deleteAddress(addressId: string, userId: string): Promise<void> {
-    // Verify address belongs to user
-    const address = await prisma.address.findFirst({
-      where: { id: addressId, userId },
-    });
-
-    if (!address) {
-      throw new Error('Address not found');
-    }
-
-    await prisma.address.delete({
-      where: { id: addressId },
-    });
-  }
-
-  // Get user preferences for recommendations
-  async getUserPreferences(userId: string) {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        favoriteOccasions: true,
-        favoriteColors: true,
-        favoriteMoods: true,
+        id: auth0Data.sub, // Use Auth0 ID as primary key
+        email: auth0Data.email,
+        firstName,
+        lastName,
       },
     });
 
+    console.log('✅ User synced:', user.id);
     return user;
   }
 
-  // Update user preferences
-  async updateUserPreferences(
-    userId: string,
-    preferences: {
-      favoriteOccasions?: string[];
-      favoriteColors?: string[];
-      favoriteMoods?: string[];
-    }
-  ) {
-    return await prisma.user.update({
+  /**
+   * Get user by ID with all relationships
+   */
+  async getUser(userId: string): Promise<User | null> {
+    return await prisma.user.findUnique({
       where: { id: userId },
-      data: preferences,
+      include: {
+        addresses: {
+          orderBy: { createdAt: 'desc' },
+        },
+      },
     });
+  }
+
+  /**
+   * Update user profile (firstName, lastName, phone)
+   */
+  async updateUser(userId: string, data: UpdateUserData): Promise<User> {
+    console.log('📝 Updating user profile:', userId);
+
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        ...data,
+        updatedAt: new Date(),
+      },
+      include: {
+        addresses: {
+          orderBy: { createdAt: 'desc' },
+        },
+      },
+    });
+
+    console.log('✅ User profile updated');
+    return user;
+  }
+
+  /**
+   * Update user preferences (favorite occasions, colors, moods)
+   */
+  async updatePreferences(
+    userId: string,
+    preferences: UserPreferences
+  ): Promise<User> {
+    console.log('🎨 Updating user preferences:', userId);
+
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        ...preferences,
+        updatedAt: new Date(),
+      },
+    });
+
+    console.log('✅ User preferences updated');
+    return user;
+  }
+
+  /**
+   * Get user statistics (order count, subscription count, etc.)
+   */
+  async getUserStats(userId: string): Promise<{
+    orderCount: number;
+    subscriptionCount: number;
+    addressCount: number;
+    totalSpentCents: number;
+  }> {
+    const [orderCount, subscriptionCount, addressCount, orders] =
+      await Promise.all([
+        prisma.order.count({ where: { userId } }),
+        prisma.subscription.count({ where: { userId } }),
+        prisma.address.count({ where: { userId } }),
+        prisma.order.findMany({
+          where: { userId },
+          select: { totalCents: true },
+        }),
+      ]);
+
+    const totalSpentCents = orders.reduce(
+      (sum, order) => sum + order.totalCents,
+      0
+    );
+
+    return {
+      orderCount,
+      subscriptionCount,
+      addressCount,
+      totalSpentCents,
+    };
+  }
+
+  /**
+   * Delete user (soft delete - for GDPR compliance)
+   * In production, this would archive user data instead of hard delete
+   */
+  async deleteUser(userId: string): Promise<void> {
+    console.log('🗑️ Deleting user:', userId);
+
+    // In production, you'd want to:
+    // 1. Cancel all active subscriptions
+    // 2. Archive orders
+    // 3. Anonymize user data
+    // For now, we'll just delete (be careful in production!)
+
+    await prisma.user.delete({
+      where: { id: userId },
+    });
+
+    console.log('✅ User deleted');
   }
 }

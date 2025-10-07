@@ -1,13 +1,16 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { SubscriptionService } from '../services/SubscriptionService';
+import { PaymentService } from '../services/PaymentService';
 import { ApiResponse } from '../types/api';
 import { AuthRequest } from '../middleware/auth';
 
 export class SubscriptionController {
   private subscriptionService: SubscriptionService;
+  private paymentService: PaymentService;
 
   constructor() {
     this.subscriptionService = new SubscriptionService();
+    this.paymentService = new PaymentService();
   }
 
   // Create new subscription (requires login)
@@ -25,6 +28,11 @@ export class SubscriptionController {
       }
 
       const subscriptionData = req.body;
+
+      // Add educational logging for debugging
+      console.log('📝 Creating subscription for user:', userId);
+      console.log('📋 Subscription data:', subscriptionData);
+
       const subscription = await this.subscriptionService.createSubscription({
         ...subscriptionData,
         userId,
@@ -36,11 +44,85 @@ export class SubscriptionController {
         message: 'Subscription created successfully',
       };
       res.status(201).json(response);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Create subscription error:', error);
       res.status(500).json({
         success: false,
-        error: 'Failed to create subscription',
+        error: error.message || 'Failed to create subscription',
+        details: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+      });
+    }
+  };
+
+  // NEW: Create subscription with Stripe payment setup (safe addition)
+  createSubscriptionWithPayment = async (
+    req: AuthRequest,
+    res: Response
+  ): Promise<void> => {
+    try {
+      const userId = req.user?.id;
+      const userEmail = req.user?.email;
+
+      if (!userId || !userEmail) {
+        res
+          .status(401)
+          .json({ success: false, error: 'Authentication required for subscription payments' });
+        return;
+      }
+
+      const subscriptionData = req.body;
+
+      console.log('🔄 Creating subscription with payment setup for user:', userId);
+      console.log('📋 Subscription data:', subscriptionData);
+
+      // Feature flag check - fallback to regular subscription if payment disabled
+      if (process.env.ENABLE_SUBSCRIPTION_PAYMENTS !== 'true') {
+        console.log('⚠️ Subscription payments disabled, falling back to regular subscription');
+        return this.createSubscription(req, res);
+      }
+
+      // Step 1: Create Flora subscription (without payment)
+      const floraSubscription = await this.subscriptionService.createSubscription({
+        ...subscriptionData,
+        userId,
+      });
+
+      // Step 2: Create Stripe subscription with payment setup
+      // Use email prefix as customer name since we don't track user profiles
+      const customerName = userEmail.split('@')[0] || 'Flora Customer';
+
+      const stripeResult = await this.paymentService.createSubscriptionWithPaymentSetup({
+        email: userEmail,
+        name: customerName,
+        subscriptionType: subscriptionData.type,
+        floraSubscriptionId: floraSubscription.id,
+        metadata: {
+          floraUserId: userId,
+          subscriptionType: subscriptionData.type,
+        },
+      });
+
+      // Step 3: Update Flora subscription with Stripe subscription ID
+      await this.subscriptionService.updateSubscription(floraSubscription.id, {
+        stripeSubscriptionId: stripeResult.subscription.id,
+      });
+
+      const response: ApiResponse = {
+        success: true,
+        data: {
+          subscription: floraSubscription,
+          clientSecret: stripeResult.clientSecret,
+          stripeSubscriptionId: stripeResult.subscription.id,
+        },
+        message: 'Subscription created with payment setup successfully',
+      };
+
+      res.status(201).json(response);
+    } catch (error) {
+      console.error('Create subscription with payment error:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to create subscription with payment setup',
       });
     }
   };
@@ -322,6 +404,77 @@ export class SubscriptionController {
       res.status(500).json({
         success: false,
         error: 'Failed to schedule delivery',
+      });
+    }
+  };
+
+  // Convenience method: Create subscription from a product page
+  // This is perfect for your UI flow where users select a product and choose subscription
+  createSubscriptionFromProduct = async (
+    req: AuthRequest,
+    res: Response
+  ): Promise<void> => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, error: 'Login required' });
+        return;
+      }
+
+      const {
+        productId,
+        quantity = 1,
+        subscriptionType,
+        shippingAddress,
+        deliveryType,
+        deliveryNotes
+      } = req.body;
+
+      console.log(`🛍️ Creating subscription for product ${productId} with type ${subscriptionType}`);
+
+      // Validate required fields
+      if (!productId || !subscriptionType || !shippingAddress) {
+        res.status(400).json({
+          success: false,
+          error: 'Missing required fields: productId, subscriptionType, shippingAddress',
+        });
+        return;
+      }
+
+      // Validate shippingAddress has required fields
+      const requiredAddressFields = ['firstName', 'lastName', 'street1', 'city', 'state', 'zipCode'];
+      const missingFields = requiredAddressFields.filter(field => !shippingAddress[field]);
+      if (missingFields.length > 0) {
+        res.status(400).json({
+          success: false,
+          error: `Missing address fields: ${missingFields.join(', ')}`,
+        });
+        return;
+      }
+
+      console.log(`👤 Creating subscription for Auth0 user: ${userId}`);
+
+      // Create subscription using simplified service method
+      const subscription = await this.subscriptionService.createSubscription({
+        userId,
+        type: subscriptionType,
+        shippingAddress,
+        deliveryType,
+        deliveryNotes,
+        items: [{ productId, quantity }],
+      });
+
+      const response: ApiResponse = {
+        success: true,
+        data: subscription,
+        message: 'Subscription created successfully from product',
+      };
+      res.status(201).json(response);
+    } catch (error) {
+      console.error('Create subscription from product error:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to create subscription from product',
       });
     }
   };

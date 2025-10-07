@@ -241,7 +241,6 @@ model Address {
 
   user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   orders      Order[] @relation("ShippingAddress")
-  subscriptions Subscription[] @relation("SubscriptionAddress")
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -290,6 +289,7 @@ model Order {
   shippingCity      String
   shippingState     String
   shippingZipCode   String
+  shippingCountry   String        @default("AU")
   shippingPhone     String?
 
   // Relationships
@@ -312,6 +312,10 @@ model OrderItem {
   quantity      Int
   priceCents    Int     // Price at time of order
 
+  // Item-specific delivery and subscription details
+  subscriptionType      SubscriptionType?  // Item's subscription type (if subscription)
+  requestedDeliveryDate DateTime?          // Item's requested delivery date
+
   order         Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product       Product @relation(fields: [productId], references: [id])
 
@@ -328,26 +332,33 @@ model Subscription {
   status          SubscriptionStatus @default(ACTIVE)
 
   // Subscription details
-  frequency       Int?              // For recurring: weeks/months between deliveries
   nextDeliveryDate DateTime?        // When next delivery is scheduled
   lastDeliveryDate DateTime?        // When last delivery was made
 
   // Stripe subscription reference
   stripeSubscriptionId String?      @unique
 
-  // Default delivery preferences
+  // Delivery preferences
   deliveryType    DeliveryType      @default(STANDARD)
-  addressId       String
   deliveryNotes   String?
 
-  // Subscription items (what they want to receive)
-  items           SubscriptionItem[]
+  // Inline shipping address (like Order model - no separate Address table)
+  shippingFirstName String
+  shippingLastName  String
+  shippingStreet1   String
+  shippingStreet2   String?
+  shippingCity      String
+  shippingState     String
+  shippingZipCode   String
+  shippingCountry   String        @default("AU")
+  shippingPhone     String?
 
-  // Generated orders from this subscription
+  // Subscription items and generated orders
+  items           SubscriptionItem[]
   orders          Order[]
 
+  // Only user relationship - no address table dependency
   user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  address         Address           @relation("SubscriptionAddress", fields: [addressId], references: [id])
 
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
