@@ -1,0 +1,494 @@
+/* Order History Page */
+
+.order-history-page {
+  min-height: 100vh;
+  background: #f5f5f0;
+  padding: 2rem 1rem;
+}
+
+.order-history-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Loading and Error States */
+.order-history-loading,
+.order-history-not-logged-in,
+.order-history-error {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #e5e5e0;
+  border-top: 4px solid #6b7a5e;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.order-history-loading p,
+.order-history-not-logged-in p,
+.order-history-error p {
+  color: #8a8a7a;
+  font-size: 1rem;
+  margin: 0.5rem 0 1.5rem 0;
+}
+
+.order-history-not-logged-in h2,
+.order-history-error h2 {
+  color: #5a5a4a;
+  font-size: 2rem;
+  margin: 0 0 1rem 0;
+}
+
+.browse-products-btn,
+.retry-btn {
+  display: inline-block;
+  padding: 0.875rem 2rem;
+  background: #6b7a5e;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: all 0.3s;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.browse-products-btn:hover,
+.retry-btn:hover {
+  background: #5a6a4e;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(107, 122, 94, 0.3);
+}
+
+/* Header Section */
+.order-history-header {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.order-history-header h1 {
+  color: #5a5a4a;
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.order-count {
+  color: #8a8a7a;
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* No Orders State */
+.no-orders {
+  background: white;
+  border-radius: 16px;
+  padding: 4rem 2rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.no-orders-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.no-orders h2 {
+  color: #5a5a4a;
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.no-orders p {
+  color: #8a8a7a;
+  font-size: 1.125rem;
+  margin: 0 0 2rem 0;
+}
+
+/* Orders List */
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Order Card */
+.order-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s;
+}
+
+.order-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.order-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.5rem 2rem;
+  background: #faf8f5;
+  border-bottom: 1px solid #e5e5e0;
+}
+
+.order-info-left {
+  flex: 1;
+}
+
+.order-number {
+  color: #5a5a4a;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+}
+
+.order-date {
+  color: #8a8a7a;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.order-info-right {
+  flex-shrink: 0;
+  margin-left: 1rem;
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-pending {
+  background: #fff4e6;
+  color: #c97a00;
+}
+
+.status-preparing {
+  background: #e6f4ff;
+  color: #0066cc;
+}
+
+.status-shipped {
+  background: #f0e6ff;
+  color: #7a00cc;
+}
+
+.status-delivered {
+  background: #e6f7ed;
+  color: #00a854;
+}
+
+.status-cancelled {
+  background: #ffe6e6;
+  color: #d14343;
+}
+
+/* Order Card Body */
+.order-card-body {
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2rem;
+}
+
+.order-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.order-item-preview {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.item-thumbnail {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #f0f0eb;
+}
+
+.item-thumbnail-placeholder {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  background: #f0f0eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+}
+
+.item-preview-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-name {
+  color: #5a5a4a;
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0 0 0.25rem 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-quantity {
+  color: #8a8a7a;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.more-items {
+  color: #8a8a7a;
+  font-size: 0.875rem;
+  font-style: italic;
+  margin: 0;
+  padding-left: 76px;
+}
+
+/* Order Summary */
+.order-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 200px;
+}
+
+.order-type,
+.order-delivery,
+.order-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.order-summary .label {
+  color: #8a8a7a;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.order-summary .value {
+  color: #5a5a4a;
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-align: right;
+}
+
+.order-total {
+  padding-top: 0.75rem;
+  border-top: 2px solid #e5e5e0;
+  margin-top: 0.5rem;
+}
+
+.total-amount {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #6b7a5e;
+}
+
+/* Order Card Footer */
+.order-card-footer {
+  padding: 1.5rem 2rem;
+  background: #fafafa;
+  border-top: 1px solid #e5e5e0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.view-details-btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: #6b7a5e;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all 0.3s;
+}
+
+.view-details-btn:hover {
+  background: #5a6a4e;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(107, 122, 94, 0.3);
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem 0;
+}
+
+.page-btn {
+  padding: 0.75rem 1.5rem;
+  background: white;
+  color: #5a5a4a;
+  border: 2px solid #e5e5e0;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: inherit;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: #6b7a5e;
+  color: white;
+  border-color: #6b7a5e;
+}
+
+.page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.page-numbers {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.page-number {
+  width: 40px;
+  height: 40px;
+  background: white;
+  color: #5a5a4a;
+  border: 2px solid #e5e5e0;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-number:hover {
+  background: #f5f5f0;
+  border-color: #6b7a5e;
+}
+
+.page-number.active {
+  background: #6b7a5e;
+  color: white;
+  border-color: #6b7a5e;
+}
+
+.page-ellipsis {
+  color: #8a8a7a;
+  padding: 0 0.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .order-history-page {
+    padding: 1rem 0.5rem;
+  }
+
+  .order-history-header {
+    padding: 1.5rem;
+  }
+
+  .order-history-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .order-card-header {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .order-info-right {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .status-badge {
+    display: block;
+    text-align: center;
+  }
+
+  .order-card-body {
+    grid-template-columns: 1fr;
+    padding: 1.5rem;
+  }
+
+  .order-summary {
+    border-top: 1px solid #e5e5e0;
+    padding-top: 1.5rem;
+  }
+
+  .order-card-footer {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .view-details-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .page-btn {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+  }
+
+  .page-numbers {
+    gap: 0.25rem;
+  }
+
+  .page-number {
+    width: 36px;
+    height: 36px;
+    font-size: 0.875rem;
+  }
+}
