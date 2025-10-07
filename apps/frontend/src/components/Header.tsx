@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -7,6 +7,25 @@ import './Header.css';
 const Header: React.FC = () => {
   const { getItemCount } = useCart();
   const { user, login, logout, loading: authLoading } = useAuth();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
 
   return (
     <header className="flora-header flora-header-sticky">
@@ -18,9 +37,95 @@ const Header: React.FC = () => {
           {authLoading ? (
             <span className="top-nav-link">Loading...</span>
           ) : user ? (
-            <button onClick={logout} className="top-nav-link auth-button">
-              Log Out ({user.email})
-            </button>
+            <div className="user-menu-wrapper" ref={dropdownRef}>
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="top-nav-link auth-button user-menu-button"
+              >
+                <span className="user-avatar-small">
+                  {user.picture ? (
+                    <img src={user.picture} alt={user.name || 'User'} />
+                  ) : (
+                    <span className="avatar-text">
+                      {user.name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || 'U'}
+                    </span>
+                  )}
+                </span>
+                <span className="user-name-text">
+                  {user.name?.split(' ')[0] || 'Account'}
+                </span>
+                <svg
+                  className={`dropdown-arrow ${isDropdownOpen ? 'open' : ''}`}
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M2 4l4 4 4-4" />
+                </svg>
+              </button>
+
+              {isDropdownOpen && (
+                <div className="user-dropdown">
+                  <div className="dropdown-header">
+                    <p className="dropdown-user-name">{user.name}</p>
+                    <p className="dropdown-user-email">{user.email}</p>
+                  </div>
+                  <div className="dropdown-divider"></div>
+                  <Link
+                    to="/profile"
+                    className="dropdown-item"
+                    onClick={() => setIsDropdownOpen(false)}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    My Profile
+                  </Link>
+                  <Link
+                    to="/orders"
+                    className="dropdown-item"
+                    onClick={() => setIsDropdownOpen(false)}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                      <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                      <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
+                    Order History
+                  </Link>
+                  <Link
+                    to="/subscriptions"
+                    className="dropdown-item"
+                    onClick={() => setIsDropdownOpen(false)}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      <path d="M9 12l2 2 4-4"></path>
+                    </svg>
+                    My Subscriptions
+                  </Link>
+                  <div className="dropdown-divider"></div>
+                  <button
+                    onClick={() => {
+                      setIsDropdownOpen(false);
+                      logout();
+                    }}
+                    className="dropdown-item logout-item"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                      <polyline points="16 17 21 12 16 7"></polyline>
+                      <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    Log Out
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
             <button onClick={login} className="top-nav-link auth-button">
               Log In
