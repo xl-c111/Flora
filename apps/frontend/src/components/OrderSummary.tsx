@@ -76,7 +76,9 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
               {item.isSubscription ? (
                 <div className="item-subscription-info">
                   <p className="item-type subscription">
-                    <span className="badge">Subscription</span>
+                    <span className="badge">
+                      {item.purchaseType === 'spontaneous' ? 'Spontaneous Subscription' : 'Recurring Subscription'}
+                    </span>
                   </p>
                   {item.subscriptionFrequency && (
                     <p className="item-frequency">
@@ -93,11 +95,24 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
               {/* Delivery Date */}
               {item.selectedDate && (
                 <p className="item-delivery-date">
-                  Delivery: {new Date(item.selectedDate).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric'
-                  })}
+                  {item.purchaseType === 'spontaneous'
+                    ? `First delivery: ${new Date(item.selectedDate).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                      })} (then on-demand)`
+                    : item.isSubscription
+                    ? `First delivery: ${new Date(item.selectedDate).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                      })} (auto-renews ${item.subscriptionFrequency})`
+                    : `Delivery: ${new Date(item.selectedDate).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                      })}`
+                  }
                 </p>
               )}
 
