@@ -96,6 +96,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
       product,
       quantity,
       isSubscription,
+      purchaseType: isSubscription ? 'recurring' : 'one-time',
       subscriptionFrequency: isSubscription ? selectedFrequency : undefined,
       subscriptionDiscount
     });

@@ -8,6 +8,7 @@ export interface CartItem {
   selectedDate?: Date;
   message?: string;
   isSubscription?: boolean;
+  purchaseType?: 'one-time' | 'recurring' | 'spontaneous';
   subscriptionFrequency?: 'weekly' | 'fortnightly' | 'monthly';
   subscriptionDiscount?: number; // Percentage discount for subscription
 }

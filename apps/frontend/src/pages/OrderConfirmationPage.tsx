@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useCart } from "../contexts/CartContext";
+import { useAuth } from "../contexts/AuthContext";
 import orderService from "../services/orderService";
 import type { Order } from "../services/orderService";
 import { getImageUrl } from "../services/api";
@@ -9,8 +10,10 @@ import "../styles/OrderConfirmationPage.css";
 const OrderConfirmationPage: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>();
   const { clearCart } = useCart();
+  const { getAccessToken } = useAuth();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Clear cart when order confirmation page loads
@@ -23,7 +26,8 @@ const OrderConfirmationPage: React.FC = () => {
 
   const fetchOrder = async (id: string) => {
     try {
-      const orderData = await orderService.getOrder(id);
+      const token = await getAccessToken();
+      const orderData = await orderService.getOrder(id, token);
       console.log("📦 Order data received:", orderData);
       console.log("📦 Shipping info:", {
         firstName: orderData.shippingFirstName,
@@ -35,8 +39,10 @@ const OrderConfirmationPage: React.FC = () => {
         country: orderData.shippingCountry,
       });
       setOrder(orderData);
-    } catch (err) {
+      setError(null);
+    } catch (err: any) {
       console.error("Error fetching order:", err);
+      setError(err.response?.data?.error || "Failed to load order details");
     } finally {
       setLoading(false);
     }
@@ -103,6 +109,25 @@ const OrderConfirmationPage: React.FC = () => {
       <div className="order-confirmation-loading">
         <div className="spinner"></div>
         <p>Loading your order...</p>
+      </div>
+    );
+  }
+
+  if (error || !order) {
+    return (
+      <div className="order-confirmation-page">
+        <div className="confirmation-container">
+          <div className="logo-section">
+            <div className="logo">FLORA</div>
+          </div>
+          <div className="error-section">
+            <h2>Unable to Load Order</h2>
+            <p>{error || "Order not found"}</p>
+            <Link to="/" className="back-home-btn">
+              Back to Home
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }

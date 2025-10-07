@@ -76,7 +76,8 @@ export const useCheckout = (): UseCheckoutReturn => {
         // Determine subscription type for this item
         let itemSubscriptionType = undefined;
         if (item.isSubscription && item.subscriptionFrequency) {
-          itemSubscriptionType = mapSubscriptionType('recurring', item.subscriptionFrequency);
+          const purchaseType = item.purchaseType || 'recurring';
+          itemSubscriptionType = mapSubscriptionType(purchaseType, item.subscriptionFrequency);
         }
 
         return {
@@ -142,8 +143,9 @@ export const useCheckout = (): UseCheckoutReturn => {
             ? 'STANDARD'
             : (formData.deliveryType || 'STANDARD');
 
+          const itemPurchaseType = item.purchaseType || 'recurring';
           const subscriptionData: CreateSubscriptionData = {
-            type: mapSubscriptionType('recurring', item.subscriptionFrequency || 'monthly'),
+            type: mapSubscriptionType(itemPurchaseType, item.subscriptionFrequency || 'monthly'),
             deliveryType: subscriptionDeliveryType as 'STANDARD' | 'EXPRESS',
             shippingAddress: {
               firstName: formData.recipientFirstName,
