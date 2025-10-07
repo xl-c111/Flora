@@ -19,7 +19,7 @@ const CartPage: React.FC = () => {
   const giftMessage = cartState.giftMessage || { to: '', from: '', message: '' };
   const [showSaveConfirmation, setShowSaveConfirmation] = React.useState(false);
 
-  const handleProductClick = (productId: number) => {
+  const handleProductClick = (productId: string) => {
     navigate(`/products/${productId}`);
   };
 
@@ -105,7 +105,7 @@ const CartPage: React.FC = () => {
                   onClick={() => handleProductClick(item.product.id)}
                   style={{ cursor: 'pointer' }}
                 >
-                  <img src={getImageUrl(item.product.imageUrl)} alt={item.product.name} />
+                  <img src={getImageUrl(item.product.imageUrl || '')} alt={item.product.name} />
                   {isSubscription && (
                     <div className="subscription-badge">
                       📅 {subscriptionOption?.label}
@@ -121,8 +121,13 @@ const CartPage: React.FC = () => {
                     {item.product.name}
                   </h3>
                   <p>{item.product.description}</p>
-                  {isSubscription && (
+                  {isSubscription ? (
                     <div className="subscription-details">
+                      <span>
+                        {item.purchaseType === 'spontaneous'
+                          ? '✨ Spontaneous Subscription'
+                          : '🔄 Recurring Subscription'}
+                      </span>
                       <span className="subscription-label">
                         {subscriptionOption?.description}
                       </span>
@@ -132,10 +137,21 @@ const CartPage: React.FC = () => {
                         </span>
                       )}
                     </div>
+                  ) : (
+                    <div className="subscription-details">
+                      <span>
+                        🛍️ One-time Purchase
+                      </span>
+                    </div>
                   )}
                   {item.selectedDate && (
                     <div className="delivery-date-info">
-                      📅 Delivery: {format(item.selectedDate, 'PPP')}
+                      📅 {item.purchaseType === 'spontaneous'
+                        ? `First delivery: ${format(item.selectedDate, 'PPP')} (then on-demand)`
+                        : item.isSubscription
+                        ? `First delivery: ${format(item.selectedDate, 'PPP')} (then auto-renews ${item.subscriptionFrequency})`
+                        : `Delivery: ${format(item.selectedDate, 'PPP')}`
+                      }
                     </div>
                   )}
                 </div>

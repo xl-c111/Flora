@@ -159,6 +159,7 @@ const ProductDetail: React.FC = () => {
       product,
       quantity,
       isSubscription,
+      purchaseType,
       subscriptionFrequency: isSubscription ? selectedFrequency : undefined,
       subscriptionDiscount,
       selectedDate
