@@ -73,6 +73,29 @@ export const apiService = {
     const response = await api.get('/health');
     return response.data;
   },
+
+  // AI Message Generation
+  generateAIMessage: async (data: {
+    to?: string;
+    from?: string;
+    occasion?: string;
+    keywords?: string;
+    tone?: string;
+    userPrompt?: string;
+  }): Promise<{ success: boolean; data: { message: string }; message: string }> => {
+    const response = await api.post('/ai/generate-message', data, {
+      timeout: 15000, // Reduced to 15 seconds for faster timeout feedback
+    });
+    return response.data;
+  },
+
+  getMessageSuggestions: async (data: {
+    productName?: string;
+    productDescription?: string;
+  }): Promise<{ success: boolean; data: { suggestions: string[] }; message: string }> => {
+    const response = await api.post('/ai/message-suggestions', data);
+    return response.data;
+  },
 };
 
 export default apiService;
