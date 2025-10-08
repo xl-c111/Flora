@@ -20,6 +20,7 @@ import paymentRoutes from "./routes/payments";
 import webhookRoutes from "./routes/webhooks";
 import deliveryInfoRoutes from "./routes/deliveryInfo";
 import userRoutes from "./routes/users";
+import aiRoutes from "./routes/ai";
 
 // Initialize Express app
 const app: Application = express();
@@ -45,6 +46,7 @@ app.use("/api/subscriptions", subscriptionRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/delivery", deliveryInfoRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/ai", aiRoutes);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
@@ -69,6 +71,7 @@ app.get("/", (req, res) => {
       payments: "/api/payments",
       webhooks: "/api/webhooks",
       users: "/api/users",
+      ai: "/api/ai",
     },
   });
 });
@@ -78,9 +81,18 @@ app.use("*", notFoundHandler);
 app.use(errorHandler);
 
 // Start server
-app.listen(port, () => {
+app.listen(port, async () => {
   console.log(`🚀 Flora API server running on http://localhost:${port}`);
   console.log(`📚 API Documentation: http://localhost:${port}/`);
+
+  // Pre-warm AI cache for faster responses on demo day
+  // Temporarily disabled to avoid quota issues
+  // try {
+  //   const { aiService } = await import('./services/AIService');
+  //   await aiService.prewarmCache();
+  // } catch (error) {
+  //   console.log('⚠️  AI cache pre-warming skipped');
+  // }
 });
 
 // Graceful shutdown
