@@ -282,7 +282,7 @@ docker exec flora-frontend pnpm build
 ```
 
 **Quick verification:**
-- ✅ All backend tests pass (64/64 tests)
+- ✅ All backend tests pass (80/80 tests)
 - ✅ Frontend type-check runs (warnings allowed)
 - ✅ Frontend builds successfully
 - ✅ Docker containers running: `docker ps`
