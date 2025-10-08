@@ -8,56 +8,58 @@ import type { Product } from '../types';
 import DatePicker from '../components/DatePicker';
 import '../styles/ProductDetail.css';
 
-const ProductDetail: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const { addItem } = useCart();
-  const { user, login } = useAuth();
 
-  const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isSubscription, setIsSubscription] = useState(false);
-  const [selectedFrequency, setSelectedFrequency] = useState<'weekly' | 'fortnightly' | 'monthly'>('monthly');
-  const [quantity, setQuantity] = useState(1);
-  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
-  const [similarProducts, setSimilarProducts] = useState<Product[]>([]);
-  const [similarProductsLoading, setSimilarProductsLoading] = useState(false);
-  const [purchaseType, setPurchaseType] = useState<'one-time' | 'recurring' | 'spontaneous'>('one-time');
-  const [likesCount] = useState(256); // Placeholder for likes feature
-  const [openAccordion, setOpenAccordion] = useState<string | null>(null);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+
+const ProductDetail: React.FC = () => {
+  const {id} = useParams<{ id: string }>();
+    const navigate = useNavigate();
+    const {addItem} = useCart();
+    const {user, login} = useAuth();
+
+    const [product, setProduct] = useState<Product | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [isSubscription, setIsSubscription] = useState(false);
+    const [selectedFrequency, setSelectedFrequency] = useState<'weekly' | 'fortnightly' | 'monthly'>('monthly');
+    const [quantity, setQuantity] = useState(1);
+    const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+    const [similarProducts, setSimilarProducts] = useState<Product[]>([]);
+    const [similarProductsLoading, setSimilarProductsLoading] = useState(false);
+    const [purchaseType, setPurchaseType] = useState<'one-time' | 'recurring' | 'spontaneous'>('one-time');
+    const [likesCount] = useState(256); // Placeholder for likes feature
+    const [openAccordion, setOpenAccordion] = useState<string | null>(null);
+    const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
 
   // Toggle accordion sections
   const toggleAccordion = (section: string) => {
-    setOpenAccordion(openAccordion === section ? null : section);
+      setOpenAccordion(openAccordion === section ? null : section);
   };
 
   // Handle date selection
   const handleDateSelect = (date: Date | undefined) => {
-    setSelectedDate(date);
+      setSelectedDate(date);
   };
 
   // Fetch product data
   useEffect(() => {
     const fetchProduct = async () => {
       if (!id) {
-        setError('Product ID not found');
-        setLoading(false);
-        return;
+      setError('Product ID not found');
+    setLoading(false);
+    return;
       }
 
-      try {
-        setLoading(true);
-        // Use the specific getProduct method from apiService
-        const productData = await apiService.getProduct(id);
-        setProduct(productData);
-        setError(null);
+    try {
+      setLoading(true);
+    // Use the specific getProduct method from apiService
+    const productData = await apiService.getProduct(id);
+    setProduct(productData);
+    setError(null);
       } catch (err: any) {
-        console.error('Error fetching product:', err);
-        setError('Failed to load product details');
+      console.error('Error fetching product:', err);
+    setError('Failed to load product details');
       } finally {
-        setLoading(false);
+      setLoading(false);
       }
     };
 
@@ -69,46 +71,46 @@ const ProductDetail: React.FC = () => {
     const fetchSimilarProducts = async () => {
       if (!product?.id) return;
 
-      try {
-        setSimilarProductsLoading(true);
-        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/products/${product.id}/similar`);
-        const data = await response.json();
+    try {
+      setSimilarProductsLoading(true);
+    const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/products/${product.id}/similar`);
+    const data = await response.json();
 
-        if (data.products) {
-          setSimilarProducts(data.products);
+    if (data.products) {
+      setSimilarProducts(data.products);
         }
       } catch (error) {
-        console.error('Error fetching similar products:', error);
+      console.error('Error fetching similar products:', error);
       } finally {
-        setSimilarProductsLoading(false);
+      setSimilarProductsLoading(false);
       }
     };
 
     fetchSimilarProducts();
   }, [product?.id]);
 
-  if (loading) {
+    if (loading) {
     return (
-      <div className="product-detail-page">
-        <div className="loading-container">
-          <div className="loading-spinner"></div>
-          <p>Loading product details...</p>
-        </div>
+    <div className="product-detail-page">
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Loading product details...</p>
       </div>
+    </div>
     );
   }
 
-  if (error || !product) {
+    if (error || !product) {
     return (
-      <div className="product-detail-page">
-        <div className="error-container">
-          <h2>Product Not Found</h2>
-          <p>{error || 'The product you are looking for does not exist.'}</p>
-          <button onClick={() => navigate('/products')} className="back-btn">
-            Back to Products
-          </button>
-        </div>
+    <div className="product-detail-page">
+      <div className="error-container">
+        <h2>Product Not Found</h2>
+        <p>{error || 'The product you are looking for does not exist.'}</p>
+        <button onClick={() => navigate('/products')} className="back-btn">
+          Back to Products
+        </button>
       </div>
+    </div>
     );
   }
 
@@ -119,13 +121,13 @@ const ProductDetail: React.FC = () => {
   const formatAttributes = (attributes: string[]): string => {
     return attributes
       .map((attr) => attr.charAt(0).toUpperCase() + attr.slice(1).toLowerCase())
-      .join(', ');
+    .join(', ');
   };
 
   const getDisplayPrice = () => {
     if (isSubscription) {
       const discountedPrice = calculateSubscriptionPrice(product.priceCents, selectedFrequency);
-      return formatPrice(discountedPrice);
+    return formatPrice(discountedPrice);
     }
     return formatPrice(product.priceCents);
   };
@@ -137,10 +139,10 @@ const ProductDetail: React.FC = () => {
     const savings = formatSubscriptionSavings(product.priceCents, selectedFrequency);
 
     return (
-      <div className="subscription-info">
-        <span className="savings-badge">{savings} with subscription!</span>
-        <span className="frequency-label">{option?.label}</span>
-      </div>
+    <div className="subscription-info">
+      <span className="savings-badge">{savings} with subscription!</span>
+      <span className="frequency-label">{option?.label}</span>
+    </div>
     );
   };
 
@@ -148,12 +150,12 @@ const ProductDetail: React.FC = () => {
     // Check authentication for subscription items
     if (isSubscription && !user) {
       setShowAuthPrompt(true);
-      return;
+    return;
     }
 
     const subscriptionDiscount = isSubscription
       ? SUBSCRIPTION_OPTIONS.find(opt => opt.frequency === selectedFrequency)?.discountPercentage
-      : undefined;
+    : undefined;
 
     addItem({
       product,
@@ -161,19 +163,19 @@ const ProductDetail: React.FC = () => {
       isSubscription,
       purchaseType,
       subscriptionFrequency: isSubscription ? selectedFrequency : undefined,
-      subscriptionDiscount,
-      selectedDate
+    subscriptionDiscount,
+    selectedDate
     });
 
     const message = isSubscription
-      ? `Added ${product.name} (${selectedFrequency} subscription) to cart!`
-      : `Added ${product.name} to cart!`;
+    ? `Added ${product.name} (${selectedFrequency} subscription) to cart!`
+    : `Added ${product.name} to cart!`;
 
     alert(message);
     navigate('/cart');
   };
 
-  return (
+    return (
     <div className="product-detail-page">
       <div className="container">
         {/* Breadcrumb */}
@@ -222,7 +224,7 @@ const ProductDetail: React.FC = () => {
 
             {/* Select a Delivery Date */}
             <div className="date-selector-section">
-              <h3>Select a Delivery Date</h3>
+              <h3 className="date-selector-section">Select a Delivery Date</h3>
               <DatePicker
                 selectedDate={selectedDate}
                 onDateSelect={handleDateSelect}
@@ -232,7 +234,7 @@ const ProductDetail: React.FC = () => {
             </div>
 
             {/* Select a Purchase Type */}
-            <div className="purchase-type-section">
+            <div className="date-selector-section">
               <h3>Select a Purchase Type</h3>
 
               {/* Three Purchase Type Options */}
@@ -533,7 +535,7 @@ const ProductDetail: React.FC = () => {
         </div>
       )}
     </div>
-  );
+    );
 };
 
-export default ProductDetail;
+    export default ProductDetail;
