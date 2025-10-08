@@ -440,6 +440,49 @@
   min-height: 100px;
 }
 
+.ai-tone-selector {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.ai-tone-selector label {
+  font-size: 0.95rem;
+  color: #5a5a4f;
+  font-weight: 500;
+}
+
+.tone-dropdown {
+  padding: 0.75rem 1rem;
+  background-color: #e8f0e8;
+  border: 1px solid #d4dcd4;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  color: #5a5a4f;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 180px;
+}
+
+.tone-dropdown:hover {
+  border-color: #6a6a5f;
+  background-color: #e0e8e0;
+}
+
+.tone-dropdown:focus {
+  outline: none;
+  border-color: #6a6a5f;
+  background-color: #e0e8e0;
+}
+
+.message-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
 .save-message-btn {
   padding: 1rem 2rem;
   background-color: #6a6a5f;
@@ -454,6 +497,42 @@
 
 .save-message-btn:hover {
   background-color: #5a5a4f;
+}
+
+.generate-ai-btn {
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.generate-ai-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.generate-ai-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.generate-error {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background-color: #fee;
+  border: 1px solid #fcc;
+  border-radius: 8px;
+  color: #c33;
+  font-size: 0.9rem;
 }
 
 /* Checkout Button */
