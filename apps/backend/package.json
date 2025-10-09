@@ -20,11 +20,13 @@
     "test:order": "jest --testPathPatterns=order",
     "test:payment": "jest --testPathPatterns=payment",
     "test:email": "jest --testPathPatterns=email",
+    "test:ai": "jest --testPathPatterns=ai",
     "test:integration": "jest --testPathPatterns=integration",
     "test:live-email": "tsx src/test/test-get-live-email.ts",
     "get-token": "tsx src/test/test-get-token.ts"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@prisma/client": "^5.7.0",
     "@supabase/supabase-js": "^2.57.4",
     "bcryptjs": "^2.4.3",
