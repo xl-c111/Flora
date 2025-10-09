@@ -214,13 +214,13 @@ p {
     padding: 40px;
     align-content:center;
     margin: 20px;
-    border:dashed;
+    /* border:dashed; */
 }
 
 .product-image {
     height: auto;
     width: auto;
-    border: dotted;
+    /* border: dotted; */
 }
 
 .product-image img{

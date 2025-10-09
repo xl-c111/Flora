@@ -51,14 +51,14 @@
 .container {
   /* max-width: 1200px; */
   /* background-color: red; */
-  border-style: dashed;
+  /* border-style: dashed; */
   /* margin: 0 auto; */
   /* padding: 0 1rem; */
   /*if something is broken dont use this*/
 }
 
 .content-wrapper {
-  border-style:dotted;
+  /* border-style:dotted; */
   /* display: grid;
   grid-template-columns: 300px 1fr; */
   /* gap: 2rem; */
@@ -539,8 +539,8 @@
 
 .pagination-btn {
   padding: 0.5rem 1rem;
-  border: 1px solid #ddd;
-  background: white;
+  border: 1px solid var(--button-colour);
+  background: blue;
   cursor: pointer;
   border-radius: 4px;
   font-size: 0.875rem;
@@ -548,14 +548,14 @@
 }
 
 .pagination-btn:hover:not(:disabled) {
-  background: #f8f9fa;
-  border-color: #4a90e2;
+  background: orange;
+  border-color: red;
 }
 
 .pagination-btn.active {
-  background: #4a90e2;
+  background: green;
   color: white;
-  border-color: #4a90e2;
+  border-color: red;
 }
 
 .pagination-btn:disabled {

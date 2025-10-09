@@ -63,7 +63,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         // padding: '40px',
         alignContent: 'center',
         margin: '15px',
-        border: 'dashed',
+        // border: 'dashed',
       }}>
       {/* Product Link - makes entire card clickable */}
       <Link
@@ -101,13 +101,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {/* Product Information */}
         <div className="product-info"
         style={{
-              // paddingLeft: '25px',
-              // paddingRight: '25px',
+              paddingLeft: '30px',
+              paddingRight: '30px',
               marginTop: '15px',
               marginBottom: '15px',
               // maxHeight: '120px',
               // overflow: 'hidden',
-              borderStyle:"dotted",
+              // borderStyle:"dotted",
         }}>
           <div className="product-header"
                 style={{
