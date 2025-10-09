@@ -35,6 +35,17 @@ export interface CreateOrderData {
     country?: string;
     phone?: string;
   };
+  billingAddress?: {
+    firstName: string;
+    lastName: string;
+    street1: string;
+    street2?: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country?: string;
+    phone?: string;
+  };
   deliveryType: DeliveryType;
   deliveryNotes?: string;
   requestedDeliveryDate?: Date;
