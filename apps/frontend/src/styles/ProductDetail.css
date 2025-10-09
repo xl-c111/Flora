@@ -364,6 +364,11 @@
 .frequency-option-card.active {
   border-color: #C8D7C4;
   background-color: #595E4E;
+  /* color: orange; */
+}
+
+.frequncy-option-card .frequency-option-description {
+  color: orange;
 }
 
 .frequency-option-card input[type="radio"] {
@@ -380,7 +385,7 @@
 
 .frequency-option-label {
   font-weight: 500;
-  color: #33362c;
+  /* color: #33362c; */
   font-size: 1rem;
   font-family: "Outfit", sans-serif;
 }
@@ -403,30 +408,6 @@
 .frequency-option-savings {
   font-size: 0.8125rem;
   color: #38a169;
-  font-weight: 500;
-}
-
-.frequency-option-label.active {
-  font-weight: 600;
-  color: #13da55;
-  font-size: 1rem;
-}
-
-.frequency-option-description.selected {
-  font-size: 0.875rem;
-  color: #ca8928;
-}
-
-.frequency-option-price.active {
-  font-weight: 700;
-  color: #72bd1c;
-  font-size: 1.125rem;
-  white-space: nowrap;
-}
-
-.frequency-option-savings.active {
-  font-size: 0.8125rem;
-  color: #180933;
   font-weight: 500;
 }
 
@@ -472,12 +453,13 @@
   transition: all 0.2s ease;
   width: 100%;
   margin-top: 1.5rem;
+  border: 2px solid #595E4E;
 }
 
 .add-to-cart-btn:hover:not(:disabled) {
-  background-color: #595E4E;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(90, 108, 125, 0.3);
+  background-color: #e0e8e0;
+  color: #595E4E;
+  border: 2px solid #595E4E;
 }
 
 .add-to-cart-btn:disabled {
