@@ -148,6 +148,7 @@ const OrderConfirmationPage: React.FC = () => {
             We've received your order and will contact you as soon as your package is shipped. You can find your
             purchase information below.
           </p>
+          <p className="info-message">An email will be sent to you soon.</p>
         </div>
 
         {order && (
@@ -213,7 +214,7 @@ const OrderConfirmationPage: React.FC = () => {
 
             {/* Billing and Shipping */}
             <div className="billing-shipping-section">
-              <h2>Billing and shipping</h2>
+              <h2>Billing and Shipping</h2>
 
               <div className="info-grid">
                 <div className="info-column">
