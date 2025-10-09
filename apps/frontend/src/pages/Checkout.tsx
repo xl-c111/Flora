@@ -124,7 +124,7 @@ const CheckoutPage: React.FC = () => {
             deliveryInfo={deliveryInfo}
             selectedDeliveryType={selectedDeliveryType}
             onDeliveryTypeChange={setSelectedDeliveryType}
-          />
+            />
         </div>
 
         <div className="checkout-right">

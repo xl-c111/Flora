@@ -90,12 +90,12 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
       <div className="filter-options">
         {/* Price Range Filter */}
         <div className="filter-group">
-          <label
+          {/* <label
             htmlFor="price-filter"
             className="filter-label"
           >
             Price Range
-          </label>
+          </label> */}
           <select
             id="price-filter"
             value={selectedFilters.priceRange || ''}
@@ -117,12 +117,12 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
         {/* Color Filter */}
         <div className="filter-group">
-          <label
+          {/* <label
             htmlFor="color-filter"
             className="filter-label"
           >
             Color
-          </label>
+          </label> */}
           <select
             id="color-filter"
             value={selectedFilters.color || ''}
@@ -143,12 +143,12 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
         {/* Mood Filter */}
         <div className="filter-group">
-          <label
+          {/* <label
             htmlFor="mood-filter"
             className="filter-label"
           >
             Mood
-          </label>
+          </label> */}
           <select
             id="mood-filter"
             value={selectedFilters.mood || ''}
@@ -169,12 +169,12 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
         {/* Season Filter */}
         <div className="filter-group">
-          <label
+          {/* <label
             htmlFor="season-filter"
             className="filter-label"
           >
             Season
-          </label>
+          </label> */}
           <select
             id="season-filter"
             value={selectedFilters.season || ''}
@@ -195,12 +195,12 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
         {/* Occasion Filter */}
         <div className="filter-group">
-          <label
+          {/* <label
             htmlFor="occasion-filter"
             className="filter-label"
           >
             Occasion
-          </label>
+          </label> */}
           <select
             id="occasion-filter"
             value={selectedFilters.occasion || ''}
@@ -221,12 +221,12 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
         {/* Product Type Filter */}
         <div className="filter-group">
-          <label
+          {/* <label
             htmlFor="type-filter"
             className="filter-label"
           >
             Product Type
-          </label>
+          </label> */}
           <select
             id="type-filter"
             value={selectedFilters.type || ''}
@@ -247,12 +247,12 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
         {/* Stock Filter */}
         <div className="filter-group">
-          <label
+          {/* <label
             htmlFor="stock-filter"
             className="filter-label"
           >
             Availability
-          </label>
+          </label> */}
           <select
             id="stock-filter"
             value={

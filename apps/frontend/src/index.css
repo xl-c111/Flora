@@ -22,6 +22,7 @@
     --banner-colour-2: #C8D7C480; /*banner colour with 50% opacity*/
     --button-colour: #E3EAE1;
     --border-colour: var(--text-colour);
+    --background-menu-colour: #E5E9E0BF; /*75% transparency to #E5E9E0*/
     --radius-tile: 10px;
     --radius-image: 50px;
     --radius-button: 50px;
