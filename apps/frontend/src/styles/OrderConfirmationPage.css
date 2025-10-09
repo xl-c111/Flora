@@ -8,7 +8,6 @@
 
 .confirmation-container {
   width: 100%;
-  max-width: 100vh;
   margin: 0 auto;
   /* background: white; */
   padding: 0;
@@ -32,7 +31,6 @@
 .header-section {
   background: #C8D7C4;
   width: 100%;
-  max-width: 100vh;
   padding: 2rem 2rem;
   margin-bottom: 3rem;
 }
@@ -67,6 +65,8 @@
 /* Order Summary Section */
 .order-summary-section {
   /* background: #faf8f5; */
+  max-width: 100vh;
+  margin: auto;
   padding: 2rem 2rem;
   margin-bottom: 0;
 }
@@ -135,6 +135,7 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 1rem;
+  width: 600px;
 }
 
 .item-header h3 {
@@ -172,7 +173,8 @@
 .price-breakdown {
   margin-top: 2rem;
   padding-top: 1.5rem;
-  width: 100%;
+  margin: auto;
+  width: 92%;
 }
 
 .price-row {
