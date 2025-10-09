@@ -91,9 +91,11 @@ body {
 
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(385px, 1fr));
+  /* gap: 2rem; */
   margin-bottom: 3rem;
+  /* align-items:center;
+  justify-content: center; */
 }
 
 .product-card {

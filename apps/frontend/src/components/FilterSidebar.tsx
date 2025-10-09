@@ -103,11 +103,12 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
             className="filter-select"
             aria-label="Filter by price range"
           >
-            <option value="">All Prices</option>
+            <option value="" className="filter-select-menu">All Prices</option>
             {filterOptions.priceRanges.map((priceRange) => (
               <option
                 key={priceRange}
                 value={priceRange}
+                className="filter-select-menu"
               >
                 {formatFilterValue('priceRange', priceRange)}
               </option>
@@ -129,11 +130,12 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
             onChange={(e) => handleFilterChange('color', e.target.value)}
             className="filter-select"
           >
-            <option value="">All Colors</option>
+            <option value="" className="filter-select-menu">All Colors</option>
             {filterOptions.colors.map((color) => (
               <option
                 key={color}
                 value={color}
+                className="filter-select-menu"
               >
                 {formatFilterValue('color', color)}
               </option>
@@ -155,11 +157,12 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
             onChange={(e) => handleFilterChange('mood', e.target.value)}
             className="filter-select"
           >
-            <option value="">All Moods</option>
+            <option value="" className="filter-select-menu">All Moods</option>
             {filterOptions.moods.map((mood) => (
               <option
                 key={mood}
                 value={mood}
+                className="filter-select-menu"
               >
                 {formatFilterValue('mood', mood)}
               </option>
@@ -181,11 +184,12 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
             onChange={(e) => handleFilterChange('season', e.target.value)}
             className="filter-select"
           >
-            <option value="">All Seasons</option>
+            <option value="" className="filter-select-menu">All Seasons</option>
             {filterOptions.seasons.map((season) => (
               <option
                 key={season}
                 value={season}
+                className="filter-select-menu"
               >
                 {formatFilterValue('season', season)}
               </option>
@@ -207,11 +211,12 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
             onChange={(e) => handleFilterChange('occasion', e.target.value)}
             className="filter-select"
           >
-            <option value="">All Occasions</option>
+            <option value="" className="filter-select-menu">All Occasions</option>
             {filterOptions.occasions.map((occasion) => (
               <option
                 key={occasion}
                 value={occasion}
+                className="filter-select-menu"
               >
                 {formatFilterValue('occasion', occasion)}
               </option>
@@ -233,11 +238,12 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
             onChange={(e) => handleFilterChange('type', e.target.value)}
             className="filter-select"
           >
-            <option value="">All Types</option>
+            <option className="filter-select-menu" value="">All Types</option>
             {filterOptions.types.map((type) => (
               <option
                 key={type}
                 value={type}
+                className="filter-select-menu"
               >
                 {formatFilterValue('type', type)}
               </option>
@@ -270,9 +276,9 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
             }}
             className="filter-select"
           >
-            <option value="">All Products</option>
-            <option value="true">In Stock Only</option>
-            <option value="false">Out of Stock</option>
+            <option value="" className="filter-select-menu">All Products</option>
+            <option value="true" className="filter-select-menu">In Stock Only</option>
+            <option value="false" className="filter-select-menu">Out of Stock</option>
           </select>
         </div>
       </div>

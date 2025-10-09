@@ -58,11 +58,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       role="group"
       aria-label={`${product.name} - ${formatPrice(product.priceCents)}`}
       style={{
-        width: '400px',
-        height: '740px',
-        padding: '40px',
+        width: '385px',
+        height: '775px',
+        // padding: '40px',
         alignContent: 'center',
-        margin: '20px',
+        margin: '15px',
         border: 'dashed',
       }}>
       {/* Product Link - makes entire card clickable */}
