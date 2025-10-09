@@ -164,8 +164,8 @@ const CartPage: React.FC = () => {
                     <div className="subscription-details">
                       <span>
                         {item.purchaseType === 'spontaneous'
-                          ? '✨ Spontaneous Subscription'
-                          : '🔄 Recurring Subscription'}
+                          ? 'Spontaneous Subscription'
+                          : 'Recurring Subscription'}
                       </span>
                       <span className="subscription-label">
                         {subscriptionOption?.description}
@@ -179,13 +179,13 @@ const CartPage: React.FC = () => {
                   ) : (
                     <div className="subscription-details">
                       <span>
-                        🛍️ One-time Purchase
+                        One-time Purchase
                       </span>
                     </div>
                   )}
                   {item.selectedDate && (
                     <div className="delivery-date-info">
-                      📅 {item.purchaseType === 'spontaneous'
+                      {item.purchaseType === 'spontaneous'
                         ? `First delivery: ${format(item.selectedDate, 'PPP')} (then on-demand)`
                         : item.isSubscription
                         ? `First delivery: ${format(item.selectedDate, 'PPP')} (then auto-renews ${item.subscriptionFrequency})`
@@ -292,9 +292,6 @@ const CartPage: React.FC = () => {
                 </select>
               </div>
               <div className="message-buttons">
-                <button className="save-message-btn" onClick={handleSaveMessage}>
-                  {showSaveConfirmation ? '✓ Saved!' : 'Save'}
-                </button>
                 <button
                   className="generate-ai-btn"
                   onClick={handleGenerateAIMessage}
@@ -329,7 +326,7 @@ const CartPage: React.FC = () => {
               </div>
               {calculateSavings() > 0 && (
                 <div className="savings-note">
-                  🎉 You're saving {formatPrice(calculateSavings())} with subscriptions!
+                  You're saving {formatPrice(calculateSavings())} with subscriptions!
                 </div>
               )}
             </div>
