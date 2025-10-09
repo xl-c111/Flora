@@ -280,7 +280,7 @@ model Order {
   actualDeliveryDate    DateTime?
   deliveryNotes   String?
 
-  // Shipping address (snapshot for guest orders)
+  // Shipping address (recipient/delivery address)
   shippingAddressId String?
   shippingFirstName String
   shippingLastName  String
@@ -291,6 +291,17 @@ model Order {
   shippingZipCode   String
   shippingCountry   String        @default("AU")
   shippingPhone     String?
+
+  // Billing address (sender/payer address)
+  billingFirstName  String?
+  billingLastName   String?
+  billingStreet1    String?
+  billingStreet2    String?
+  billingCity       String?
+  billingState      String?
+  billingZipCode    String?
+  billingCountry    String?       @default("AU")
+  billingPhone      String?
 
   // Relationships
   user            User?         @relation(fields: [userId], references: [id])
