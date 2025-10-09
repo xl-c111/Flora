@@ -5,7 +5,7 @@ import type { Appearance } from "@stripe/stripe-js";
 import PaymentForm from "./PaymentForm";
 import { useAuth } from "../contexts/AuthContext";
 import { useCart } from "../contexts/CartContext";
-import type { DeliveryInfo } from "../services/deliveryService";
+import deliveryService, { type DeliveryInfo } from "../services/deliveryService";
 import "../styles/CheckoutForm.css";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "");
@@ -123,7 +123,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
     }
   };
 
-  const validateForm = (): boolean => {
+  const validateForm = async (): Promise<boolean> => {
     const newErrors: Partial<Record<keyof CheckoutFormData, string>> = {};
 
     if (!formData.guestEmail.trim()) {
@@ -148,15 +148,33 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
     }
     if (!formData.recipientZipCode.trim()) {
       newErrors.recipientZipCode = "Enter a ZIP / postal code";
+    } else {
+      // Validate postcode is in Melbourne delivery zone
+      try {
+        const validation = await deliveryService.validatePostcode(formData.recipientZipCode);
+        if (!validation.available) {
+          newErrors.recipientZipCode = "We only deliver to Melbourne metro area. Please check your postcode.";
+        } else {
+          // Cross-validate: Melbourne postcodes must have VIC state
+          if (formData.recipientState && formData.recipientState !== "VIC") {
+            newErrors.recipientState = "Melbourne postcodes are in Victoria (VIC). Please select the correct state.";
+          }
+        }
+      } catch (error) {
+        // Graceful degradation: if validation service fails, allow checkout to continue
+        console.warn('Postcode validation service unavailable, allowing checkout:', error);
+        // No error added - we don't block checkout for technical failures
+      }
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleProceedToPayment = (e: React.FormEvent) => {
+  const handleProceedToPayment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
+    const isValid = await validateForm();
+    if (isValid) {
       onSubmit(formData);
     }
   };
@@ -448,14 +466,8 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
                 onChange={handleInputChange}
               >
                 <option value="">State/territory</option>
-                <option value="ACT">Australian Capital Territory</option>
-                <option value="NSW">New South Wales</option>
-                <option value="NT">Northern Territory</option>
-                <option value="QLD">Queensland</option>
-                <option value="SA">South Australia</option>
-                <option value="TAS">Tasmania</option>
-                <option value="VIC">Victoria</option>
-                <option value="WA">Western Australia</option>
+                <option value="VIC">Victoria (Melbourne Metro - Currently Available)</option>
+                {/* Other states will be added as we expand delivery zones */}
               </select>
               {errors.recipientState && <span className="field-error">{errors.recipientState}</span>}
             </div>
