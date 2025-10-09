@@ -161,35 +161,37 @@ const OrderConfirmationPage: React.FC = () => {
               {order.items && order.items.length > 0 && (
                 <>
                   {/* Loop through all order items */}
-                  {order.items.map((item) => (
-                    <div key={item.id} className="order-item-card">
-                      <div className="item-image-container">
-                        {item.product.imageUrl ? (
-                          <img src={getImageUrl(item.product.imageUrl)} alt={item.product.name} />
-                        ) : (
-                          <div className="placeholder-image"></div>
-                        )}
-                      </div>
-                      <div className="item-details-container">
-                        <div className="item-header">
-                          <h3>{item.product.name}</h3>
-                          <span className="item-price">
-                            {formatPrice(item.priceCents * item.quantity)}
-                            {item.quantity > 1 && <span className="quantity"> × {item.quantity}</span>}
-                          </span>
+                  {order.items.map((item) => {
+                    const itemTotalCents = item.priceCents * item.quantity;
+
+                    return (
+                      <div key={item.id} className="order-item-card">
+                        <div className="item-image-container">
+                          {item.product.imageUrl ? (
+                            <img src={getImageUrl(item.product.imageUrl)} alt={item.product.name} />
+                          ) : (
+                            <div className="placeholder-image"></div>
+                          )}
                         </div>
-                        <div className="item-info-list">
-                          <p>Suburb: {order.shippingCity || "N/A"}</p>
-                          <p>Postcode: {order.shippingZipCode || "N/A"}</p>
-                          <p>
-                            Delivery Date:{" "}
-                            {item.requestedDeliveryDate ? formatDate(item.requestedDeliveryDate) : getDeliveryEstimate(order.deliveryType)}
-                          </p>
-                          <p>Subscription: {formatSubscriptionType(item.subscriptionType)}</p>
+                        <div className="item-details-container">
+                          <div className="item-header">
+                            <h3>{item.product.name}</h3>
+                            <span className="item-price">{formatPrice(itemTotalCents)}</span>
+                          </div>
+                          <div className="item-info-list">
+                            <p>Quantity: {item.quantity}</p>
+                            <p>Suburb: {order.shippingCity || "N/A"}</p>
+                            <p>Postcode: {order.shippingZipCode || "N/A"}</p>
+                            <p>
+                              Delivery Date:{" "}
+                              {item.requestedDeliveryDate ? formatDate(item.requestedDeliveryDate) : getDeliveryEstimate(order.deliveryType)}
+                            </p>
+                            <p>Subscription: {formatSubscriptionType(item.subscriptionType)}</p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
 
                   {/* Price breakdown shown once after all items */}
                   <div className="price-breakdown">
