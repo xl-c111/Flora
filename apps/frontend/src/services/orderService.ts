@@ -27,6 +27,17 @@ export interface CreateOrderData {
     country?: string;
     phone?: string;
   };
+  billingAddress?: {
+    firstName: string;
+    lastName: string;
+    street1: string;
+    street2?: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country?: string;
+    phone?: string;
+  };
   deliveryType: 'STANDARD' | 'EXPRESS' | 'NEXT_DAY' | 'PICKUP';
   deliveryNotes?: string;
   requestedDeliveryDate?: Date;
@@ -54,6 +65,15 @@ export interface Order {
   shippingZipCode?: string;
   shippingCountry?: string;
   shippingPhone?: string;
+  billingFirstName?: string;
+  billingLastName?: string;
+  billingStreet1?: string;
+  billingStreet2?: string;
+  billingCity?: string;
+  billingState?: string;
+  billingZipCode?: string;
+  billingCountry?: string;
+  billingPhone?: string;
   items: Array<{
     id: string;
     productId: string;
