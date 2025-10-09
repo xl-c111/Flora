@@ -92,6 +92,38 @@ export const useCheckout = (): UseCheckoutReturn => {
       // Get user token if logged in
       const token = await getAccessToken();
 
+      // Build billing address based on checkbox
+      console.log('💳 Billing Address Logic:', {
+        useSameAddress: formData.useSameAddress,
+        senderFirstName: formData.senderFirstName,
+        senderLastName: formData.senderLastName,
+        senderAddress: formData.senderAddress,
+      });
+
+      const billingAddress = formData.useSameAddress ? {
+        firstName: formData.recipientFirstName,
+        lastName: formData.recipientLastName,
+        street1: formData.recipientAddress,
+        street2: formData.recipientApartment,
+        city: formData.recipientCity,
+        state: formData.recipientState,
+        zipCode: formData.recipientZipCode,
+        country: formData.recipientCountry || 'AU',
+        phone: formData.recipientPhone,
+      } : {
+        firstName: formData.senderFirstName,
+        lastName: formData.senderLastName,
+        street1: formData.senderAddress,
+        street2: formData.senderApartment,
+        city: formData.senderCity,
+        state: formData.senderState,
+        zipCode: formData.senderZipCode,
+        country: 'AU',
+        phone: formData.senderPhone,
+      };
+
+      console.log('💳 Built billing address:', billingAddress);
+
       const orderData: CreateOrderData = {
         purchaseType: 'ONE_TIME', // First order is always one-time, subscriptions are for future
         // If user is logged in, use their ID; otherwise guest checkout
@@ -110,6 +142,7 @@ export const useCheckout = (): UseCheckoutReturn => {
           country: formData.recipientCountry || 'AU',
           phone: formData.recipientPhone || '+1234567890',
         },
+        billingAddress: billingAddress,
         deliveryType: formData.deliveryType || 'STANDARD',
       };
 

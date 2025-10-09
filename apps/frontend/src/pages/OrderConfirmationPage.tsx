@@ -219,16 +219,34 @@ const OrderConfirmationPage: React.FC = () => {
               <div className="info-grid">
                 <div className="info-column">
                   <h3>Billing Information</h3>
-                  <p>
-                    {order.shippingFirstName} {order.shippingLastName}
-                  </p>
-                  <p>{order.shippingStreet1}</p>
-                  {order.shippingStreet2 && <p>{order.shippingStreet2}</p>}
-                  <p>
-                    {order.shippingCity}, {order.shippingState}
-                  </p>
-                  <p>{order.shippingZipCode}</p>
-                  <p>{getCountryName(order.shippingCountry)}</p>
+                  {order.billingFirstName && order.billingLastName ? (
+                    <>
+                      <p>
+                        {order.billingFirstName} {order.billingLastName}
+                      </p>
+                      <p>{order.billingStreet1}</p>
+                      {order.billingStreet2 && <p>{order.billingStreet2}</p>}
+                      <p>
+                        {order.billingCity}, {order.billingState}
+                      </p>
+                      <p>{order.billingZipCode}</p>
+                      <p>{getCountryName(order.billingCountry)}</p>
+                    </>
+                  ) : (
+                    <>
+                      <p>
+                        {order.shippingFirstName} {order.shippingLastName}
+                      </p>
+                      <p>{order.shippingStreet1}</p>
+                      {order.shippingStreet2 && <p>{order.shippingStreet2}</p>}
+                      <p>
+                        {order.shippingCity}, {order.shippingState}
+                      </p>
+                      <p>{order.shippingZipCode}</p>
+                      <p>{getCountryName(order.shippingCountry)}</p>
+                      <p className="same-as-shipping">(Same as shipping)</p>
+                    </>
+                  )}
                 </div>
 
                 <div className="info-column">

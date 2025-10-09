@@ -35,6 +35,17 @@ export interface CreateOrderData {
     country?: string;
     phone?: string;
   };
+  billingAddress?: {
+    firstName: string;
+    lastName: string;
+    street1: string;
+    street2?: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country?: string;
+    phone?: string;
+  };
   deliveryType: DeliveryType;
   deliveryNotes?: string;
   requestedDeliveryDate?: Date;
@@ -95,6 +106,17 @@ export class OrderService {
 
     // Create order with transaction
     const order = await prisma.$transaction(async (tx) => {
+      // Debug billing data before insertion
+      console.log('🔍 OrderService - About to insert billing data:', {
+        billingAddress: orderData.billingAddress,
+        billingFirstName: orderData.billingAddress?.firstName,
+        billingLastName: orderData.billingAddress?.lastName,
+        billingStreet1: orderData.billingAddress?.street1,
+        billingCity: orderData.billingAddress?.city,
+        billingState: orderData.billingAddress?.state,
+        billingZipCode: orderData.billingAddress?.zipCode,
+      });
+
       // Create order
       const newOrder = await tx.order.create({
         data: {
@@ -112,7 +134,7 @@ export class OrderService {
           deliveryType: orderData.deliveryType,
           requestedDeliveryDate: orderData.requestedDeliveryDate,
           deliveryNotes: orderData.deliveryNotes,
-          // Shipping address snapshot
+          // Shipping address snapshot (recipient/delivery address)
           shippingFirstName: orderData.shippingAddress.firstName,
           shippingLastName: orderData.shippingAddress.lastName,
           shippingStreet1: orderData.shippingAddress.street1,
@@ -122,6 +144,16 @@ export class OrderService {
           shippingZipCode: orderData.shippingAddress.zipCode,
           shippingCountry: orderData.shippingAddress.country || 'AU',
           shippingPhone: orderData.shippingAddress.phone,
+          // Billing address snapshot (sender/payer address)
+          billingFirstName: orderData.billingAddress?.firstName,
+          billingLastName: orderData.billingAddress?.lastName,
+          billingStreet1: orderData.billingAddress?.street1,
+          billingStreet2: orderData.billingAddress?.street2,
+          billingCity: orderData.billingAddress?.city,
+          billingState: orderData.billingAddress?.state,
+          billingZipCode: orderData.billingAddress?.zipCode,
+          billingCountry: orderData.billingAddress?.country || 'AU',
+          billingPhone: orderData.billingAddress?.phone,
           items: {
             create: orderData.items.map(item => ({
               productId: item.productId,
