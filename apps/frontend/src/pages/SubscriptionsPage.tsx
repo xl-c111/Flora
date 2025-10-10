@@ -74,6 +74,7 @@ const SubscriptionsPage = () => {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
+      timeZone: 'UTC',
     });
   };
 

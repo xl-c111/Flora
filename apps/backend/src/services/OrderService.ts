@@ -89,11 +89,12 @@ export class OrderService {
     // Calculate totals
     const subtotalCents = orderData.items.reduce((sum, item) => sum + item.priceCents * item.quantity, 0);
 
-    // Calculate shipping based on delivery type and zip code
+    // Calculate shipping based on delivery type, zip code, and delivery dates
     const shippingCents = await this.calculateShipping(
       orderData.deliveryType,
       orderData.shippingAddress.zipCode,
-      subtotalCents
+      subtotalCents,
+      orderData.items
     );
 
     // No additional tax (tax included in item price)
@@ -520,7 +521,30 @@ export class OrderService {
     return orderNumber;
   }
 
-  private async calculateShipping(deliveryType: DeliveryType, zipCode: string, subtotalCents: number): Promise<number> {
+  private async calculateShipping(
+    deliveryType: DeliveryType,
+    zipCode: string,
+    subtotalCents: number,
+    items: Array<{ requestedDeliveryDate?: Date }>
+  ): Promise<number> {
+    // PICKUP is always free, regardless of delivery dates
+    if (deliveryType === DeliveryType.PICKUP) {
+      return 0;
+    }
+
+    // Group items by delivery date
+    const deliveryGroups = new Map<string, number>();
+    items.forEach((item) => {
+      const dateKey = item.requestedDeliveryDate
+        ? new Date(item.requestedDeliveryDate).toISOString().split('T')[0] // YYYY-MM-DD
+        : 'no-date';
+
+      deliveryGroups.set(dateKey, (deliveryGroups.get(dateKey) || 0) + 1);
+    });
+
+    // Calculate shipping fee per delivery group
+    const numberOfDeliveries = deliveryGroups.size;
+
     // Check if delivery zone offers free shipping
     const deliveryZone = await prisma.deliveryZone.findFirst({
       where: {
@@ -529,40 +553,48 @@ export class OrderService {
       },
     });
 
-    // Free shipping over threshold
-    if (deliveryZone?.freeDeliveryThreshold && subtotalCents >= deliveryZone.freeDeliveryThreshold) {
+    // Free shipping over threshold (only applies if single delivery)
+    if (numberOfDeliveries === 1 && deliveryZone?.freeDeliveryThreshold && subtotalCents >= deliveryZone.freeDeliveryThreshold) {
       return 0;
     }
+
+    // Determine cost per delivery
+    let costPerDelivery = 0;
 
     // Use delivery zone pricing if available
     if (deliveryZone) {
       switch (deliveryType) {
         case DeliveryType.STANDARD:
-          return deliveryZone.standardCostCents;
+          costPerDelivery = deliveryZone.standardCostCents;
+          break;
         case DeliveryType.EXPRESS:
-          return deliveryZone.expressCostCents || deliveryZone.standardCostCents;
+          costPerDelivery = deliveryZone.expressCostCents || deliveryZone.standardCostCents;
+          break;
         case DeliveryType.SAME_DAY:
-          return deliveryZone.sameDayCostCents || deliveryZone.expressCostCents || deliveryZone.standardCostCents;
-        case DeliveryType.PICKUP:
-          return 0;
+          costPerDelivery = deliveryZone.sameDayCostCents || deliveryZone.expressCostCents || deliveryZone.standardCostCents;
+          break;
         default:
-          return deliveryZone.standardCostCents;
+          costPerDelivery = deliveryZone.standardCostCents;
+      }
+    } else {
+      // Fallback pricing (matches deliveryService.ts config)
+      switch (deliveryType) {
+        case DeliveryType.STANDARD:
+          costPerDelivery = 899; // $8.99 AUD
+          break;
+        case DeliveryType.EXPRESS:
+          costPerDelivery = 1599; // $15.99 AUD
+          break;
+        case DeliveryType.SAME_DAY:
+          costPerDelivery = 2999; // $29.99 AUD
+          break;
+        default:
+          costPerDelivery = 899;
       }
     }
 
-    // Fallback pricing (matches deliveryService.ts config)
-    switch (deliveryType) {
-      case DeliveryType.STANDARD:
-        return 899; // $8.99 AUD
-      case DeliveryType.EXPRESS:
-        return 1599; // $15.99 AUD
-      case DeliveryType.SAME_DAY:
-        return 2999; // $29.99 AUD
-      case DeliveryType.PICKUP:
-        return 0; // Free
-      default:
-        return 899;
-    }
+    // Total shipping = cost per delivery × number of unique delivery dates
+    return costPerDelivery * numberOfDeliveries;
   }
 
   private async createDeliveryTracking(order: OrderWithDetails): Promise<void> {

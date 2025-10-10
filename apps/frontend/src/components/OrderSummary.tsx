@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { CartItem } from '../contexts/CartContext';
 import { getImageUrl } from '../services/api';
 import '../styles/OrderSummary.css';
@@ -11,6 +12,11 @@ interface OrderSummaryProps {
   onApplyDiscount?: (code: string) => void;
   onUpdateQuantity?: (itemId: string, quantity: number) => void;
   onRemoveItem?: (itemId: string) => void;
+  shippingBreakdown?: Array<{
+    date: string | null;
+    itemCount: number;
+    shippingCost: number;
+  }>;
 }
 
 const OrderSummary: React.FC<OrderSummaryProps> = ({
@@ -21,14 +27,21 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   onApplyDiscount,
   onUpdateQuantity,
   onRemoveItem,
+  shippingBreakdown,
 }) => {
+  const navigate = useNavigate();
   const [discountCode, setDiscountCode] = useState('');
+  const [showShippingBreakdown, setShowShippingBreakdown] = useState(false);
   const itemsContainerRef = useRef<HTMLDivElement>(null);
 
   const handleApplyDiscount = () => {
     if (discountCode.trim() && onApplyDiscount) {
       onApplyDiscount(discountCode.trim());
     }
+  };
+
+  const handleItemClick = (productId: string) => {
+    navigate(`/products/${productId}`);
   };
 
   const handleScrollDown = () => {
@@ -55,7 +68,17 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
         <div className="order-summary-items" ref={itemsContainerRef}>
           {items.map((item) => (
           <div key={item.id} className="order-item">
-            <div className="order-item-image">
+            <div
+              className="order-item-image clickable"
+              onClick={() => handleItemClick(item.product.id)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  handleItemClick(item.product.id);
+                }
+              }}
+            >
               {item.product.imageUrl ? (
                 <img
                   src={getImageUrl(item.product.imageUrl)}
@@ -70,7 +93,19 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
               <span className="item-quantity-badge">{item.quantity}</span>
             </div>
             <div className="order-item-details">
-              <h3>{item.product.name}</h3>
+              <h3
+                className="clickable"
+                onClick={() => handleItemClick(item.product.id)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    handleItemClick(item.product.id);
+                  }
+                }}
+              >
+                {item.product.name}
+              </h3>
 
               {/* Purchase Type */}
               {item.isSubscription ? (
@@ -182,12 +217,55 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           <span>Subtotal · {items.reduce((sum, item) => sum + item.quantity, 0)} items</span>
           <span>{formatPrice(subtotal)}</span>
         </div>
-        <div className="total-row">
-          <span>Shipping</span>
+
+        {/* Shipping section with breakdown support */}
+        <div className="total-row shipping-row">
+          <div className="shipping-label-wrapper">
+            <span>
+              {shippingBreakdown && shippingBreakdown.length > 1
+                ? `Shipping (${shippingBreakdown.length} deliveries)`
+                : 'Shipping'}
+            </span>
+            {shippingBreakdown && shippingBreakdown.length > 1 && (
+              <button
+                className="breakdown-toggle"
+                onClick={() => setShowShippingBreakdown(!showShippingBreakdown)}
+                type="button"
+              >
+                {showShippingBreakdown ? '▼ Hide details' : '▶ See breakdown'}
+              </button>
+            )}
+          </div>
           <span className="shipping-tbd">
-            {shipping === 0 ? 'Enter shipping address' : formatPrice(shipping)}
+            {shipping === 0
+              ? (shippingBreakdown && shippingBreakdown.length > 0
+                  ? 'Free' // Pickup or free shipping
+                  : 'Enter shipping address') // Not yet calculated
+              : formatPrice(shipping)}
           </span>
         </div>
+
+        {/* Shipping breakdown details */}
+        {showShippingBreakdown && shippingBreakdown && shippingBreakdown.length > 1 && (
+          <div className="shipping-breakdown">
+            {shippingBreakdown.map((group, index) => (
+              <div key={index} className="breakdown-item">
+                <span className="breakdown-date">
+                  {group.date
+                    ? new Date(group.date + 'T12:00:00').toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })
+                    : 'Unscheduled'}{' '}
+                  ({group.itemCount} {group.itemCount === 1 ? 'item' : 'items'})
+                </span>
+                <span className="breakdown-cost">{formatPrice(group.shippingCost)}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
         <div className="total-row final-total">
           <span className="total-label">Total</span>
           <div className="total-amount">
