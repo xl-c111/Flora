@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { useCart } from "../contexts/CartContext";
+import { useCart, groupItemsByDeliveryDate } from "../contexts/CartContext";
 import { useAuth } from "../contexts/AuthContext";
 import orderService from "../services/orderService";
 import type { Order } from "../services/orderService";
@@ -14,6 +14,7 @@ const OrderConfirmationPage: React.FC = () => {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showShippingBreakdown, setShowShippingBreakdown] = useState(false);
 
   useEffect(() => {
     // Clear cart when order confirmation page loads
@@ -28,16 +29,6 @@ const OrderConfirmationPage: React.FC = () => {
     try {
       const token = await getAccessToken();
       const orderData = await orderService.getOrder(id, token);
-      console.log("📦 Order data received:", orderData);
-      console.log("📦 Shipping info:", {
-        firstName: orderData.shippingFirstName,
-        lastName: orderData.shippingLastName,
-        street1: orderData.shippingStreet1,
-        city: orderData.shippingCity,
-        state: orderData.shippingState,
-        zipCode: orderData.shippingZipCode,
-        country: orderData.shippingCountry,
-      });
       setOrder(orderData);
       setError(null);
     } catch (err: any) {
@@ -102,6 +93,30 @@ const OrderConfirmationPage: React.FC = () => {
       'PICKUP': 'Pickup (date to be arranged)',
     };
     return estimates[deliveryType || 'STANDARD'] || 'Standard delivery (3-5 business days)';
+  };
+
+  const getShippingBreakdown = () => {
+    if (!order || !order.items) return [];
+
+    // Convert order items to cart item format for grouping
+    const cartItems = order.items.map(item => ({
+      id: item.id,
+      product: item.product,
+      quantity: item.quantity,
+      selectedDate: item.requestedDeliveryDate ? new Date(item.requestedDeliveryDate) : undefined,
+    }));
+
+    // Group by delivery date
+    const groups = groupItemsByDeliveryDate(cartItems);
+
+    // Calculate shipping cost per group
+    const shippingPerDelivery = order.deliveryType === 'PICKUP' ? 0 : 899; // $8.99 in cents
+
+    return groups.map(group => ({
+      date: group.date,
+      itemCount: group.items.reduce((sum, item) => sum + item.quantity, 0),
+      shippingCost: shippingPerDelivery,
+    }));
   };
 
   if (loading) {
@@ -199,10 +214,58 @@ const OrderConfirmationPage: React.FC = () => {
                       <span>Subtotal</span>
                       <span>{formatPrice(order.subtotalCents)}</span>
                     </div>
-                    <div className="price-row">
-                      <span>Shipping</span>
-                      <span>{formatPrice(order.shippingCents)}</span>
-                    </div>
+
+                    {/* Shipping section with breakdown */}
+                    {(() => {
+                      const shippingBreakdown = getShippingBreakdown();
+                      const calculatedShipping = shippingBreakdown.reduce((sum, group) => sum + group.shippingCost, 0);
+
+                      return (
+                        <>
+                          <div className="price-row shipping-row">
+                            <div className="shipping-label-wrapper">
+                              <span>
+                                {shippingBreakdown.length > 1
+                                  ? `Shipping (${shippingBreakdown.length} deliveries)`
+                                  : 'Shipping'}
+                              </span>
+                              {shippingBreakdown.length > 1 && (
+                                <button
+                                  className="breakdown-toggle"
+                                  onClick={() => setShowShippingBreakdown(!showShippingBreakdown)}
+                                  type="button"
+                                >
+                                  {showShippingBreakdown ? '▼ Hide details' : '▶ See breakdown'}
+                                </button>
+                              )}
+                            </div>
+                            <span>{formatPrice(calculatedShipping)}</span>
+                          </div>
+
+                          {/* Shipping breakdown details */}
+                          {showShippingBreakdown && shippingBreakdown.length > 1 && (
+                            <div className="shipping-breakdown">
+                              {shippingBreakdown.map((group, index) => (
+                                <div key={index} className="breakdown-item">
+                                  <span className="breakdown-date">
+                                    {group.date
+                                      ? new Date(group.date + 'T12:00:00').toLocaleDateString('en-US', {
+                                          month: 'short',
+                                          day: 'numeric',
+                                          year: 'numeric',
+                                        })
+                                      : 'Unscheduled'}{' '}
+                                    ({group.itemCount} {group.itemCount === 1 ? 'item' : 'items'})
+                                  </span>
+                                  <span className="breakdown-cost">{formatPrice(group.shippingCost)}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </>
+                      );
+                    })()}
+
                     <div className="price-row total-row">
                       <span>Total</span>
                       <span>{formatPrice(order.totalCents)}</span>

@@ -55,25 +55,40 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
     case 'ADD_ITEM': {
-      // Check if the same product with same subscription settings already exists
-      const existingItemIndex = state.items.findIndex(
-        (item) =>
+      // Check if the same product with same subscription settings AND delivery date already exists
+      const existingItemIndex = state.items.findIndex((item) => {
+        // Normalize dates for comparison using UTC components (YYYY-MM-DD format)
+        const getDateKey = (date?: Date) => {
+          if (!date) return null;
+          const d = new Date(date);
+          const year = d.getUTCFullYear();
+          const month = String(d.getUTCMonth() + 1).padStart(2, '0');
+          const day = String(d.getUTCDate()).padStart(2, '0');
+          return `${year}-${month}-${day}`;
+        };
+
+        const existingDateKey = getDateKey(item.selectedDate);
+        const newDateKey = getDateKey(action.payload.selectedDate);
+
+        return (
           item.product.id === action.payload.product.id &&
           item.isSubscription === action.payload.isSubscription &&
-          item.subscriptionFrequency === action.payload.subscriptionFrequency
-      );
+          item.subscriptionFrequency === action.payload.subscriptionFrequency &&
+          existingDateKey === newDateKey
+        );
+      });
 
       let updatedItems: CartItem[];
 
       if (existingItemIndex !== -1) {
-        // Product already exists - increase quantity
+        // Product with same settings and delivery date exists - increase quantity
         updatedItems = state.items.map((item, index) =>
           index === existingItemIndex
             ? { ...item, quantity: item.quantity + (action.payload.quantity || 1) }
             : item
         );
       } else {
-        // New product - add to cart
+        // New product or different delivery date - add to cart
         const newItem: CartItem = {
           ...action.payload,
           id: Date.now().toString() + Math.random().toString(36).substring(2, 11),
@@ -135,6 +150,40 @@ const calculateTotal = (items: CartItem[]): number => {
   );
 };
 
+// Helper function to group cart items by delivery date
+export const groupItemsByDeliveryDate = (items: CartItem[]): Array<{ date: string | null; items: CartItem[] }> => {
+  const groups = new Map<string, CartItem[]>();
+
+  items.forEach((item) => {
+    // Create a key based on the delivery date
+    // Items without a date are grouped together with key 'no-date'
+    let dateKey = 'no-date';
+
+    if (item.selectedDate) {
+      const d = new Date(item.selectedDate);
+      // Use LOCAL date components (not UTC) to match what user selected
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      dateKey = `${year}-${month}-${day}`;
+    }
+
+    if (!groups.has(dateKey)) {
+      groups.set(dateKey, []);
+    }
+    groups.get(dateKey)!.push(item);
+  });
+
+  // Convert Map to array of groups
+  // Store the dateKey string directly as the date for display
+  const result = Array.from(groups.entries()).map(([dateKey, items]) => ({
+    date: dateKey === 'no-date' ? null : dateKey, // Keep as string YYYY-MM-DD
+    items,
+  }));
+
+  return result;
+};
+
 export const useCart = () => {
   const context = useContext(CartContext);
   if (context === undefined) {
@@ -161,20 +210,22 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const savedCart = localStorage.getItem('flora-cart');
     const savedGiftMessage = localStorage.getItem('flora-cart-gift-message');
-    console.log('🛒 Loading cart from localStorage. Raw data:', savedCart);
     if (savedCart) {
       try {
         const parsedCart = JSON.parse(savedCart);
-        console.log('🛒 Parsed cart. Item count:', parsedCart.length);
-        console.log('🛒 Parsed cart items:', JSON.stringify(parsedCart, null, 2));
-        if (parsedCart.length > 0) {
-          dispatch({ type: 'LOAD_CART', payload: parsedCart });
+
+        // Convert date strings back to Date objects
+        const normalizedCart = parsedCart.map((item: any) => ({
+          ...item,
+          selectedDate: item.selectedDate ? new Date(item.selectedDate) : undefined,
+        }));
+
+        if (normalizedCart.length > 0) {
+          dispatch({ type: 'LOAD_CART', payload: normalizedCart });
         }
       } catch (error) {
         console.error('Error loading cart from localStorage:', error);
       }
-    } else {
-      console.log('🛒 No saved cart found in localStorage');
     }
 
     // Load gift message
@@ -194,8 +245,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     if (!isInitialized) return;
 
-    console.log('🛒 Saving cart to localStorage. Item count:', state.items.length);
-    console.log('🛒 Cart items:', JSON.stringify(state.items, null, 2));
     localStorage.setItem('flora-cart', JSON.stringify(state.items));
   }, [state.items, isInitialized]);
 
