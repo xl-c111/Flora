@@ -228,11 +228,16 @@
 .action-card {
   background: #faf8f5;
   border-radius: 12px;
-  padding: 2rem;
-  text-align: center;
+  padding: 2rem 1.5rem;
   text-decoration: none;
   transition: all 0.3s;
   border: 2px solid transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  min-height: 200px;
 }
 
 .action-card:not(.disabled):hover {
@@ -247,21 +252,27 @@
 }
 
 .action-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
+  font-size: 3.5rem;
+  margin-bottom: 1.25rem;
+  line-height: 1;
 }
 
 .action-card h3 {
   color: #5a5a4a;
   font-size: 1.25rem;
   font-weight: 600;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.75rem 0;
+  text-align: center;
+  width: 100%;
 }
 
 .action-card p {
   color: #8a8a7a;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   margin: 0;
+  text-align: center;
+  line-height: 1.5;
+  width: 100%;
 }
 
 .action-card p.coming-soon {

@@ -160,6 +160,29 @@
   flex: 1;
 }
 
+.subscription-type-badge {
+  margin-bottom: 0.5rem;
+}
+
+.type-badge {
+  display: inline-block;
+  background: #6b7a5e;
+  color: white;
+  padding: 0.35rem 0.85rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.subscription-frequency {
+  color: #6b7a5e;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+}
+
 .subscription-type {
   color: #5a5a4a;
   font-size: 1.25rem;
@@ -169,7 +192,7 @@
 
 .subscription-created {
   color: #8a8a7a;
-  font-size: 0.95rem;
+  font-size: 0.875rem;
   margin: 0;
 }
 
