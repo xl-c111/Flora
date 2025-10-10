@@ -258,7 +258,7 @@ export class OrderService {
     });
   }
 
-  // Get user orders
+  // Get user orders (exclude PENDING - those are abandoned/incomplete orders)
   async getUserOrders(
     userId: string,
     page = 1,
@@ -270,9 +270,17 @@ export class OrderService {
   }> {
     const offset = (page - 1) * limit;
 
+    // Only show confirmed orders (exclude PENDING which are abandoned orders)
+    const whereClause = {
+      userId,
+      status: {
+        not: OrderStatus.PENDING, // Exclude draft/abandoned orders
+      },
+    };
+
     const [orders, total] = await Promise.all([
       prisma.order.findMany({
-        where: { userId },
+        where: whereClause,
         include: {
           items: {
             include: {
@@ -299,7 +307,7 @@ export class OrderService {
         skip: offset,
         take: limit,
       }),
-      prisma.order.count({ where: { userId } }),
+      prisma.order.count({ where: whereClause }),
     ]);
 
     return {

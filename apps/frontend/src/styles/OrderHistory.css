@@ -85,16 +85,75 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
+.header-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
 .order-history-header h1 {
   color: #5a5a4a;
   font-size: 2rem;
   font-weight: 600;
-  margin: 0 0 0.5rem 0;
+  margin: 0;
+}
+
+.status-info-btn {
+  background: #6b7a5e;
+  color: white;
+  border: none;
+  padding: 0.625rem 1.25rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: inherit;
+}
+
+.status-info-btn:hover {
+  background: #5a6a4e;
+  transform: translateY(-2px);
 }
 
 .order-count {
   color: #8a8a7a;
   font-size: 1rem;
+  margin: 0 0 1rem 0;
+}
+
+.status-info-panel {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+  border: 2px solid #e5e5e0;
+}
+
+.status-info-panel h3 {
+  color: #5a5a4a;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 1.25rem 0;
+}
+
+.status-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.25rem;
+}
+
+.status-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.status-info-item p {
+  color: #6a6a5a;
+  font-size: 0.875rem;
+  line-height: 1.5;
   margin: 0;
 }
 
