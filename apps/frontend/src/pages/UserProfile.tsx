@@ -280,6 +280,7 @@ const UserProfile = () => {
                       year: 'numeric',
                       month: 'long',
                       day: 'numeric',
+                      timeZone: 'UTC',
                     })
                   : 'Recently'}
               </p>
