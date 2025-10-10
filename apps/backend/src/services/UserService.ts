@@ -124,6 +124,7 @@ export class UserService {
 
   /**
    * Get user statistics (order count, subscription count, etc.)
+   * Only counts completed orders (excludes PENDING/abandoned orders)
    */
   async getUserStats(userId: string): Promise<{
     orderCount: number;
@@ -133,17 +134,33 @@ export class UserService {
   }> {
     const [orderCount, subscriptionCount, addressCount, orders] =
       await Promise.all([
-        prisma.order.count({ where: { userId } }),
-        prisma.subscription.count({ where: { userId } }),
+        // Only count orders that are not PENDING (exclude abandoned orders)
+        prisma.order.count({
+          where: {
+            userId,
+            status: { not: 'PENDING' }
+          }
+        }),
+        // Only count ACTIVE subscriptions
+        prisma.subscription.count({
+          where: {
+            userId,
+            status: 'ACTIVE'
+          }
+        }),
         prisma.address.count({ where: { userId } }),
+        // Only include completed orders in total spent
         prisma.order.findMany({
-          where: { userId },
+          where: {
+            userId,
+            status: { not: 'PENDING' }
+          },
           select: { totalCents: true },
         }),
       ]);
 
     const totalSpentCents = orders.reduce(
-      (sum, order) => sum + order.totalCents,
+      (sum: number, order: { totalCents: number }) => sum + order.totalCents,
       0
     );
 

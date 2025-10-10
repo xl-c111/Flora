@@ -135,7 +135,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                         month: 'short',
                         day: 'numeric',
                         year: 'numeric'
-                      })} (then on-demand)`
+                      })} (then random surprise day)`
                     : item.isSubscription
                     ? `First delivery: ${new Date(item.selectedDate).toLocaleDateString('en-US', {
                         month: 'short',

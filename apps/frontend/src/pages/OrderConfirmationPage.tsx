@@ -73,16 +73,35 @@ const OrderConfirmationPage: React.FC = () => {
   const formatSubscriptionType = (subscriptionType?: string) => {
     if (!subscriptionType) return "One-time purchase";
 
-    const typeMap: Record<string, string> = {
-      'RECURRING_WEEKLY': 'Weekly Subscription',
-      'RECURRING_BIWEEKLY': 'Fortnightly Subscription',
-      'RECURRING_MONTHLY': 'Monthly Subscription',
-      'RECURRING_QUARTERLY': 'Quarterly Subscription',
-      'RECURRING_YEARLY': 'Yearly Subscription',
-      'SPONTANEOUS': 'Spontaneous Subscription',
-    };
+    // Extract frequency and type to avoid redundancy
+    // IMPORTANT: Check BIWEEKLY before WEEKLY to avoid substring match bug
+    let frequency = '';
+    let type = '';
 
-    return typeMap[subscriptionType] || subscriptionType;
+    if (subscriptionType.includes('SPONTANEOUS')) {
+      type = 'Spontaneous';
+    } else if (subscriptionType.includes('RECURRING')) {
+      type = 'Recurring';
+    }
+
+    // Check BIWEEKLY first (it contains "WEEKLY" as substring)
+    if (subscriptionType.includes('BIWEEKLY')) {
+      frequency = 'Biweekly';
+    } else if (subscriptionType.includes('WEEKLY')) {
+      frequency = 'Weekly';
+    } else if (subscriptionType.includes('MONTHLY')) {
+      frequency = 'Monthly';
+    } else if (subscriptionType.includes('QUARTERLY')) {
+      frequency = 'Quarterly';
+    } else if (subscriptionType.includes('YEARLY')) {
+      frequency = 'Yearly';
+    } else if (subscriptionType === 'SPONTANEOUS') {
+      // Legacy spontaneous type
+      return 'Biweekly Spontaneous';
+    }
+
+    // Return: "Biweekly Recurring" or "Monthly Spontaneous", etc.
+    return frequency && type ? `${frequency} ${type}` : subscriptionType;
   };
 
   const getDeliveryEstimate = (deliveryType?: string) => {
@@ -158,6 +177,12 @@ const OrderConfirmationPage: React.FC = () => {
         {/* Header Section */}
         <div className="header-section">
           <h1>ORDER CONFIRMATION</h1>
+          {order && (
+            <div className="order-number-highlight">
+              <span className="order-number-label">Order Number:</span>
+              <span className="order-number-value">#{order.orderNumber}</span>
+            </div>
+          )}
           <p className="thank-you-message">{getCustomerName()}, thank you for your order!</p>
           <p className="info-message">
             We've received your order and will contact you as soon as your package is shipped. You can find your

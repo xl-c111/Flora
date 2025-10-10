@@ -33,7 +33,10 @@ enum SubscriptionType {
   RECURRING_MONTHLY     // Monthly recurring delivery
   RECURRING_QUARTERLY   // Every 3 months
   RECURRING_YEARLY      // Yearly recurring delivery
-  SPONTANEOUS           // Flexible timing, user decides when
+  SPONTANEOUS           // Flexible timing, user decides when (DEPRECATED - use specific variants)
+  SPONTANEOUS_WEEKLY    // Weekly spontaneous delivery (random day each week)
+  SPONTANEOUS_BIWEEKLY  // Biweekly spontaneous delivery (random day every 2 weeks)
+  SPONTANEOUS_MONTHLY   // Monthly spontaneous delivery (random day each month)
 }
 
 enum SubscriptionStatus {

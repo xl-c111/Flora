@@ -20,6 +20,7 @@ services:
     working_dir: /app/apps/backend
     ports:
       - "3001:3001"
+      - "5555:5555"  # Prisma Studio
 
   frontend:
     build:
