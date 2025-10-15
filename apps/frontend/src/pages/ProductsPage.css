@@ -267,38 +267,43 @@
   border-top: 1px solid black;
   border-bottom: 1px solid black;
   border-color: var(--text-colour);
+
+  font-size: 1rem;
 }
 
 .filter-select:focus {
-  outline: dotted;
+  /* outline: dotted; */
   box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
   background: var(--background-menu-colour);
+  /* border-color:red; */
 }
 
 /* .filter-select: */
 
 .filter-select-menu {
   font-family: var(--primary-font-body-copy);
+  font-size: 0.9rem;
+  border: 1rem;
 }
 
 /* Filter Tips */
 .filter-tips {
   margin-top: 2rem;
   padding-top: 1rem;
-  border-top: 1px solid #eee;
+  border-top: 1px solid orange;
 }
 
 .filter-tips h4 {
   margin: 0 0 0.5rem 0;
   font-size: 0.875rem;
-  color: #666;
+  color: red;
 }
 
 .filter-tips ul {
   margin: 0;
   padding-left: 1rem;
   font-size: 0.75rem;
-  color: #999;
+  color: blue;
   line-height: 1.4;
 }
 
