@@ -87,11 +87,11 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, isLoading }) => {
   return (
     <div className="product-grid-container">
       {/* Grid Header - could add sorting options here later */}
-      <div className="grid-header">
+      {/* <div className="grid-header">
         <span className="product-count">
           {products.length} product{products.length !== 1 ? 's' : ''}
         </span>
-      </div>
+      </div> */}
 
       {/* Products Grid */}
       <div className="product-grid">

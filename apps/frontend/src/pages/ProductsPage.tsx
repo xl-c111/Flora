@@ -206,7 +206,7 @@ const ProductsPage: React.FC = () => {
               aria-label="Product results"
             >
               {/* Screen Reader Announcements */}
-              {/* <div
+              <div
                 aria-live="polite"
                 aria-atomic="true"
                 className="sr-only"
@@ -220,11 +220,11 @@ const ProductsPage: React.FC = () => {
                         ? ` with ${getActiveFilterCount()} filters applied`
                         : ''
                     }`}
-              </div> */}
+              </div>
 
               {/* Results Header */}
               <div className="results-header">
-                {/* <div className="results-info">
+                <div className="results-info">
                   {isLoading ? (
                     <span>Loading products...</span>
                   ) : (
@@ -238,10 +238,10 @@ const ProductsPage: React.FC = () => {
                       )}
                     </span>
                   )}
-                </div> */}
+                </div>
 
                 {/* Clear Filters Button (only show if filters are applied) */}
-                {/* {getActiveFilterCount() > 0 && (
+                {getActiveFilterCount() > 0 && (
                   <button
                     className="clear-filters-btn"
                     onClick={handleClearFilters}
@@ -249,7 +249,7 @@ const ProductsPage: React.FC = () => {
                   >
                     Clear All Filters
                   </button>
-                )} */}
+                )}
               </div>
 
               {/* Error Message */}
