@@ -1,8 +1,7 @@
 .flora-footer {
-  background: #d4dcd4;
+  background: var(--banner-colour-1);
   padding: 2rem 3rem 1.5rem;
   width: 100%;
-  color: #333;
 }
 
 /* Acknowledgment Section */
@@ -69,7 +68,7 @@
 }
 
 .footer-link {
-  color: #333;
+  color: var(--text-colour);
   text-decoration: underline;
   font-size: 0.9rem;
   transition: opacity 0.2s ease;
