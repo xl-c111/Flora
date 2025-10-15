@@ -180,18 +180,18 @@
 
 /* Filter Sidebar Styles */
 .filter-sidebar {
-  background: white;
+  /* background: red;
   border-radius: 8px;
   padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
   /* position: sticky; */
-  top: 2rem;
+  /* top: 2rem; */
 }
 
 .filter-header {
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #eee;
+  /* margin-bottom: 1.5rem;
+  padding-bottom: 1rem;*/
+  /* border-bottom: 1px solid red; */
 }
 
 .filter-header h3 {
@@ -359,7 +359,8 @@
 
 /* Product Grid Container */
 .product-grid-container {
-  width: 100%;
+  width: 90%;
+  margin: auto;
 }
 
 .grid-header {
@@ -542,7 +543,7 @@
   border: 1px solid var(--button-colour);
   background: blue;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 20px;
   font-size: 0.875rem;
   transition: all 0.3s ease;
 }
