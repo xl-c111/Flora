@@ -9,51 +9,55 @@
   background-color: transparent;
   padding: 0;
   border: none;
+  font-family: "EB Garamond", sans-serif;
 }
 
 .email-banner {
-  background-color: #6b6b5c;
-  color: white;
+  background-color: #595E4E;
+  color: #f5f5f5;
   padding: 1rem 1.5rem;
-  border-radius: 12px;
+  border-radius: 10px;
   text-align: center;
   font-size: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 15px;
+  font-family: "Outfit", sans-serif;
+  max-height: 64px;
 }
 
 .email-section .form-input {
-  background-color: #e8e8dd;
-  border: 2px solid #333;
-  border-radius: 12px;
+  background-color: #e0e8e0;
+  border: 2px solid #595E4E;
+  color: #595E4E;
+  border-radius: 10px;
   padding: 1rem 1.5rem;
   font-size: 1rem;
   height: 3.5rem;
-  box-sizing: border-box;
+  font-family: "Outfit", sans-serif;
 }
 
 .email-section .form-input:focus {
-  border-color: #6b6b5c;
-  background-color: #e8e8dd;
+  border-color: #595E4E;
+  background-color: #e0e8e0;
 }
 
 .email-section .form-input.error {
   border-color: #dc2626;
-  background-color: #e8e8dd;
+  background-color: #e0e8e0;
 }
 
 .email-section .form-input:-webkit-autofill,
 .email-section .form-input:-webkit-autofill:hover,
 .email-section .form-input:-webkit-autofill:focus,
 .email-section .form-input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 30px #e8e8dd inset !important;
-  -webkit-text-fill-color: #333 !important;
-  border: 2px solid #333 !important;
+  -webkit-box-shadow: 0 0 0 30px #f5f5f5 inset !important;
+  -webkit-text-fill-color: #595E4E !important;
+  border: 2px solid #595E4E !important;
   border-radius: 12px !important;
 }
 
 /* Gift Message Section */
 .gift-message-section {
-  margin-bottom: 2rem;
+  margin-bottom: 15px;
 }
 
 .message-header {
@@ -64,27 +68,31 @@
 }
 
 .gift-message-section .section-title {
-  font-family: Georgia, serif;
+  font-family: "EB Garamond", sans-serif;
   font-size: 2rem;
-  font-weight: 400;
-  color: #333;
+  font-weight: 500;
+  color: #595E4E;
+  margin-bottom: 15px;
 }
 
 .message-banner {
-  background-color: #6b6b5c;
-  color: white;
+  background-color: #595E4E;
+  color: #f5f5f5;
   padding: 1rem 1.5rem;
-  border-radius: 12px;
+  border-radius: 10px;
   text-align: center;
   font-size: 1rem;
   margin-bottom: 1.5rem;
+  font-family: "Outfit", sans-serif;
 }
 
 .message-form-container {
-  background-color: #e8e8dd;
+  background-color: #C8D7C4;
   padding: 2rem;
-  border-radius: 16px;
-  border: 2px solid #333;
+  border-radius: 10px;
+  border: 2px solid #595E4E;
+  font-family: "Outfit", sans-serif;
+  color: #595E4E;
 }
 
 .message-form-container .form-field {
@@ -96,7 +104,7 @@
 }
 
 .message-input {
-  background-color: #e8e8dd;
+  background-color: #c9c923;
   border: 2px solid #333;
   border-radius: 12px;
   padding: 1rem 1.5rem;
@@ -109,8 +117,8 @@ input.message-input {
 }
 
 .message-input:focus {
-  border-color: #6b6b5c;
-  background-color: #e8e8dd;
+  border-color: #595E4E;
+  background-color: #e0e8e0;
   box-shadow: none;
 }
 
@@ -125,32 +133,35 @@ input.message-input {
 .message-input:-webkit-autofill:hover,
 .message-input:-webkit-autofill:focus,
 .message-input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 30px #e8e8dd inset !important;
-  -webkit-text-fill-color: #333 !important;
-  border: 2px solid #333 !important;
+  -webkit-box-shadow: 0 0 0 30px #595E4E inset !important;
+  -webkit-text-fill-color: #C8D7C4 !important;
+  border: 2px solid #C8D7C4 !important;
   border-radius: 12px !important;
 }
 
 .update-cart-link {
   background: none;
   border: none;
-  color: #6b6b5c;
+  color: #595E4E;
   text-decoration: underline;
   cursor: pointer;
   font-size: 0.9375rem;
   padding: 0;
   font-weight: 500;
+  font-family: "Outfit", sans-serif;
 }
 
 .update-cart-link:hover {
-  color: #5a5a4d;
+  color: #e0e8e0;
 }
 
 .saved-message-display {
-  background-color: #e8e8dd;
+  background-color: #C8D7C4;
+  color: #595E4E;
   padding: 2rem;
   border-radius: 16px;
-  border: 2px solid #333;
+  border: 2px solid #595E4E;
+  font-family: "Outfit", sans-serif;
 }
 
 .saved-message-display p {
@@ -162,18 +173,21 @@ input.message-input {
 .edit-message-button {
   margin-top: 1rem;
   padding: 0.75rem 1.5rem;
-  background-color: #6b6b5c;
-  color: white;
-  border: none;
-  border-radius: 12px;
+  background-color: #595E4E;
+  color: #e0e8e0;
+  border: 2px solid #595E4E;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 1rem;
   font-weight: 500;
   transition: background-color 0.2s;
+  font-family: "Outfit", sans-serif;
 }
 
 .edit-message-button:hover {
-  background-color: #5a5a4d;
+  background-color: #e0e8e0;
+  border: 2px solid #595E4E;
+  color: #595E4E;
 }
 
 .save-message-button {
@@ -181,17 +195,20 @@ input.message-input {
   padding: 1rem 2rem;
   font-size: 1rem;
   font-weight: 600;
-  color: white;
-  background-color: #6b6b5c;
+  color: #e0e8e0;
+  background-color: #595E4E;
   border: none;
   border-radius: 12px;
   cursor: pointer;
   transition: background-color 0.2s;
   margin-top: 0;
+  border: 2px solid #595E4E;
 }
 
 .save-message-button:hover {
-  background-color: #5a5a4d;
+  background-color: #e0e8e0;
+  color: #595E4E;
+  border: 2px solid #595E4E;
 }
 
 /* Section Styles */
@@ -207,28 +224,29 @@ input.message-input {
 }
 
 .sign-in-link {
-  color: #6b6b5c;
+  color: #f5f5f5;
   text-decoration: underline;
   font-size: 0.9375rem;
   font-weight: 500;
   cursor: pointer;
-  background: none;
-  border: 1px solid #6b6b5c;
+  background: #595E4E;
+  border: 2px solid #595E4E;
   padding: 0.5rem 1rem;
-  border-radius: 8px;
+  border-radius: 10px;
+  font-family: "Outfit", sans-serif;
 }
 
 .sign-in-link:hover {
-  color: #fff;
-  background-color: #6b6b5c;
+  color: #595E4E;
+  background-color: #e0e8e0;
 }
 
 .section-title {
-  font-size: 1.75rem;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 1.5rem;
-  font-family: serif;
+  font-size: 2rem;
+  font-weight: 500;
+  color: #595E4E;
+  margin-bottom: 15px;
+  font-family: "EB Garamond";
 }
 
 .section-subtitle {
@@ -246,27 +264,29 @@ input.message-input {
 
 /* Delivery Section */
 .delivery-section .section-title {
-  font-family: Georgia, serif;
+  font-family: "EB Garamond", sans-serif;
   font-size: 2rem;
-  font-weight: 400;
-  color: #333;
+  font-weight: 500;
+  color: #595E4E;
+  margin-bottom: 15px;
 }
 
 .delivery-banner {
-  background-color: #6b6b5c;
-  color: white;
+  background-color: #595E4E;
+  color: #f5f5f5;
   padding: 1rem 1.5rem;
-  border-radius: 12px;
+  border-radius: 10px;
   text-align: center;
   font-size: 1rem;
   margin-bottom: 1.5rem;
+  font-family: "Outfit", sans-serif;
 }
 
 /* Delivery Options */
 .delivery-options {
   margin-top: 0;
-  background-color: #e8e8dd;
-  border: 2px solid #333;
+  background-color: #C8D7C4;
+  border: 2px solid #595E4E;
   border-radius: 16px;
   padding: 1.5rem;
 }
@@ -279,25 +299,25 @@ input.message-input {
 
 .delivery-option {
   width: 100%;
-  background-color: #d4d4c8;
-  border: none;
-  border-radius: 12px;
+  background-color: #e0e8e0;
+  border: 2px solid #595E4E;
+  border-radius: 10px;
   padding: 1rem 1.5rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: space-between;
   transition: all 0.2s;
-  position: relative;
   box-sizing: border-box;
+  font-family: "Outfit", sans-serif;
 }
 
 .delivery-option.active {
-  background-color: #6b6b5c;
+  background-color: #595E4E;
 }
 
 .delivery-option:hover {
-  opacity: 0.9;
+  opacity: 75%;
 }
 
 .delivery-option input[type="radio"] {
@@ -323,11 +343,10 @@ input.message-input {
 }
 
 .delivery-details {
-  flex: 1;
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
+  flex-direction: column;
   color: #333;
+  /* background-color: orange; */
 }
 
 .delivery-option.active .delivery-details {
@@ -337,48 +356,53 @@ input.message-input {
 .delivery-name {
   font-weight: 500;
   font-size: 1rem;
+  /* background-color: green; */
 }
 
 .delivery-time {
   font-size: 0.875rem;
   opacity: 0.85;
+  /* background-color: purple; */
+
 }
 
 .delivery-price {
   font-weight: 600;
   font-size: 1rem;
-  margin-left: auto;
+  /* background-color: yellow; */
 }
 
 /* Recipient Section */
 .recipient-section .section-title {
-  font-family: Georgia, serif;
+  font-family: "EB Garamond", sans-serif;
   font-size: 2rem;
-  font-weight: 400;
-  color: #333;
+  font-weight: 500;
+  color: #595E4E;
 }
 
 .recipient-banner {
-  background-color: #6b6b5c;
-  color: white;
+  background-color: #595E4E;
+  color: #f5f5f5;
   padding: 1rem 1.5rem;
-  border-radius: 12px;
+  border-radius: 10px;
   text-align: center;
   font-size: 1rem;
   margin-bottom: 1.5rem;
+  font-family: "Outfit", sans-serif;
 }
 
 .recipient-form {
-  background-color: #e8e8dd;
+  background-color: #10bb90;
   border: 2px solid #333;
   border-radius: 16px;
   padding: 2rem;
 }
 
 .recipient-form .form-input {
-  background-color: #e8e8dd;
-  border: 2px solid #333;
-  border-radius: 12px;
+  background-color: #e0e8e0;
+  border: 2px solid #595E4E;
+  border-radius: 10px;
+  font-family: "Outfit", sans-serif;
 }
 
 .recipient-form input.form-input,
@@ -388,45 +412,45 @@ input.message-input {
 }
 
 .recipient-form .form-input:focus {
-  border-color: #6b6b5c;
-  background-color: #e8e8dd;
+  border-color: #595E4E;
+  background-color: #C8D7C4;
   box-shadow: none;
 }
 
 .recipient-form .form-input.error {
   border-color: #dc2626;
-  background-color: #e8e8dd;
+  background-color: #C8D7C4;
 }
 
 .recipient-form .form-input:-webkit-autofill,
 .recipient-form .form-input:-webkit-autofill:hover,
 .recipient-form .form-input:-webkit-autofill:focus,
 .recipient-form .form-input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 30px #e8e8dd inset !important;
-  -webkit-text-fill-color: #333 !important;
-  border: 2px solid #333 !important;
+  -webkit-box-shadow: 0 0 0 30px #f5f5f5 inset !important;
+  -webkit-text-fill-color: #595E4E !important;
+  border: 2px solid #595E4E !important;
   border-radius: 12px !important;
 }
 
 /* Form Section */
 .form-section {
-  background-color: #ffffff;
+  background-color: #C8D7C4;
   padding: 1.5rem;
-  border-radius: 8px;
-  border: 2px solid #333;
+  border-radius: 10px;
+  border: 2px solid #595E4E;
 }
 
 .section-header {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
+  gap: 15px;
+  margin-bottom: 15px;
 }
 
 .info-icon {
   width: 20px;
   height: 20px;
-  background-color: #7a2e4a;
+  background-color: #d8155d;
   color: white;
   border-radius: 50%;
   display: inline-flex;
@@ -446,8 +470,8 @@ input.message-input {
   width: 100%;
   padding: 0.875rem 1rem;
   font-size: 0.9375rem;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
+  border: 2px solid #595E4E;
+  border-radius: 10px;
   background-color: #ffffff;
   color: #2d2d2d;
   transition: all 0.2s;
@@ -467,8 +491,7 @@ select.form-input {
 
 .form-input:focus {
   outline: none;
-  border-color: #7a2e4a;
-  box-shadow: 0 0 0 3px rgba(122, 46, 74, 0.1);
+  border-color: #595E4E;
 }
 
 .form-input::placeholder {
@@ -536,15 +559,17 @@ select.form-input {
 .checkbox-field input[type="checkbox"] {
   width: 20px;
   height: 20px;
-  border: 2px solid #d1d5db;
+  border: 2px solid #595E4E;
   border-radius: 4px;
   cursor: pointer;
 }
 
 .checkbox-field label {
   font-size: 0.9375rem;
-  color: #2d2d2d;
+  color: #595E4E;
+  font-family: "Outfit", sans-serif;
   cursor: pointer;
+  display: flex;
 }
 
 /* Payment Section */
@@ -553,21 +578,22 @@ select.form-input {
 }
 
 .payment-section .section-title {
-  font-family: Georgia, serif;
+  font-family: "EB Garamond", sans-serif;
   font-size: 2rem;
-  font-weight: 400;
-  color: #333;
+  font-weight: 500;
+  color: #595E4E;
   margin-bottom: 1.5rem;
 }
 
 .payment-banner {
-  background-color: #6b6b5c;
-  color: white;
+  background-color: #595E4E;
+  color: #f5f5f5;
   padding: 1rem 1.5rem;
-  border-radius: 12px;
+  border-radius: 10px;
   text-align: center;
   font-size: 1rem;
   margin-bottom: 1.5rem;
+  font-family: "Outfit", sans-serif;
 }
 
 .payment-security-notice {
@@ -584,7 +610,7 @@ select.form-input {
 
 .billing-section {
   margin-top: 2rem;
-  background-color: #e8e8dd;
+  background-color: #ee370a;
   border: 2px solid #333;
   border-radius: 16px;
   padding: 2rem;
@@ -596,7 +622,7 @@ select.form-input {
 }
 
 .billing-section .form-input {
-  background-color: #e8e8dd;
+  background-color: #adad27;
   border: 2px solid #333;
   border-radius: 12px;
 }
@@ -608,7 +634,7 @@ select.form-input {
 }
 
 .billing-section .form-input:focus {
-  border-color: #6b6b5c;
+  border-color: #a1a12a;
   background-color: #e8e8dd;
   box-shadow: none;
 }
@@ -626,7 +652,7 @@ select.form-input {
 .billing-section .form-input:-webkit-autofill:hover,
 .billing-section .form-input:-webkit-autofill:focus,
 .billing-section .form-input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 30px #e8e8dd inset !important;
+  -webkit-box-shadow: 0 0 0 30px #dada21 inset !important;
   -webkit-text-fill-color: #333 !important;
   border: 2px solid #333 !important;
   border-radius: 12px !important;
@@ -638,17 +664,21 @@ select.form-input {
   padding: 1rem 2rem;
   font-size: 1rem;
   font-weight: 600;
-  color: white;
-  background-color: #6b6b5c;
+  color: #f5f5f5;
+  background-color: #595E4E;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   cursor: pointer;
   transition: background-color 0.2s;
   margin-top: 2rem;
+  font-family: "Outfit", sans-serif;
+  border: 2px solid #595E4E;
 }
 
 .continue-button:hover {
-  background-color: #5a5a4d;
+  background-color: #e0e8e0;
+  color: #595E4E;
+  border: 2px solid #595E4E;
 }
 
 .continue-button:disabled {

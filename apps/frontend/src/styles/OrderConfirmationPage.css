@@ -297,8 +297,10 @@
 
 /* Billing and Shipping Section */
 .billing-shipping-section {
-  /* background: #faf8f5; */
-  padding: 3rem 2rem 2rem 2rem;
+  background: #faf8f5;
+  /* padding: 3rem 2rem 2rem 2rem; */
+  display: flex;
+  flex-direction: column;
   text-align: left;
 }
 
@@ -314,11 +316,10 @@
 .info-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  margin-bottom: 3rem;
-  max-width: 700px;
+  gap: 10rem;
   margin-left: auto;
   margin-right: auto;
+  padding-top: 2rem;
 }
 
 .info-column h3 {
@@ -340,8 +341,7 @@
 .payment-shipping-methods {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  max-width: 700px;
+  gap: 10rem;
   margin-left: auto;
   margin-right: auto;
   padding-top: 2rem;

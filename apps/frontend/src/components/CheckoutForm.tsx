@@ -464,7 +464,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
               type="text"
               name="recipientBusinessName"
               className="form-input"
-              placeholder="Business Name"
+              placeholder="Business Name (optional)"
               value={formData.recipientBusinessName}
               onChange={handleInputChange}
             />
@@ -488,7 +488,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
               type="text"
               name="recipientApartment"
               className="form-input"
-              placeholder="Apartment, unit, etc."
+              placeholder="Apartment, unit, etc. (optional)"
               value={formData.recipientApartment}
               onChange={handleInputChange}
             />
@@ -546,10 +546,10 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
       </section>
 
       {/* Sender's Details (Billing Address) Section */}
-      <section className="checkout-section billing-section">
+      <section className="checkout-section recipient-section">
         <h2 className="section-title">Billing Information</h2>
 
-        <div className="billing-banner">Enter YOUR information (the person paying for this order).</div>
+        <div className="recipient-banner">Enter your information below.</div>
 
         <div className="form-section">
           <div className="form-field checkbox-field">
@@ -559,12 +559,12 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
               checked={formData.useSameAddress}
               onChange={handleUseSameAddressChange}
             />
-            <label htmlFor="useSameAddress">Use recipient's address as billing address (same person)</label>
+            <label htmlFor="useSameAddress">Use recipient's address as billing address.</label>
           </div>
 
           {!formData.useSameAddress && (
-            <>
-              <div className="form-field">
+        <div className="form-section recipient-form">
+            <div className="form-field">
                 <label className="form-label-top">Country</label>
                 <input type="text" name="senderCountry" className="form-input" value="Australia" readOnly disabled />
               </div>
@@ -575,7 +575,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
                     type="text"
                     name="senderFirstName"
                     className={`form-input ${errors.senderFirstName ? "error" : ""}`}
-                    placeholder="Your First Name *"
+                    placeholder="First Name"
                     value={formData.senderFirstName}
                     onChange={handleInputChange}
                   />
@@ -586,7 +586,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
                     type="text"
                     name="senderLastName"
                     className={`form-input ${errors.senderLastName ? "error" : ""}`}
-                    placeholder="Your Last Name *"
+                    placeholder="Last Name"
                     value={formData.senderLastName}
                     onChange={handleInputChange}
                   />
@@ -599,7 +599,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
                   type="text"
                   name="senderBusinessName"
                   className="form-input"
-                  placeholder="Your Business Name (optional)"
+                  placeholder="Business Name (optional)"
                   value={formData.senderBusinessName}
                   onChange={handleInputChange}
                 />
@@ -610,7 +610,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
                   type="text"
                   name="senderAddress"
                   className={`form-input ${errors.senderAddress ? "error" : ""}`}
-                  placeholder="Your Address *"
+                  placeholder="Address"
                   value={formData.senderAddress}
                   onChange={handleInputChange}
                 />
@@ -623,7 +623,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
                   type="text"
                   name="senderApartment"
                   className="form-input"
-                  placeholder="Your Apartment, unit, etc. (optional)"
+                  placeholder="Apartment, unit, etc. (optional)"
                   value={formData.senderApartment}
                   onChange={handleInputChange}
                 />
@@ -635,7 +635,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
                     type="text"
                     name="senderCity"
                     className={`form-input ${errors.senderCity ? "error" : ""}`}
-                    placeholder="Your Suburb *"
+                    placeholder="Suburb"
                     value={formData.senderCity}
                     onChange={handleInputChange}
                   />
@@ -648,7 +648,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
                     value={formData.senderState}
                     onChange={handleInputChange}
                   >
-                    <option value="">Your State *</option>
+                    <option value="">State/territory *</option>
                     <option value="VIC">Victoria (VIC)</option>
                     <option value="NSW">New South Wales (NSW)</option>
                     <option value="QLD">Queensland (QLD)</option>
@@ -665,7 +665,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
                     type="text"
                     name="senderZipCode"
                     className={`form-input ${errors.senderZipCode ? "error" : ""}`}
-                    placeholder="Your Postcode *"
+                    placeholder="Postcode"
                     value={formData.senderZipCode}
                     onChange={handleInputChange}
                   />
@@ -678,12 +678,12 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
                   type="tel"
                   name="senderPhone"
                   className="form-input"
-                  placeholder="Your Phone (optional)"
+                  placeholder="Phone"
                   value={formData.senderPhone}
                   onChange={handleInputChange}
                 />
               </div>
-            </>
+            </div>
           )}
         </div>
       </section>
