@@ -70,7 +70,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
         {/* <h4>Filter Products FilterSidebar.tsx</h4> */}
 
         {/* Show active filter count and clear button if filters are applied */}
-        {activeFilterCount > 0 && (
+        {/* {activeFilterCount > 0 && (
           <div className="filter-header-actions">
             <span className="active-filters">
               {activeFilterCount} filter{activeFilterCount > 1 ? 's' : ''}{' '}
@@ -83,7 +83,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
               Clear All
             </button>
           </div>
-        )}
+        )} */}
       </header>
 
       {/* Filter Options */}
