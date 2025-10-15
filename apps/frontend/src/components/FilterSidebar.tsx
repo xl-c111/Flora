@@ -67,7 +67,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
     <div className="filter-sidebar">
       {/* Sidebar Header */}
       <header className="filter-header">
-        <h4>Filter Products FilterSidebar.tsx</h4>
+        {/* <h4>Filter Products FilterSidebar.tsx</h4> */}
 
         {/* Show active filter count and clear button if filters are applied */}
         {activeFilterCount > 0 && (
@@ -284,14 +284,14 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
       </div>
 
       {/* Filter Tips */}
-      <div className="filter-tips">
+      {/* <div className="filter-tips">
         <h4>Filter Tips:</h4>
         <ul>
           <li>Select multiple filters to narrow down results</li>
           <li>Use search to find specific flower names</li>
           <li>Clear filters to see all available products</li>
         </ul>
-      </div>
+      </div> */}
     </div>
   );
 };

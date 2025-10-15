@@ -94,8 +94,9 @@ body {
   grid-template-columns: repeat(auto-fill, minmax(385px, 1fr));
   /* gap: 2rem; */
   margin-bottom: 3rem;
-  /* align-items:center;
-  justify-content: center; */
+  align-items:center;
+  justify-content: center;
+  place-items:center;
 }
 
 .product-card {
