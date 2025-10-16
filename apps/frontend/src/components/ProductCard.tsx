@@ -211,7 +211,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
 {/* favourite button OUT OF SCOPE */}
       {/* Quick Action Buttons (outside the link so they don't trigger navigation) */}
-      <div className="quick-actions">
+      {/* <div className="quick-actions">
         <button
           className="quick-action-btn favorite-btn"
           onClick={(e) => {
@@ -240,7 +240,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             🛒
           </button>
         )}
-      </div>
+      </div> */}
 
     </article>
   );
