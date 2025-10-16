@@ -14,6 +14,7 @@ const sampleProducts = [
   {
     name: 'Red Rose Bouquet',
     description: 'Classic red roses perfect for romantic occasions',
+    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
     priceCents: 4599, // $45.99
     priceRange: PriceRange.RANGE_25_50,
     imageUrl: '/images/Roses.jpg',
@@ -27,6 +28,7 @@ const sampleProducts = [
   {
     name: 'Spring Tulip Arrangement',
     description: 'Beautiful mixed tulips in a ceramic vase',
+    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
     priceCents: 3250, // $32.50
     priceRange: PriceRange.RANGE_25_50,
     imageUrl: '/images/Tulips.jpg',
@@ -40,6 +42,7 @@ const sampleProducts = [
   {
     name: 'White Orchid Plant',
     description: 'Elegant white orchid in decorative pot',
+    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
     priceCents: 6800, // $68.00
     priceRange: PriceRange.RANGE_50_75,
     imageUrl: '/images/Orchids.jpg',
@@ -53,6 +56,7 @@ const sampleProducts = [
   {
     name: 'Sunflower Happiness Bouquet',
     description: 'Bright sunflowers to bring joy and warmth',
+    longDescription: 'Like rays of sunshine captured in bloom, these magnificent sunflowers radiate warmth and positive energy. Their bold, golden petals and impressive size make them impossible to ignore—and even harder not to smile at.\n\nPerfect for lifting spirits, celebrating achievements, or simply brightening someone\'s day, this cheerful bouquet brings the warmth of summer into any space. These aren\'t just flowers; they\'re happiness, delivered.',
     priceCents: 3875, // $38.75
     priceRange: PriceRange.RANGE_25_50,
     imageUrl: '/images/Sunflowers.jpg',
@@ -70,6 +74,7 @@ const sampleProducts = [
   {
     name: 'Pink Lily Arrangement',
     description: 'Graceful pink lilies in an elegant vase',
+    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
     priceCents: 5500, // $55.00
     priceRange: PriceRange.RANGE_50_75,
     imageUrl: '/images/Lilys.jpg',
@@ -83,6 +88,7 @@ const sampleProducts = [
   {
     name: 'Delicate Anemone Bouquet',
     description: 'Stunning anemones with dark centers and vibrant petals',
+    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
     priceCents: 3499, // $34.99
     priceRange: PriceRange.RANGE_25_50,
     imageUrl: '/images/Anemones.jpg',
@@ -96,6 +102,7 @@ const sampleProducts = [
   {
     name: 'Sweet Carnation Mix',
     description: 'Ruffled carnations in soft pastel shades',
+    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
     priceCents: 2899, // $28.99
     priceRange: PriceRange.RANGE_25_50,
     imageUrl: '/images/Carnation.jpg',
@@ -109,6 +116,7 @@ const sampleProducts = [
   {
     name: 'Cheerful Daffodil Bundle',
     description: 'Bright yellow daffodils celebrating spring',
+    longDescription: 'Daffodils, the heart of this bouquet, are nature\'s timeless symbol of new beginnings and hope. Paired with daisies and airy accents, this arrangement celebrates the season of growth, when the world awakens from winter\'s rest and blossoms with possibility.\n\nPerfect for brightening your home, office, or loved one, or celebrating a fresh chapter, this bouquet isn\'t just flowers—it\'s a reminder that every season brings renewal and light.',
     priceCents: 2650, // $26.50
     priceRange: PriceRange.RANGE_25_50,
     imageUrl: '/images/Daffodil.jpg',
@@ -122,6 +130,7 @@ const sampleProducts = [
   {
     name: 'Fresh Daisy Bouquet',
     description: 'Simple and charming white daisies',
+    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
     priceCents: 2299, // $22.99
     priceRange: PriceRange.UNDER_25,
     imageUrl: '/images/Daisies.jpg',
@@ -135,6 +144,7 @@ const sampleProducts = [
   {
     name: 'Fragrant Gardenia Plant',
     description: 'Exotic gardenia with heavenly scent',
+    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
     priceCents: 5899, // $58.99
     priceRange: PriceRange.RANGE_50_75,
     imageUrl: '/images/Gardenia.jpg',
@@ -148,6 +158,7 @@ const sampleProducts = [
   {
     name: 'Golden Marigold Bunch',
     description: 'Vibrant marigolds bursting with color',
+    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
     priceCents: 1999, // $19.99
     priceRange: PriceRange.UNDER_25,
     imageUrl: '/images/Merigold.jpg',
@@ -161,6 +172,7 @@ const sampleProducts = [
   {
     name: 'Romantic Peony Bouquet',
     description: 'Lush peonies in full bloom',
+    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
     priceCents: 7250, // $72.50
     priceRange: PriceRange.RANGE_50_75,
     imageUrl: '/images/Peonies.jpg',
@@ -174,6 +186,7 @@ const sampleProducts = [
   {
     name: 'Premium Mixed Bouquet',
     description: 'Luxurious arrangement with premium seasonal flowers',
+    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
     priceCents: 12500, // $125.00
     priceRange: PriceRange.OVER_100,
     imageUrl: '/images/Filler.jpg',
@@ -187,6 +200,7 @@ const sampleProducts = [
   {
     name: 'Succulent Garden Collection',
     description: 'Mix of beautiful succulents in a modern planter',
+    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
     priceCents: 2399, // $23.99
     priceRange: PriceRange.UNDER_25,
     imageUrl: '/images/Filler2.jpg',
@@ -199,7 +213,8 @@ const sampleProducts = [
   },
   {
     name: 'Tropical Paradise Mix',
-    description: 'Exotic tropical flowers in vibrant colors test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test',
+    description: 'Exotic tropical flowers in vibrant colors',
+    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
     priceCents: 6499, // $64.99
     priceRange: PriceRange.RANGE_50_75,
     imageUrl: '/images/Filler3.jpg',
@@ -213,6 +228,7 @@ const sampleProducts = [
   {
     name: 'Zen Garden Plant',
     description: 'Peaceful bamboo and greenery arrangement',
+    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
     priceCents: 4250, // $42.50
     priceRange: PriceRange.RANGE_25_50,
     imageUrl: '/images/Filler4.jpg',
@@ -226,6 +242,7 @@ const sampleProducts = [
   {
     name: 'Autumn Harvest Bouquet',
     description: 'Warm fall colors with seasonal blooms',
+    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
     priceCents: 4899, // $48.99
     priceRange: PriceRange.RANGE_25_50,
     imageUrl: '/images/Filler5.jpg',
@@ -239,6 +256,7 @@ const sampleProducts = [
   {
     name: 'Garden Rose Delight',
     description: 'Premium garden roses in soft hues',
+    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
     priceCents: 8999, // $89.99
     priceRange: PriceRange.RANGE_75_100,
     imageUrl: '/images/Filler6.jpg',
@@ -252,6 +270,7 @@ const sampleProducts = [
   {
     name: 'Country Wildflower Mix',
     description: 'Rustic wildflowers for a natural look',
+    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
     priceCents: 3150, // $31.50
     priceRange: PriceRange.RANGE_25_50,
     imageUrl: '/images/Filler7.jpg',
@@ -265,6 +284,7 @@ const sampleProducts = [
   {
     name: 'Indoor Fern Collection',
     description: 'Lush ferns perfect for home or office',
+    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
     priceCents: 3599, // $35.99
     priceRange: PriceRange.RANGE_25_50,
     imageUrl: '/images/Filler8.jpg',

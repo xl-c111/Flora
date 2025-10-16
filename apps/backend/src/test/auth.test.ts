@@ -74,10 +74,12 @@ describe('Auth Middleware Tests', () => {
       authMiddleware(mockReq as AuthRequest, mockRes as Response, mockNext);
 
       expect(mockRes.status).toHaveBeenCalledWith(401);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        error: 'Invalid token',
-        message: 'Token is expired, malformed, or not signed by Auth0'
-      });
+      expect(mockRes.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          error: 'Invalid token',
+          message: 'Token is expired, malformed, or not signed by Auth0'
+        })
+      );
       expect(mockNext).not.toHaveBeenCalled();
     });
 

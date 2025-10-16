@@ -33,7 +33,10 @@ enum SubscriptionType {
   RECURRING_MONTHLY     // Monthly recurring delivery
   RECURRING_QUARTERLY   // Every 3 months
   RECURRING_YEARLY      // Yearly recurring delivery
-  SPONTANEOUS           // Flexible timing, user decides when
+  SPONTANEOUS           // Flexible timing, user decides when (DEPRECATED - use specific variants)
+  SPONTANEOUS_WEEKLY    // Weekly spontaneous delivery (random day each week)
+  SPONTANEOUS_BIWEEKLY  // Biweekly spontaneous delivery (random day every 2 weeks)
+  SPONTANEOUS_MONTHLY   // Monthly spontaneous delivery (random day each month)
 }
 
 enum SubscriptionStatus {
@@ -152,7 +155,8 @@ enum UserRole {
 model Product {
   id          String      @id @default(cuid())
   name        String
-  description String
+  description String      // Short description for cards/listings
+  longDescription String? // Detailed description for product detail page
   priceCents  Int         // Price in cents (e.g., 2599 = $25.99)
   priceRange  PriceRange
   imageUrl    String?
@@ -280,7 +284,7 @@ model Order {
   actualDeliveryDate    DateTime?
   deliveryNotes   String?
 
-  // Shipping address (snapshot for guest orders)
+  // Shipping address (recipient/delivery address)
   shippingAddressId String?
   shippingFirstName String
   shippingLastName  String
@@ -291,6 +295,17 @@ model Order {
   shippingZipCode   String
   shippingCountry   String        @default("AU")
   shippingPhone     String?
+
+  // Billing address (sender/payer address)
+  billingFirstName  String?
+  billingLastName   String?
+  billingStreet1    String?
+  billingStreet2    String?
+  billingCity       String?
+  billingState      String?
+  billingZipCode    String?
+  billingCountry    String?       @default("AU")
+  billingPhone      String?
 
   // Relationships
   user            User?         @relation(fields: [userId], references: [id])

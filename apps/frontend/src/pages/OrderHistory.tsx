@@ -25,6 +25,7 @@ const OrderHistory = () => {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showStatusInfo, setShowStatusInfo] = useState(false);
 
   const ITEMS_PER_PAGE = 10;
 
@@ -80,6 +81,7 @@ const OrderHistory = () => {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
+      timeZone: 'UTC',
     });
   };
 
@@ -96,6 +98,20 @@ const OrderHistory = () => {
 
   const getStatusDisplay = (status: string) => {
     return status.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+  };
+
+  const getOrderType = (order: Order) => {
+    // Check individual items to determine actual order type
+    const hasSubscription = order.items.some(item => item.subscriptionType);
+    const hasOneTime = order.items.some(item => !item.subscriptionType);
+
+    if (hasSubscription && hasOneTime) {
+      return '🌸 Mixed'; // Both subscription and one-time items
+    } else if (hasSubscription) {
+      return '🔄 Subscription';
+    } else {
+      return '📦 One-time';
+    }
   };
 
   if (authLoading) {
@@ -150,12 +166,45 @@ const OrderHistory = () => {
     <div className="order-history-page">
       <div className="order-history-container">
         <div className="order-history-header">
-          <h1>Order History</h1>
+          <div className="header-title-row">
+            <h1>Order History</h1>
+            <button
+              className="status-info-btn"
+              onClick={() => setShowStatusInfo(!showStatusInfo)}
+              title="Order status information"
+            >
+              ℹ️ Status Guide
+            </button>
+          </div>
           <p className="order-count">
             {total === 0
               ? 'No orders yet'
               : `${total} ${total === 1 ? 'order' : 'orders'} total`}
           </p>
+
+          {showStatusInfo && (
+            <div className="status-info-panel">
+              <h3>Order Status Explained</h3>
+              <div className="status-info-grid">
+                <div className="status-info-item">
+                  <span className="status-badge status-preparing">Confirmed</span>
+                  <p>Payment successful! Your order is confirmed and being prepared for delivery.</p>
+                </div>
+                <div className="status-info-item">
+                  <span className="status-badge status-preparing">Preparing</span>
+                  <p>Your beautiful flowers are being carefully arranged and prepared.</p>
+                </div>
+                <div className="status-info-item">
+                  <span className="status-badge status-shipped">Shipped</span>
+                  <p>Your order is on its way! Check your email for tracking details.</p>
+                </div>
+                <div className="status-info-item">
+                  <span className="status-badge status-delivered">Delivered</span>
+                  <p>Your flowers have been delivered. Enjoy!</p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {orders.length === 0 ? (
@@ -200,7 +249,7 @@ const OrderHistory = () => {
 
                   <div className="order-card-body">
                     <div className="order-items">
-                      {order.items.slice(0, 3).map((item, index) => (
+                      {order.items.slice(0, 3).map((item) => (
                         <div
                           key={item.id}
                           className="order-item-preview"
@@ -236,9 +285,7 @@ const OrderHistory = () => {
                       <div className="order-type">
                         <span className="label">Type:</span>
                         <span className="value">
-                          {order.purchaseType === 'SUBSCRIPTION'
-                            ? `${'\u{1F504}'} Subscription`
-                            : `${'\u{1F4E6}'} One-time`}
+                          {getOrderType(order)}
                         </span>
                       </div>
                       {order.deliveryType && (

@@ -51,10 +51,8 @@ export class SubscriptionService {
     // Ensure user exists (auto-create from Auth0 data if needed)
     await this.ensureUserExists(data.userId, data.shippingAddress);
 
-    // Calculate next delivery date
-    const nextDeliveryDate = data.type === SubscriptionType.SPONTANEOUS
-      ? null
-      : this.calculateNextDelivery(new Date(), data.type);
+    // Calculate next delivery date (works for both recurring and spontaneous)
+    const nextDeliveryDate = this.calculateNextDelivery(new Date(), data.type);
 
     // Create subscription with inline address data
     const subscription = await prisma.subscription.create({
@@ -92,9 +90,12 @@ export class SubscriptionService {
     console.log(`✅ Subscription created: ${subscription.id}`);
 
     // For recurring subscriptions, create first order immediately
-    if (data.type !== SubscriptionType.SPONTANEOUS) {
+    // Spontaneous subscriptions wait for automatic random delivery
+    if (!this.isSpontaneousType(data.type)) {
       console.log(`🛒 Creating first order for recurring subscription...`);
       await this.createSubscriptionOrder(subscription);
+    } else {
+      console.log(`🎲 Spontaneous subscription will deliver on: ${nextDeliveryDate.toDateString()}`);
     }
 
     return subscription;
@@ -174,16 +175,13 @@ export class SubscriptionService {
       status: SubscriptionStatus.ACTIVE,
     });
 
-    // Update next delivery date when resuming
-    // Only set for recurring subscriptions, not spontaneous
-    if (subscription.type !== SubscriptionType.SPONTANEOUS) {
-      await prisma.subscription.update({
-        where: { id },
-        data: {
-          nextDeliveryDate: this.calculateNextDelivery(new Date(), subscription.type),
-        },
-      });
-    }
+    // Update next delivery date when resuming (for both recurring and spontaneous)
+    await prisma.subscription.update({
+      where: { id },
+      data: {
+        nextDeliveryDate: this.calculateNextDelivery(new Date(), subscription.type),
+      },
+    });
 
     return subscription;
   }
@@ -201,14 +199,12 @@ export class SubscriptionService {
     today.setHours(0, 0, 0, 0);
 
     // Find all active subscriptions that are due for delivery today
+    // Now includes spontaneous subscriptions with scheduled random dates
     const dueSubscriptions = await prisma.subscription.findMany({
       where: {
         status: SubscriptionStatus.ACTIVE,
         nextDeliveryDate: {
           lte: today, // Due today or overdue
-        },
-        type: {
-          not: SubscriptionType.SPONTANEOUS, // Exclude spontaneous (user-triggered)
         },
       },
       include: {
@@ -322,7 +318,7 @@ export class SubscriptionService {
     }
 
     // Validate subscription type - only spontaneous subscriptions can trigger deliveries
-    if (subscription.type !== SubscriptionType.SPONTANEOUS) {
+    if (!this.isSpontaneousType(subscription.type)) {
       throw new Error('Only spontaneous subscriptions can trigger manual deliveries');
     }
 
@@ -397,6 +393,54 @@ export class SubscriptionService {
     }
   }
 
+  // Helper method to check if subscription type is spontaneous
+  private isSpontaneousType(type: SubscriptionType): boolean {
+    return type === SubscriptionType.SPONTANEOUS ||
+           type === SubscriptionType.SPONTANEOUS_WEEKLY ||
+           type === SubscriptionType.SPONTANEOUS_BIWEEKLY ||
+           type === SubscriptionType.SPONTANEOUS_MONTHLY;
+  }
+
+  // Calculate random delivery date for spontaneous subscriptions
+  // Returns a random date within the frequency period (e.g., random day in next 7 days for weekly)
+  private calculateRandomDelivery(
+    currentDate: Date,
+    type: SubscriptionType
+  ): Date {
+    const startDate = new Date(currentDate);
+    let maxDays = 7; // Default to weekly
+
+    // Determine the frequency window
+    switch (type) {
+      case SubscriptionType.SPONTANEOUS_WEEKLY:
+        maxDays = 7;
+        break;
+      case SubscriptionType.SPONTANEOUS_BIWEEKLY:
+        maxDays = 14;
+        break;
+      case SubscriptionType.SPONTANEOUS_MONTHLY:
+        maxDays = 30;
+        break;
+      case SubscriptionType.SPONTANEOUS:
+        // Legacy spontaneous type defaults to biweekly
+        maxDays = 14;
+        break;
+      default:
+        throw new Error(`Cannot calculate random delivery for non-spontaneous type: ${type}`);
+    }
+
+    // Generate random number of days (1 to maxDays)
+    // Add 1 to ensure at least 1 day in the future
+    const randomDays = Math.floor(Math.random() * maxDays) + 1;
+
+    const randomDelivery = new Date(startDate);
+    randomDelivery.setDate(randomDelivery.getDate() + randomDays);
+
+    console.log(`🎲 Random delivery calculated: ${randomDays} days from now (${randomDelivery.toDateString()})`);
+
+    return randomDelivery;
+  }
+
   // Calculate next delivery date based on subscription type
   // Uses proper enum values from schema and handles different frequencies
   private calculateNextDelivery(
@@ -422,8 +466,11 @@ export class SubscriptionService {
         nextDelivery.setFullYear(nextDelivery.getFullYear() + 1);
         break;
       case SubscriptionType.SPONTANEOUS:
-        // Spontaneous subscriptions don't have automatic next delivery
-        throw new Error('Spontaneous subscriptions do not have automatic next delivery dates');
+      case SubscriptionType.SPONTANEOUS_WEEKLY:
+      case SubscriptionType.SPONTANEOUS_BIWEEKLY:
+      case SubscriptionType.SPONTANEOUS_MONTHLY:
+        // Spontaneous subscriptions use random dates
+        return this.calculateRandomDelivery(currentDate, type);
       default:
         throw new Error(`Unsupported subscription type: ${type}`);
     }
@@ -472,15 +519,24 @@ export class SubscriptionService {
 
   // Calculate monthly revenue value for a subscription type
   // Used for business analytics and revenue projections
+  // TODO (POST-DEMO): Update this for admin dashboard stats
+  // - Add SPONTANEOUS_WEEKLY, SPONTANEOUS_BIWEEKLY, SPONTANEOUS_MONTHLY support
+  // - Calculate actual revenue from product prices instead of hardcoded values
+  // - Move prices to database configuration
+  // - Create admin dashboard to display revenue projections
   private getMonthlyValue(type: SubscriptionType): number {
-    // Base subscription prices (in dollars) - would be configurable in production
+    // Base subscription prices (in dollars) - hardcoded for demo
+    // NOTE: Only Weekly, Biweekly, Monthly are implemented (no Quarterly/Yearly)
     const basePrices = {
       [SubscriptionType.RECURRING_WEEKLY]: 25,
       [SubscriptionType.RECURRING_BIWEEKLY]: 20,
       [SubscriptionType.RECURRING_MONTHLY]: 15,
-      [SubscriptionType.RECURRING_QUARTERLY]: 40,
-      [SubscriptionType.RECURRING_YEARLY]: 120,
-      [SubscriptionType.SPONTANEOUS]: 0, // No recurring revenue
+      [SubscriptionType.RECURRING_QUARTERLY]: 40,  // Not implemented
+      [SubscriptionType.RECURRING_YEARLY]: 120,    // Not implemented
+      [SubscriptionType.SPONTANEOUS]: 0,            // Legacy - no recurring revenue
+      [SubscriptionType.SPONTANEOUS_WEEKLY]: 22,   // TODO: Add to calculation
+      [SubscriptionType.SPONTANEOUS_BIWEEKLY]: 18, // TODO: Add to calculation
+      [SubscriptionType.SPONTANEOUS_MONTHLY]: 13,  // TODO: Add to calculation
     } as const;
 
     const basePrice = basePrices[type] || 0;
@@ -488,17 +544,20 @@ export class SubscriptionService {
     // Convert to monthly equivalent for revenue projection
     switch (type) {
       case SubscriptionType.RECURRING_WEEKLY:
+      case SubscriptionType.SPONTANEOUS_WEEKLY:
         return basePrice * 4.33; // Average weeks per month
       case SubscriptionType.RECURRING_BIWEEKLY:
+      case SubscriptionType.SPONTANEOUS_BIWEEKLY:
         return basePrice * 2.17; // Average bi-weeks per month
       case SubscriptionType.RECURRING_MONTHLY:
-        return basePrice;
+      case SubscriptionType.SPONTANEOUS_MONTHLY:
+        return basePrice; // Already monthly
       case SubscriptionType.RECURRING_QUARTERLY:
-        return basePrice / 3; // Quarterly payment divided by 3 months
+        return basePrice / 3; // Not implemented
       case SubscriptionType.RECURRING_YEARLY:
-        return basePrice / 12; // Yearly payment divided by 12 months
+        return basePrice / 12; // Not implemented
       case SubscriptionType.SPONTANEOUS:
-        return 0; // No predictable recurring revenue
+        return 0; // Legacy - no predictable recurring revenue
       default:
         return 0;
     }

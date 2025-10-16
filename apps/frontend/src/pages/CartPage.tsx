@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
-import { getImageUrl } from '../services/api';
+import { getImageUrl, apiService } from '../services/api';
 import { SUBSCRIPTION_OPTIONS } from '../config/subscriptionConfig';
 import { format } from 'date-fns';
 import '../styles/CartPage.css';
@@ -18,6 +18,9 @@ const CartPage: React.FC = () => {
   // Use cart state instead of local state
   const giftMessage = cartState.giftMessage || { to: '', from: '', message: '' };
   const [showSaveConfirmation, setShowSaveConfirmation] = React.useState(false);
+  const [isGenerating, setIsGenerating] = React.useState(false);
+  const [generateError, setGenerateError] = React.useState<string | null>(null);
+  const [selectedTone, setSelectedTone] = React.useState('warm');
 
   const handleProductClick = (productId: string) => {
     navigate(`/products/${productId}`);
@@ -32,6 +35,41 @@ const CartPage: React.FC = () => {
     // Message is already saved via setGiftMessage in onChange
     setShowSaveConfirmation(true);
     setTimeout(() => setShowSaveConfirmation(false), 2000);
+  };
+
+  const handleGenerateAIMessage = async () => {
+    setIsGenerating(true);
+    setGenerateError(null);
+
+    try {
+      const firstProduct = cartState.items[0]?.product;
+      const keywords = firstProduct ? `flowers, ${firstProduct.name}` : 'flowers, gift';
+
+      const requestPayload: Parameters<typeof apiService.generateAIMessage>[0] = {
+        to: giftMessage.to || undefined,
+        from: giftMessage.from || undefined,
+        keywords,
+        tone: selectedTone,
+      };
+
+      const trimmedMessage = giftMessage.message?.trim();
+      if (trimmedMessage) {
+        requestPayload.userPrompt = trimmedMessage;
+      }
+
+      const response = await apiService.generateAIMessage(requestPayload);
+
+      if (response.success && response.data?.message) {
+        setGiftMessage({ ...giftMessage, message: response.data.message });
+      } else {
+        setGenerateError('Failed to generate message. Please try again.');
+      }
+    } catch (error: any) {
+      console.error('Error generating AI message:', error);
+      setGenerateError(error.response?.data?.error || 'Failed to generate message. Please try again.');
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const calculateTotal = () => {
@@ -50,7 +88,8 @@ const CartPage: React.FC = () => {
   };
 
   const formatPrice = (cents: number) => {
-    return `$${(cents / 100).toFixed(0)}`;
+    const dollars = Number(cents) / 100;
+    return `$${dollars.toFixed(2)}`;
   };
 
   if (cartState.items.length === 0) {
@@ -125,8 +164,8 @@ const CartPage: React.FC = () => {
                     <div className="subscription-details">
                       <span>
                         {item.purchaseType === 'spontaneous'
-                          ? '✨ Spontaneous Subscription'
-                          : '🔄 Recurring Subscription'}
+                          ? 'Spontaneous Subscription'
+                          : 'Recurring Subscription'}
                       </span>
                       <span className="subscription-label">
                         {subscriptionOption?.description}
@@ -140,13 +179,13 @@ const CartPage: React.FC = () => {
                   ) : (
                     <div className="subscription-details">
                       <span>
-                        🛍️ One-time Purchase
+                        One-time Purchase
                       </span>
                     </div>
                   )}
                   {item.selectedDate && (
                     <div className="delivery-date-info">
-                      📅 {item.purchaseType === 'spontaneous'
+                      {item.purchaseType === 'spontaneous'
                         ? `First delivery: ${format(item.selectedDate, 'PPP')} (then on-demand)`
                         : item.isSubscription
                         ? `First delivery: ${format(item.selectedDate, 'PPP')} (then auto-renews ${item.subscriptionFrequency})`
@@ -227,9 +266,43 @@ const CartPage: React.FC = () => {
                 onChange={(e) => setGiftMessage({ ...giftMessage, message: e.target.value })}
                 rows={4}
               />
-              <button className="save-message-btn" onClick={handleSaveMessage}>
-                {showSaveConfirmation ? '✓ Saved!' : 'Save'}
-              </button>
+              <div className="ai-tone-selector">
+                <label htmlFor="tone-select">Message Tone:</label>
+                <select
+                  id="tone-select"
+                  value={selectedTone}
+                  onChange={(e) => setSelectedTone(e.target.value)}
+                  className="tone-dropdown"
+                >
+                  <option value="warm">Warm</option>
+                  <option value="warmer">Deeply Warm</option>
+                  <option value="heartfelt">Heartfelt</option>
+                  <option value="romantic">Romantic</option>
+                  <option value="happy">Happy</option>
+                  <option value="joyful">Joyful</option>
+                  <option value="funny">Funny</option>
+                  <option value="playful">Playful</option>
+                  <option value="professional">Professional</option>
+                  <option value="formal">Formal</option>
+                  <option value="casual">Casual</option>
+                  <option value="grateful">Grateful</option>
+                  <option value="supportive">Supportive</option>
+                  <option value="sympathetic">Sympathetic</option>
+                  <option value="congratulatory">Congratulatory</option>
+                </select>
+              </div>
+              <div className="message-buttons">
+                <button
+                  className="generate-ai-btn"
+                  onClick={handleGenerateAIMessage}
+                  disabled={isGenerating}
+                >
+                  {isGenerating ? '✨ Generating...' : '✨ Generate Message with AI'}
+                </button>
+              </div>
+              {generateError && (
+                <div className="generate-error">{generateError}</div>
+              )}
             </div>
           </div>
 
@@ -253,7 +326,7 @@ const CartPage: React.FC = () => {
               </div>
               {calculateSavings() > 0 && (
                 <div className="savings-note">
-                  🎉 You're saving {formatPrice(calculateSavings())} with subscriptions!
+                  You're saving {formatPrice(calculateSavings())} with subscriptions!
                 </div>
               )}
             </div>

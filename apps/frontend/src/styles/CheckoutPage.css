@@ -150,13 +150,15 @@
 
 /* Right Column - Order Summary */
 .checkout-right {
-  background-color: #e8e8dd;
-  padding: 2rem 3rem;
-  border-left: 2px solid #333;
+  background-color: #C8D7C4;
+  padding: 5rem 3rem;
+  border: 2px solid #595E4E;
+  border-radius: 10px;
   position: sticky;
   top: 0;
   height: 100vh;
   overflow-y: auto;
+  font-family: "Outfit", sans-serif;
 }
 
 /* Error & Loading States */
