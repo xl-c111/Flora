@@ -17,12 +17,12 @@
   min-height: 100vh;
   background-color: #595E4E;
   padding: 2rem 0;
-}
+}*/
 
 .container {
   max-width: 1650px;
   margin: 0 auto;
-  /* padding: 0 1rem; */
+  /* padding: 0 1rem;*/
 }
 
 /* Loading & Error States */
