@@ -2,7 +2,8 @@
 export interface Product {
   id: string;
   name: string;
-  description: string;
+  description: string; // Short description for cards/listings
+  longDescription?: string; // Detailed description for product detail page
   priceCents: number; // Changed from price to priceCents to match API
   priceRange: string;
   imageUrl?: string | null;
