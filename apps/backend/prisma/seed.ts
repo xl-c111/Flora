@@ -199,7 +199,7 @@ const sampleProducts = [
   },
   {
     name: 'Tropical Paradise Mix',
-    description: 'Exotic tropical flowers in vibrant colors',
+    description: 'Exotic tropical flowers in vibrant colors test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test',
     priceCents: 6499, // $64.99
     priceRange: PriceRange.RANGE_50_75,
     imageUrl: '/images/Filler3.jpg',

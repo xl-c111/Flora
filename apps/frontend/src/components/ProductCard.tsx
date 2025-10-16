@@ -58,11 +58,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       role="group"
       aria-label={`${product.name} - ${formatPrice(product.priceCents)}`}
       style={{
-        width: '385px',
-        height: '775px',
+        width: '300px',
+        height: '525px',
         // padding: '40px',
         alignContent: 'center',
-        margin: '15px',
+        margin: '25px',
         // border: 'dashed',
       }}>
       {/* Product Link - makes entire card clickable */}
@@ -83,7 +83,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 width:'100%',
                 height: '100%',
                 objectFit: 'cover',
-                borderRadius: 'var(--radius-image)',
+                // borderRadius: 'var(--radius-image)',
               }} />
           ) : (
             /* Placeholder if no image */
@@ -133,7 +133,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </div>
 
           {/* Product Attributes - show a few key ones */}
-          <div className="product-attributes">
+          {/* Colours below */}
+          {/* <div className="product-attributes">
             Occasions
             {product.occasions && product.occasions.length > 0 && (
               <div className="attribute-group">
@@ -146,7 +147,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               </div>
             )}
 
-            {/* Colors */}
             {product.colors && product.colors.length > 0 && (
               <div className="attribute-group">
                 <span className="attribute-label">Colors:</span>
@@ -156,7 +156,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 </span>
               </div>
             )}
-          </div>
+          </div> */}
 
           {/* Product Description - truncated */}
           {product.description && (
