@@ -114,18 +114,18 @@
 
 /* Product Image Section */
 .product-image-section {
-  display: flex;
-  align-items: flex-start;
+  /* align-items: flex-start; */
   justify-content: center;
-  position: relative;
+  position: sticky;
+  background-color: blue;
 }
 
 .product-image {
   width: 100%;
-  max-width: 500px;
   height: auto;
   border-radius: 50px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
 .image-placeholder {
@@ -139,6 +139,7 @@
   justify-content: center;
   font-size: 4rem;
   color: #d1d5db;
+  position: relative;
 }
 
 /* Product Details Section */
