@@ -155,7 +155,8 @@ enum UserRole {
 model Product {
   id          String      @id @default(cuid())
   name        String
-  description String
+  description String      // Short description for cards/listings
+  longDescription String? // Detailed description for product detail page
   priceCents  Int         // Price in cents (e.g., 2599 = $25.99)
   priceRange  PriceRange
   imageUrl    String?
