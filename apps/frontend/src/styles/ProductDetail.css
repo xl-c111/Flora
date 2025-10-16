@@ -108,8 +108,8 @@
   width: 100%;
   max-width: 500px;
   height: auto;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  /* border-radius: 12px; */
+  /* box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); */
 }
 
 .image-placeholder {
@@ -221,9 +221,9 @@
 }
 
 .product-description {
-  font-size: 1rem;
-  line-height: 1.8;
-  color: #4a5568;
+  /* font-size: 1rem;
+  line-height: 1.8; */
+  /* color: #4a5568; */
   margin: 0 0 1.25rem 0;
 }
 

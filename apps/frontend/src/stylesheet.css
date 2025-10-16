@@ -209,11 +209,11 @@ p {
 }
 
 .product-card-container {
-    width: 400px;
-    height: 740px;
-    padding: 40px;
-    align-content:center;
-    margin: 20px;
+    /* width: 400px; */
+    /* height: 740px; */
+    /* padding: 40px; */
+    /* align-content:center; */
+    /* margin: 20px; */
     /* border:dashed; */
 }
 

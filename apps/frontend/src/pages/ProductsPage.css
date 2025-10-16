@@ -46,6 +46,7 @@
 /* Page Content */
 .page-content {
   padding: 2rem 0;
+  background-color: var(--background-colour);
 }
 
 .container {
@@ -263,6 +264,7 @@
   /* appearance: none; */
   border: none;
   outline: none;
+  background-color: var(--background-colour);
 
   border-top: 1px solid black;
   border-bottom: 1px solid black;
