@@ -305,10 +305,12 @@
 .savings-note {
   margin-top: 1rem;
   padding: 0.75rem;
-  background-color: #C8D7C4;
-  border-radius: 8px;
-  color: #595E4E;
-  font-size: 0.9rem;
+  background-color: #595E4E;
+  border-radius: 10px;
+  color: #C8D7C4;
+  font-size: 1rem;
+  font-weight: 600;
+  font: bold;
   font-family: "Outfit", sans-serif;
   text-align: center;
   border: 2px solid #595E4E;
@@ -456,7 +458,7 @@
 
 .message-inputs textarea {
   resize: vertical;
-  min-height: 100px;
+  min-height: 144px;
 }
 
 .ai-tone-selector {
