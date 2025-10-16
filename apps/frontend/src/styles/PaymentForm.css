@@ -5,21 +5,22 @@
 }
 
 .payment-element-container {
-  background-color: #e8e8dd;
+  background-color: #C8D7C4;
   padding: 2rem;
-  border-radius: 16px;
-  border: 2px solid #333;
+  border-radius: 10px;
+  border: 2px solid #595E4E;
   margin-bottom: 2rem;
+  font-family: "Outfit", sans-serif;
 }
 
 /* Stripe Payment Element customization is done via JS options */
 
 .payment-error {
   background-color: #fee2e2;
-  border: 1px solid #fca5a5;
+  border: 2px solid #fca5a5;
   color: #dc2626;
   padding: 1rem 1.25rem;
-  border-radius: 8px;
+  border-radius: 10px;
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
@@ -36,20 +37,22 @@
   width: 100%;
   padding: 1rem 2rem;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 500;
   color: white;
-  background-color: #6b6b5c;
+  background-color: #595E4E;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s;
   margin-top: 0;
+  font-family: "Outfit", sans-serif;
+  border: 2px solid #595E4E;
 }
 
 .submit-payment-button:hover:not(:disabled) {
-  background-color: #5a5a4d;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(107, 107, 92, 0.3);
+  background-color: #e0e8e0;
+  color: #595E4E;
+  border: 2px solid #595E4E;
 }
 
 .submit-payment-button:disabled {
@@ -68,7 +71,7 @@
   display: inline-block;
   width: 16px;
   height: 16px;
-  border: 2px solid #ffffff;
+  border: 2px solid #595E4E;
   border-top-color: transparent;
   border-radius: 50%;
   animation: spin 0.6s linear infinite;

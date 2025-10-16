@@ -5,7 +5,7 @@ import type { Appearance } from "@stripe/stripe-js";
 import PaymentForm from "./PaymentForm";
 import { useAuth } from "../contexts/AuthContext";
 import { useCart } from "../contexts/CartContext";
-import type { DeliveryInfo } from "../services/deliveryService";
+import deliveryService, { type DeliveryInfo } from "../services/deliveryService";
 import "../styles/CheckoutForm.css";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "");
@@ -61,7 +61,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
 }) => {
   const { login } = useAuth();
   const { state: cartState, setGiftMessage } = useCart();
-  const [useSameAddress, setUseSameAddress] = useState(false);
   const [isEditingMessage, setIsEditingMessage] = useState(false);
   const [savedMessage, setSavedMessage] = useState({ to: "", from: "", message: "" });
   const [formData, setFormData] = useState<CheckoutFormData>({
@@ -123,7 +122,34 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
     }
   };
 
-  const validateForm = (): boolean => {
+  const handleUseSameAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = e.target.checked;
+
+    if (checked) {
+      // Auto-fill sender fields with recipient data
+      setFormData((prev) => ({
+        ...prev,
+        senderFirstName: prev.recipientFirstName,
+        senderLastName: prev.recipientLastName,
+        senderBusinessName: prev.recipientBusinessName || "",
+        senderAddress: prev.recipientAddress,
+        senderApartment: prev.recipientApartment || "",
+        senderCity: prev.recipientCity,
+        senderState: prev.recipientState,
+        senderZipCode: prev.recipientZipCode,
+        senderPhone: prev.recipientPhone || "",
+        useSameAddress: true,
+      }));
+    } else {
+      // Just update the flag, don't clear fields (user might have already typed)
+      setFormData((prev) => ({
+        ...prev,
+        useSameAddress: false,
+      }));
+    }
+  };
+
+  const validateForm = async (): Promise<boolean> => {
     const newErrors: Partial<Record<keyof CheckoutFormData, string>> = {};
 
     if (!formData.guestEmail.trim()) {
@@ -148,15 +174,55 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
     }
     if (!formData.recipientZipCode.trim()) {
       newErrors.recipientZipCode = "Enter a ZIP / postal code";
+    } else {
+      // Validate postcode is in Melbourne delivery zone
+      try {
+        const validation = await deliveryService.validatePostcode(formData.recipientZipCode);
+        if (!validation.available) {
+          newErrors.recipientZipCode = "We only deliver to Melbourne metro area. Please check your postcode.";
+        } else {
+          // Cross-validate: Melbourne postcodes must have VIC state
+          if (formData.recipientState && formData.recipientState !== "VIC") {
+            newErrors.recipientState = "Melbourne postcodes are in Victoria (VIC). Please select the correct state.";
+          }
+        }
+      } catch (error) {
+        // Graceful degradation: if validation service fails, allow checkout to continue
+        console.warn('Postcode validation service unavailable, allowing checkout:', error);
+        // No error added - we don't block checkout for technical failures
+      }
+    }
+
+    // Sender (billing) validation - validate before proceeding to payment
+    if (!formData.useSameAddress) {
+      if (!formData.senderFirstName.trim()) {
+        newErrors.senderFirstName = "Enter your first name for billing";
+      }
+      if (!formData.senderLastName.trim()) {
+        newErrors.senderLastName = "Enter your last name for billing";
+      }
+      if (!formData.senderAddress.trim()) {
+        newErrors.senderAddress = "Enter your billing address";
+      }
+      if (!formData.senderCity.trim()) {
+        newErrors.senderCity = "Enter your billing suburb";
+      }
+      if (!formData.senderState.trim()) {
+        newErrors.senderState = "Select your billing state";
+      }
+      if (!formData.senderZipCode.trim()) {
+        newErrors.senderZipCode = "Enter your billing postcode";
+      }
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleProceedToPayment = (e: React.FormEvent) => {
+  const handleProceedToPayment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
+    const isValid = await validateForm();
+    if (isValid) {
       onSubmit(formData);
     }
   };
@@ -398,7 +464,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
               type="text"
               name="recipientBusinessName"
               className="form-input"
-              placeholder="Business Name"
+              placeholder="Business Name (optional)"
               value={formData.recipientBusinessName}
               onChange={handleInputChange}
             />
@@ -422,7 +488,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
               type="text"
               name="recipientApartment"
               className="form-input"
-              placeholder="Apartment, unit, etc."
+              placeholder="Apartment, unit, etc. (optional)"
               value={formData.recipientApartment}
               onChange={handleInputChange}
             />
@@ -448,14 +514,8 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
                 onChange={handleInputChange}
               >
                 <option value="">State/territory</option>
-                <option value="ACT">Australian Capital Territory</option>
-                <option value="NSW">New South Wales</option>
-                <option value="NT">Northern Territory</option>
-                <option value="QLD">Queensland</option>
-                <option value="SA">South Australia</option>
-                <option value="TAS">Tasmania</option>
-                <option value="VIC">Victoria</option>
-                <option value="WA">Western Australia</option>
+                <option value="VIC">Victoria (Melbourne Metro - Currently Available)</option>
+                {/* Other states will be added as we expand delivery zones */}
               </select>
               {errors.recipientState && <span className="field-error">{errors.recipientState}</span>}
             </div>
@@ -485,6 +545,149 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
         </div>
       </section>
 
+      {/* Sender's Details (Billing Address) Section */}
+      <section className="checkout-section recipient-section">
+        <h2 className="section-title">Billing Information</h2>
+
+        <div className="recipient-banner">Enter your information below.</div>
+
+        <div className="form-section">
+          <div className="form-field checkbox-field">
+            <input
+              type="checkbox"
+              id="useSameAddress"
+              checked={formData.useSameAddress}
+              onChange={handleUseSameAddressChange}
+            />
+            <label htmlFor="useSameAddress">Use recipient's address as billing address.</label>
+          </div>
+
+          {!formData.useSameAddress && (
+        <div className="form-section recipient-form">
+            <div className="form-field">
+                <label className="form-label-top">Country</label>
+                <input type="text" name="senderCountry" className="form-input" value="Australia" readOnly disabled />
+              </div>
+
+              <div className="form-row">
+                <div className="form-field">
+                  <input
+                    type="text"
+                    name="senderFirstName"
+                    className={`form-input ${errors.senderFirstName ? "error" : ""}`}
+                    placeholder="First Name"
+                    value={formData.senderFirstName}
+                    onChange={handleInputChange}
+                  />
+                  {errors.senderFirstName && <span className="field-error">{errors.senderFirstName}</span>}
+                </div>
+                <div className="form-field">
+                  <input
+                    type="text"
+                    name="senderLastName"
+                    className={`form-input ${errors.senderLastName ? "error" : ""}`}
+                    placeholder="Last Name"
+                    value={formData.senderLastName}
+                    onChange={handleInputChange}
+                  />
+                  {errors.senderLastName && <span className="field-error">{errors.senderLastName}</span>}
+                </div>
+              </div>
+
+              <div className="form-field">
+                <input
+                  type="text"
+                  name="senderBusinessName"
+                  className="form-input"
+                  placeholder="Business Name (optional)"
+                  value={formData.senderBusinessName}
+                  onChange={handleInputChange}
+                />
+              </div>
+
+              <div className="form-field">
+                <input
+                  type="text"
+                  name="senderAddress"
+                  className={`form-input ${errors.senderAddress ? "error" : ""}`}
+                  placeholder="Address"
+                  value={formData.senderAddress}
+                  onChange={handleInputChange}
+                />
+                <p className="field-hint">Add a house number if you have one</p>
+                {errors.senderAddress && <span className="field-error">{errors.senderAddress}</span>}
+              </div>
+
+              <div className="form-field">
+                <input
+                  type="text"
+                  name="senderApartment"
+                  className="form-input"
+                  placeholder="Apartment, unit, etc. (optional)"
+                  value={formData.senderApartment}
+                  onChange={handleInputChange}
+                />
+              </div>
+
+              <div className="form-row form-row-three">
+                <div className="form-field">
+                  <input
+                    type="text"
+                    name="senderCity"
+                    className={`form-input ${errors.senderCity ? "error" : ""}`}
+                    placeholder="Suburb"
+                    value={formData.senderCity}
+                    onChange={handleInputChange}
+                  />
+                  {errors.senderCity && <span className="field-error">{errors.senderCity}</span>}
+                </div>
+                <div className="form-field">
+                  <select
+                    name="senderState"
+                    className={`form-input ${errors.senderState ? "error" : ""}`}
+                    value={formData.senderState}
+                    onChange={handleInputChange}
+                  >
+                    <option value="">State/territory *</option>
+                    <option value="VIC">Victoria (VIC)</option>
+                    <option value="NSW">New South Wales (NSW)</option>
+                    <option value="QLD">Queensland (QLD)</option>
+                    <option value="SA">South Australia (SA)</option>
+                    <option value="WA">Western Australia (WA)</option>
+                    <option value="TAS">Tasmania (TAS)</option>
+                    <option value="NT">Northern Territory (NT)</option>
+                    <option value="ACT">Australian Capital Territory (ACT)</option>
+                  </select>
+                  {errors.senderState && <span className="field-error">{errors.senderState}</span>}
+                </div>
+                <div className="form-field">
+                  <input
+                    type="text"
+                    name="senderZipCode"
+                    className={`form-input ${errors.senderZipCode ? "error" : ""}`}
+                    placeholder="Postcode"
+                    value={formData.senderZipCode}
+                    onChange={handleInputChange}
+                  />
+                  {errors.senderZipCode && <span className="field-error">{errors.senderZipCode}</span>}
+                </div>
+              </div>
+
+              <div className="form-field">
+                <input
+                  type="tel"
+                  name="senderPhone"
+                  className="form-input"
+                  placeholder="Phone"
+                  value={formData.senderPhone}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* Payment Section */}
       {clientSecret && orderId && (
         <section className="checkout-section payment-section">
@@ -495,86 +698,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
           <Elements stripe={stripePromise} options={elementsOptions}>
             <PaymentForm orderId={orderId} onPaymentSuccess={onPaymentSuccess} onPaymentError={onPaymentError} />
           </Elements>
-
-          {/* Sender's Details (Billing Address) */}
-          <div className="form-section billing-section">
-            <h3 className="section-subtitle">Sender's Details (Billing Address)</h3>
-
-            <div className="form-field checkbox-field">
-              <input
-                type="checkbox"
-                id="useSameAddress"
-                checked={useSameAddress}
-                onChange={(e) => setUseSameAddress(e.target.checked)}
-              />
-              <label htmlFor="useSameAddress">Use shipping address as billing address</label>
-            </div>
-
-            {!useSameAddress && (
-              <>
-                <div className="form-field">
-                  <label className="form-label-top">Country</label>
-                  <input type="text" name="senderCountry" className="form-input" value="Australia" readOnly disabled />
-                </div>
-
-                <div className="form-row">
-                  <div className="form-field">
-                    <input
-                      type="text"
-                      name="senderFirstName"
-                      className="form-input"
-                      placeholder="First Name"
-                      value={formData.senderFirstName}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div className="form-field">
-                    <input
-                      type="text"
-                      name="senderLastName"
-                      className="form-input"
-                      placeholder="Last Name"
-                      value={formData.senderLastName}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                </div>
-
-                <div className="form-field">
-                  <input
-                    type="text"
-                    name="senderBusinessName"
-                    className="form-input"
-                    placeholder="Business Name"
-                    value={formData.senderBusinessName}
-                    onChange={handleInputChange}
-                  />
-                </div>
-
-                <div className="form-field">
-                  <input
-                    type="text"
-                    name="senderAddress"
-                    className="form-input"
-                    placeholder="Address"
-                    value={formData.senderAddress}
-                    onChange={handleInputChange}
-                  />
-                </div>
-
-                <div className="form-field">
-                  <input
-                    type="text"
-                    name="senderApartment"
-                    className="form-input"
-                    placeholder="Apartment, unit, etc."
-                    value={formData.senderApartment}
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </>
-            )}
-          </div>
         </section>
       )}
 

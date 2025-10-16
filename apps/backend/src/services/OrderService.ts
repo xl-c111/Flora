@@ -35,6 +35,17 @@ export interface CreateOrderData {
     country?: string;
     phone?: string;
   };
+  billingAddress?: {
+    firstName: string;
+    lastName: string;
+    street1: string;
+    street2?: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country?: string;
+    phone?: string;
+  };
   deliveryType: DeliveryType;
   deliveryNotes?: string;
   requestedDeliveryDate?: Date;
@@ -78,11 +89,12 @@ export class OrderService {
     // Calculate totals
     const subtotalCents = orderData.items.reduce((sum, item) => sum + item.priceCents * item.quantity, 0);
 
-    // Calculate shipping based on delivery type and zip code
+    // Calculate shipping based on delivery type, zip code, and delivery dates
     const shippingCents = await this.calculateShipping(
       orderData.deliveryType,
       orderData.shippingAddress.zipCode,
-      subtotalCents
+      subtotalCents,
+      orderData.items
     );
 
     // No additional tax (tax included in item price)
@@ -95,6 +107,17 @@ export class OrderService {
 
     // Create order with transaction
     const order = await prisma.$transaction(async (tx) => {
+      // Debug billing data before insertion
+      console.log('🔍 OrderService - About to insert billing data:', {
+        billingAddress: orderData.billingAddress,
+        billingFirstName: orderData.billingAddress?.firstName,
+        billingLastName: orderData.billingAddress?.lastName,
+        billingStreet1: orderData.billingAddress?.street1,
+        billingCity: orderData.billingAddress?.city,
+        billingState: orderData.billingAddress?.state,
+        billingZipCode: orderData.billingAddress?.zipCode,
+      });
+
       // Create order
       const newOrder = await tx.order.create({
         data: {
@@ -112,7 +135,7 @@ export class OrderService {
           deliveryType: orderData.deliveryType,
           requestedDeliveryDate: orderData.requestedDeliveryDate,
           deliveryNotes: orderData.deliveryNotes,
-          // Shipping address snapshot
+          // Shipping address snapshot (recipient/delivery address)
           shippingFirstName: orderData.shippingAddress.firstName,
           shippingLastName: orderData.shippingAddress.lastName,
           shippingStreet1: orderData.shippingAddress.street1,
@@ -122,6 +145,16 @@ export class OrderService {
           shippingZipCode: orderData.shippingAddress.zipCode,
           shippingCountry: orderData.shippingAddress.country || 'AU',
           shippingPhone: orderData.shippingAddress.phone,
+          // Billing address snapshot (sender/payer address)
+          billingFirstName: orderData.billingAddress?.firstName,
+          billingLastName: orderData.billingAddress?.lastName,
+          billingStreet1: orderData.billingAddress?.street1,
+          billingStreet2: orderData.billingAddress?.street2,
+          billingCity: orderData.billingAddress?.city,
+          billingState: orderData.billingAddress?.state,
+          billingZipCode: orderData.billingAddress?.zipCode,
+          billingCountry: orderData.billingAddress?.country || 'AU',
+          billingPhone: orderData.billingAddress?.phone,
           items: {
             create: orderData.items.map(item => ({
               productId: item.productId,
@@ -225,7 +258,7 @@ export class OrderService {
     });
   }
 
-  // Get user orders
+  // Get user orders (exclude PENDING - those are abandoned/incomplete orders)
   async getUserOrders(
     userId: string,
     page = 1,
@@ -237,9 +270,17 @@ export class OrderService {
   }> {
     const offset = (page - 1) * limit;
 
+    // Only show confirmed orders (exclude PENDING which are abandoned orders)
+    const whereClause = {
+      userId,
+      status: {
+        not: OrderStatus.PENDING, // Exclude draft/abandoned orders
+      },
+    };
+
     const [orders, total] = await Promise.all([
       prisma.order.findMany({
-        where: { userId },
+        where: whereClause,
         include: {
           items: {
             include: {
@@ -266,7 +307,7 @@ export class OrderService {
         skip: offset,
         take: limit,
       }),
-      prisma.order.count({ where: { userId } }),
+      prisma.order.count({ where: whereClause }),
     ]);
 
     return {
@@ -488,7 +529,30 @@ export class OrderService {
     return orderNumber;
   }
 
-  private async calculateShipping(deliveryType: DeliveryType, zipCode: string, subtotalCents: number): Promise<number> {
+  private async calculateShipping(
+    deliveryType: DeliveryType,
+    zipCode: string,
+    subtotalCents: number,
+    items: Array<{ requestedDeliveryDate?: Date }>
+  ): Promise<number> {
+    // PICKUP is always free, regardless of delivery dates
+    if (deliveryType === DeliveryType.PICKUP) {
+      return 0;
+    }
+
+    // Group items by delivery date
+    const deliveryGroups = new Map<string, number>();
+    items.forEach((item) => {
+      const dateKey = item.requestedDeliveryDate
+        ? new Date(item.requestedDeliveryDate).toISOString().split('T')[0] // YYYY-MM-DD
+        : 'no-date';
+
+      deliveryGroups.set(dateKey, (deliveryGroups.get(dateKey) || 0) + 1);
+    });
+
+    // Calculate shipping fee per delivery group
+    const numberOfDeliveries = deliveryGroups.size;
+
     // Check if delivery zone offers free shipping
     const deliveryZone = await prisma.deliveryZone.findFirst({
       where: {
@@ -497,40 +561,48 @@ export class OrderService {
       },
     });
 
-    // Free shipping over threshold
-    if (deliveryZone?.freeDeliveryThreshold && subtotalCents >= deliveryZone.freeDeliveryThreshold) {
+    // Free shipping over threshold (only applies if single delivery)
+    if (numberOfDeliveries === 1 && deliveryZone?.freeDeliveryThreshold && subtotalCents >= deliveryZone.freeDeliveryThreshold) {
       return 0;
     }
+
+    // Determine cost per delivery
+    let costPerDelivery = 0;
 
     // Use delivery zone pricing if available
     if (deliveryZone) {
       switch (deliveryType) {
         case DeliveryType.STANDARD:
-          return deliveryZone.standardCostCents;
+          costPerDelivery = deliveryZone.standardCostCents;
+          break;
         case DeliveryType.EXPRESS:
-          return deliveryZone.expressCostCents || deliveryZone.standardCostCents;
+          costPerDelivery = deliveryZone.expressCostCents || deliveryZone.standardCostCents;
+          break;
         case DeliveryType.SAME_DAY:
-          return deliveryZone.sameDayCostCents || deliveryZone.expressCostCents || deliveryZone.standardCostCents;
-        case DeliveryType.PICKUP:
-          return 0;
+          costPerDelivery = deliveryZone.sameDayCostCents || deliveryZone.expressCostCents || deliveryZone.standardCostCents;
+          break;
         default:
-          return deliveryZone.standardCostCents;
+          costPerDelivery = deliveryZone.standardCostCents;
+      }
+    } else {
+      // Fallback pricing (matches deliveryService.ts config)
+      switch (deliveryType) {
+        case DeliveryType.STANDARD:
+          costPerDelivery = 899; // $8.99 AUD
+          break;
+        case DeliveryType.EXPRESS:
+          costPerDelivery = 1599; // $15.99 AUD
+          break;
+        case DeliveryType.SAME_DAY:
+          costPerDelivery = 2999; // $29.99 AUD
+          break;
+        default:
+          costPerDelivery = 899;
       }
     }
 
-    // Fallback pricing (matches deliveryService.ts config)
-    switch (deliveryType) {
-      case DeliveryType.STANDARD:
-        return 899; // $8.99 AUD
-      case DeliveryType.EXPRESS:
-        return 1599; // $15.99 AUD
-      case DeliveryType.SAME_DAY:
-        return 2999; // $29.99 AUD
-      case DeliveryType.PICKUP:
-        return 0; // Free
-      default:
-        return 899;
-    }
+    // Total shipping = cost per delivery × number of unique delivery dates
+    return costPerDelivery * numberOfDeliveries;
   }
 
   private async createDeliveryTracking(order: OrderWithDetails): Promise<void> {

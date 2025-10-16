@@ -15,10 +15,20 @@ export class OrderController {
   createOrder = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
       const userId = req.user?.id; // Optional for guest checkout
+
+      console.log('💳 Backend received billingAddress:', req.body.billingAddress);
+      console.log('📦 Backend received shippingAddress:', req.body.shippingAddress);
+
       const orderData: CreateOrderData = {
         ...req.body,
         userId,
       };
+
+      console.log('💾 OrderData being passed to service:', {
+        hasBillingAddress: !!orderData.billingAddress,
+        hasShippingAddress: !!orderData.shippingAddress,
+        billingFirstName: orderData.billingAddress?.firstName,
+      });
 
       const order = await this.orderService.createOrder(orderData);
 

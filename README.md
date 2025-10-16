@@ -10,13 +10,34 @@ Flora is a modern flowers and plants marketplace featuring flexible purchasing o
 
 ## 🎯 Project Features
 
+### **Core Shopping Experience**
 ✅ **Product browsing** with search/filter \
 ✅ **Guest checkout** (no account required) \
 ✅ **User authentication** (Auth0) \
-✅ **Subscription system** (recurring + spontaneous deliveries) \
-✅ **Melbourne delivery** with flat-rate pricing \
-✅ **Order processing** & email confirmations \
-✅ **Automated testing** with CI/CD
+✅ **Calendar delivery date selection** (choose specific delivery dates) \
+✅ **AI-powered gift messages** 🤖 (generate/enhance personalized messages by Gemini AI)
+
+### **Purchase Options** (3 Types)
+✅ **One-time purchase** - Single delivery \
+✅ **Recurring subscription** - Regular deliveries (weekly/fortnightly/monthly) with savings \
+✅ **Spontaneous subscription** - Surprise deliveries at random times within chosen frequency
+
+### **User Account Features**
+✅ **User Profile** - View account stats (orders, subscriptions, total spent) \
+✅ **Order History** - Browse past orders with pagination \
+✅ **Subscriptions Management** - Pause, resume, or cancel active subscriptions
+
+### **Delivery & Payments**
+✅ **Melbourne delivery zone validation** - Real-time postcode validation (100+ postcodes) \
+✅ **Smart address validation** - Postcode + state cross-validation \
+✅ **Flat-rate pricing** - $8.99 standard, $15.99 express delivery (AUD) \
+✅ **Stripe payment processing** - Secure checkout with payment intents \
+✅ **Order confirmations** - Email notifications for completed orders
+
+### **Quality & Reliability**
+✅ **Automated testing** - 64+ backend tests with CI/CD \
+✅ **Graceful degradation** - System remains functional if validation APIs fail \
+✅ **Type-safe** - Full TypeScript coverage (frontend + backend)
 
 ---
 
@@ -282,7 +303,7 @@ docker exec flora-frontend pnpm build
 ```
 
 **Quick verification:**
-- ✅ All backend tests pass (64/64 tests)
+- ✅ All backend tests pass (80/80 tests)
 - ✅ Frontend type-check runs (warnings allowed)
 - ✅ Frontend builds successfully
 - ✅ Docker containers running: `docker ps`
@@ -401,13 +422,26 @@ pnpm docker:setup
 
 ## 🎯 **Demo Day Ready Features**
 
-- ✅ **Melbourne-focused delivery** (postcodes 3000, 3141, etc.)
-- ✅ **AUD pricing** ($8.99 standard, $15.99 express)
+### **Shopping & Checkout**
+- ✅ **3 purchase types** (one-time, recurring subscription, spontaneous subscription)
+- ✅ **Calendar date picker** (select delivery dates 1-90 days ahead)
+- ✅ **Smart validation** (Melbourne postcodes 3000-3199 with state verification)
+- ✅ **AUD pricing** ($8.99 standard, $15.99 express delivery)
+- ✅ **Stripe payments** (secure payment intent flow)
+
+### **User Experience**
 - ✅ **Auth0 authentication** (email/password + Google login)
-- ✅ **Subscription management** (pause, resume, cancel)
-- ✅ **Automated testing** (6/6 tests passing)
-- ✅ **Email confirmations** (order confirmations)
+- ✅ **User Profile page** (stats: orders, subscriptions, total spent)
+- ✅ **Order History** (paginated list of past orders)
+- ✅ **Subscription management** (pause, resume, cancel active subscriptions)
+- ✅ **Email confirmations** (automated order confirmation emails)
+
+### **Technical Excellence**
+- ✅ **64 automated tests** (Jest + integration tests passing)
+- ✅ **CI/CD pipeline** (GitHub Actions with backend tests)
+- ✅ **Melbourne delivery zones** (100+ postcode validation)
 - ✅ **Real order integration** (subscriptions create actual orders)
+- ✅ **Graceful error handling** (validates but degrades gracefully if APIs fail)
 
 ---
 

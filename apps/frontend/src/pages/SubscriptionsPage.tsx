@@ -68,13 +68,66 @@ const SubscriptionsPage = () => {
   }, [getAccessToken, user, authLoading]);
 
   const formatDate = (dateString: string | null) => {
-    if (!dateString) return 'Not scheduled';
+    if (!dateString) return null;
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
+      timeZone: 'UTC',
     });
+  };
+
+  const getSubscriptionTypeInfo = (type: string) => {
+    // Extract frequency and whether it's spontaneous or recurring
+    const isSpontaneous = type.includes('SPONTANEOUS');
+    const isRecurring = type.includes('RECURRING');
+
+    let frequency = '';
+    let discount = 0;
+
+    // IMPORTANT: Check BIWEEKLY before WEEKLY (BIWEEKLY contains substring "WEEKLY")
+    if (type.includes('BIWEEKLY')) {
+      frequency = 'Every 2 weeks';
+      discount = isSpontaneous ? 18 : 20;
+    } else if (type.includes('WEEKLY')) {
+      frequency = 'Every 1 week';
+      discount = isSpontaneous ? 15 : 15;
+    } else if (type.includes('MONTHLY')) {
+      frequency = 'Every 1 month';
+      discount = isSpontaneous ? 18 : 20;
+    } else if (type === 'SPONTANEOUS') {
+      // Legacy spontaneous type
+      frequency = 'Every 2 weeks';
+      discount = 18;
+    }
+
+    return {
+      badge: isSpontaneous ? 'SPONTANEOUS SUBSCRIPTION' : 'RECURRING SUBSCRIPTION',
+      frequency,
+      discount,
+      isSpontaneous,
+    };
+  };
+
+  const getNextDeliveryDisplay = (subscription: Subscription) => {
+    const typeInfo = getSubscriptionTypeInfo(subscription.type);
+
+    // For spontaneous subscriptions, show random date with explanation
+    if (typeInfo.isSpontaneous) {
+      if (subscription.nextDeliveryDate) {
+        return `${formatDate(subscription.nextDeliveryDate)} (random surprise day)`;
+      }
+      return 'Surprise delivery date pending';
+    }
+
+    // For recurring subscriptions, show the scheduled date
+    if (subscription.nextDeliveryDate) {
+      return formatDate(subscription.nextDeliveryDate);
+    }
+
+    // Fallback for recurring without a scheduled date
+    return 'Not yet scheduled';
   };
 
   const formatPrice = (cents: number) => {
@@ -91,16 +144,6 @@ const SubscriptionsPage = () => {
 
   const getStatusDisplay = (status: string) => {
     return status.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
-  };
-
-  const getSubscriptionTypeDisplay = (type: string) => {
-    const typeMap: Record<string, string> = {
-      'RECURRING_WEEKLY': '🔄 Weekly',
-      'RECURRING_BIWEEKLY': '🔄 Biweekly',
-      'RECURRING_MONTHLY': '🔄 Monthly',
-      'SPONTANEOUS': '✨ Spontaneous',
-    };
-    return typeMap[type] || type;
   };
 
   if (authLoading) {
@@ -172,9 +215,14 @@ const SubscriptionsPage = () => {
               <div key={subscription.id} className="subscription-card">
                 <div className="subscription-card-header">
                   <div className="subscription-info-left">
-                    <h3 className="subscription-type">
-                      {getSubscriptionTypeDisplay(subscription.type)}
-                    </h3>
+                    <div className="subscription-type-badge">
+                      <span className="type-badge">
+                        {getSubscriptionTypeInfo(subscription.type).badge}
+                      </span>
+                    </div>
+                    <p className="subscription-frequency">
+                      {getSubscriptionTypeInfo(subscription.type).frequency} • Save {getSubscriptionTypeInfo(subscription.type).discount}%
+                    </p>
                     <p className="subscription-created">
                       Started {formatDate(subscription.createdAt)}
                     </p>
