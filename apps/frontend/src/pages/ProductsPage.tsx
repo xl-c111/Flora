@@ -263,7 +263,7 @@ const ProductsPage: React.FC = () => {
 
               {/* Pagination */}
               {pagination.totalPages > 1 && (
-                <div className="pagination">
+                <div className="products-pagination">
                   <div className="pagination-controls">
                     {/* Previous Page Button */}
                     <button

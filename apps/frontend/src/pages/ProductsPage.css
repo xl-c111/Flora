@@ -316,6 +316,9 @@
 /* Products Main Area */
 .products-main {
   min-height: 80vh;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Results Header */
@@ -537,8 +540,8 @@
 }
 
 /* Pagination */
-.pagination {
-  margin-top: 3rem;
+.products-pagination {
+  margin-top: 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -554,22 +557,22 @@
 .pagination-btn {
   padding: 0.5rem 1rem;
   border: 1px solid var(--button-colour);
-  background: blue;
+  background: var(--button-colour);
   cursor: pointer;
-  border-radius: 20px;
+  border-radius: var(--radius-button);
   font-size: 0.875rem;
-  transition: all 0.3s ease;
+  /* transition: all 0.3s ease; */
+  font-weight: 400;
 }
 
 .pagination-btn:hover:not(:disabled) {
-  background: orange;
-  border-color: red;
+  opacity:70%;
 }
 
 .pagination-btn.active {
-  background: green;
-  color: white;
-  border-color: red;
+  background: var(--button-hover-colour);
+  color: var(--button-text-hover-colour);
+  border-color: ;
 }
 
 .pagination-btn:disabled {

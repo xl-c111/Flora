@@ -92,12 +92,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </div>
           )}
 
+
           {/* Stock Status Badge */}
           <div className={`stock-badge ${stockStatus.className}`}>
             {stockStatus.text}
           </div>
         </div>
 
+      </Link>
         {/* Product Information */}
         <div className="product-info"
         style={{
@@ -115,7 +117,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 display:'block',
           }}>
             {/* Product Name */}
-            <h4 className="product-name"
+            <h4 className="product-card-name"
                 style={{
                 float: 'left',
                 display:'block',
@@ -123,7 +125,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               {product.name}
             </h4>
             {/* Product Price */}
-            <h4 className="product-price"
+            <h4 className="product-card-price"
                 style={{
                 float:'right',
                 display:'block',
@@ -160,19 +162,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
           {/* Product Description - truncated */}
           {product.description && (
-            <div className="product-description">
+            <div className="product-card-description">
               {product.description.length > 100
                 ? `${product.description.substring(0, 100)}...`
                 : product.description}
             </div>
           )}
         </div>
-      </Link>
+
 
       {/* Card Actions */}
       <div className="product-actions">
         <button
-          className={`view-details-btn ${!product.inStock ? 'disabled' : ''}`}
+          className={`view-details-product-card-btn ${!product.inStock ? 'disabled' : ''}`}
           disabled={!product.inStock}
           onClick={() => navigate(`/products/${product.id}`)}
           aria-label={`${
@@ -197,14 +199,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               });
               alert(`Added ${product.name} to cart!`);
             }}
-            title="Buy Now"
+            title="Add to cart"
             style={{
             float: 'right',
             border:'1px solid',
             borderColor: 'var(--border-colour)',
             }}
           >
-          <h4>Buy Now</h4>
+          <h4>Add to Cart</h4>
           </button>
         )}
       </div>
