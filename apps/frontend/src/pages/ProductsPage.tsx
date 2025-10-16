@@ -183,7 +183,7 @@ const ProductsPage: React.FC = () => {
 
       {/* Main Content Area */}
       <main className="page-content">
-        <div className="container">
+        <div className="products-container">
           <div className="content-wrapper">
             {/* Left Sidebar - Filters */}
             <aside
