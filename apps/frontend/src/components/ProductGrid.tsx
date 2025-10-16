@@ -105,7 +105,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, isLoading }) => {
 
       {/* Grid Footer - could add "Load More" button here if needed */}
       <div className="grid-footer">
-        <div className="grid-info">Showing {products.length} products</div>
+        <div className="grid-info">Showing {products.length} products </div>
       </div>
     </div>
   );
