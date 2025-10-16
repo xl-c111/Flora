@@ -213,16 +213,17 @@ const ProductDetail: React.FC = () => {
             <div className="description-section">
               <p className="product-description">{product.description}</p>
 
-              <p className="product-description">
-                Daffodils, the heart of this bouquet, are nature's timeless symbol of new beginnings and hope. Paired with daisies and airy accents, this arrangement celebrates the season of growth, when the world awakens from winter's rest and blossoms with possibility.
-              </p>
-
-              <p className="product-description">
-                Perfect for brightening your home, office, or loved one, or celebrating a fresh chapter, this bouquet isn't just flowers—it's a reminder that every season brings renewal and light.
-              </p>
+              {/* Display long description if available, split by newlines for paragraphs */}
+              {product.longDescription &&
+                product.longDescription.split('\n\n').map((paragraph: string, index: number) => (
+                  <p key={index} className="product-description">
+                    {paragraph}
+                  </p>
+                ))
+              }
             </div>
 
-            {/* Select a Delivery Date */}
+            {/* Select a Delivery Date */} 
             <div className="date-selector-section">
               <h3 className="date-selector-section">Select a Delivery Date</h3>
               <DatePicker
