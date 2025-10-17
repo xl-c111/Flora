@@ -402,56 +402,77 @@ const testAddresses = [
 
 async function main() {
   console.log('🌸 Starting to seed Flora database...');
+  console.log('🔄 Using UPSERT pattern - updates existing data, creates new data');
 
-  // Clear existing data in correct order to respect foreign key constraints
-  console.log('🧹 Cleaning existing data...');
-
-  // Delete in order: children first, parents last
-  // Wrapped in try-catch to handle fresh databases where tables might not exist yet
-  try {
-    await prisma.payment.deleteMany();           // References orders
-    await prisma.orderItem.deleteMany();         // References orders
-    await prisma.subscriptionItem.deleteMany();  // References subscriptions
-    await prisma.order.deleteMany();             // References subscriptions, users, addresses
-    await prisma.subscription.deleteMany();      // References users
-    await prisma.address.deleteMany();           // References users
-    await prisma.user.deleteMany();              // No dependencies
-    await prisma.product.deleteMany();           // No dependencies
-    await prisma.category.deleteMany();          // No dependencies
-  } catch (error) {
-    console.log('⚠️  Some tables may not exist yet (fresh database) - continuing with seed...');
-  }
-
-  // Create categories
-  console.log('📂 Creating categories...');
+  // Upsert categories (using name as unique key)
+  console.log('📂 Upserting categories...');
   for (const category of categories) {
-    await prisma.category.create({
-      data: category,
+    await prisma.category.upsert({
+      where: { name: category.name },
+      update: {
+        description: category.description,
+        imageUrl: category.imageUrl,
+      },
+      create: category,
     });
   }
 
-  // Create products
-  console.log('🌺 Creating products...');
+  // Upsert products (name must be unique for this to work)
+  console.log('🌺 Upserting products...');
   for (const product of sampleProducts) {
-    await prisma.product.create({
-      data: product,
+    // Check if product exists by name
+    const existing = await prisma.product.findFirst({
+      where: { name: product.name },
     });
+
+    if (existing) {
+      // Update existing product
+      await prisma.product.update({
+        where: { id: existing.id },
+        data: product,
+      });
+    } else {
+      // Create new product
+      await prisma.product.create({
+        data: product,
+      });
+    }
   }
 
-  // Create test users
-  console.log('👤 Creating test users...');
+  // Upsert test users (using email as unique identifier)
+  console.log('👤 Upserting test users...');
   for (const user of testUsers) {
-    await prisma.user.create({
-      data: user,
+    await prisma.user.upsert({
+      where: { email: user.email },
+      update: {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+      },
+      create: user,
     });
   }
 
-  // Create test addresses
-  console.log('🏠 Creating test addresses...');
+  // Upsert test addresses (find by userId + label combination)
+  console.log('🏠 Upserting test addresses...');
   for (const address of testAddresses) {
-    await prisma.address.create({
-      data: address,
+    const existing = await prisma.address.findFirst({
+      where: {
+        userId: address.userId,
+        label: address.label,
+      },
     });
+
+    if (existing) {
+      await prisma.address.update({
+        where: { id: existing.id },
+        data: address,
+      });
+    } else {
+      await prisma.address.create({
+        data: address,
+      });
+    }
   }
 
   console.log('✅ Seeding completed successfully!');
