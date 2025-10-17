@@ -223,7 +223,7 @@ const ProductDetail: React.FC = () => {
               }
             </div>
 
-            {/* Select a Delivery Date */} 
+            {/* Select a Delivery Date */}
             <div className="date-selector-section">
               <h3 className="date-selector-section">Select a Delivery Date</h3>
               <DatePicker
@@ -334,6 +334,8 @@ const ProductDetail: React.FC = () => {
                 </div>
               )}
             </div>
+
+            
 
             {/* Add to Cart Button */}
             <button
