@@ -407,15 +407,20 @@ async function main() {
   console.log('🧹 Cleaning existing data...');
 
   // Delete in order: children first, parents last
-  await prisma.payment.deleteMany();           // References orders
-  await prisma.orderItem.deleteMany();         // References orders
-  await prisma.subscriptionItem.deleteMany();  // References subscriptions
-  await prisma.order.deleteMany();             // References subscriptions, users, addresses
-  await prisma.subscription.deleteMany();      // References users
-  await prisma.address.deleteMany();           // References users
-  await prisma.user.deleteMany();              // No dependencies
-  await prisma.product.deleteMany();           // No dependencies
-  await prisma.category.deleteMany();          // No dependencies
+  // Wrapped in try-catch to handle fresh databases where tables might not exist yet
+  try {
+    await prisma.payment.deleteMany();           // References orders
+    await prisma.orderItem.deleteMany();         // References orders
+    await prisma.subscriptionItem.deleteMany();  // References subscriptions
+    await prisma.order.deleteMany();             // References subscriptions, users, addresses
+    await prisma.subscription.deleteMany();      // References users
+    await prisma.address.deleteMany();           // References users
+    await prisma.user.deleteMany();              // No dependencies
+    await prisma.product.deleteMany();           // No dependencies
+    await prisma.category.deleteMany();          // No dependencies
+  } catch (error) {
+    console.log('⚠️  Some tables may not exist yet (fresh database) - continuing with seed...');
+  }
 
   // Create categories
   console.log('📂 Creating categories...');
