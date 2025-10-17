@@ -112,12 +112,13 @@ export class EmailService {
       subject: `Order Confirmation #${order.orderNumber}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h1 style="color: #16a34a;">Order Confirmation</h1>
+          <img src=''
+          <h1 style="color: #595E4E;">Order Confirmation</h1>
           <p>Dear ${customerName},</p>
           <p>Thank you for your order! We've received your purchase and are preparing it for delivery.</p>
 
           <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <h3 style="color: #16a34a; margin-top: 0;">Order Details</h3>
+            <h3 style="color: #595E4E; margin-top: 0;">Order Details</h3>
             <p><strong>Order Number:</strong> #${order.orderNumber}</p>
             <p><strong>Order Date:</strong> ${order.createdAt.toLocaleDateString()}</p>
             <p><strong>Total Amount:</strong> $${totalAmount}</p>

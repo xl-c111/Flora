@@ -166,19 +166,24 @@ const ProductsPage: React.FC = () => {
   return (
     <div className="products-page">
       {/* Page Header with Search */}
-      <header className="page-header">
-        <div className="container">
-          <h1>Shop All Flowers</h1>
-          <SearchBar
-            onSearchChange={handleSearchChange}
-            currentSearch={selectedFilters.search || ''}
-          />
-        </div>
-      </header>
+      <div className="banner-container"
+      style={{
+        // marginTop:'16px',
+      }}>
+        {/* <div className="page-header">
+          <div className="header-container">
+                
+            <SearchBar
+              onSearchChange={handleSearchChange}
+              currentSearch={selectedFilters.search || ''}
+            />
+          </div>
+        </div> */}
+      </div>
 
       {/* Main Content Area */}
       <main className="page-content">
-        <div className="container">
+        <div className="products-container">
           <div className="content-wrapper">
             {/* Left Sidebar - Filters */}
             <aside
@@ -258,7 +263,7 @@ const ProductsPage: React.FC = () => {
 
               {/* Pagination */}
               {pagination.totalPages > 1 && (
-                <div className="pagination">
+                <div className="products-pagination">
                   <div className="pagination-controls">
                     {/* Previous Page Button */}
                     <button

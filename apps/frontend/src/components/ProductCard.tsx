@@ -57,7 +57,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       className={`product-card ${!product.inStock ? 'out-of-stock' : ''}`}
       role="group"
       aria-label={`${product.name} - ${formatPrice(product.priceCents)}`}
-    >
+      style={{
+        width: '300px',
+        height: '525px',
+        // padding: '40px',
+        alignContent: 'center',
+        margin: '25px',
+        // border: 'dashed',
+      }}>
       {/* Product Link - makes entire card clickable */}
       <Link
         to={`/products/${product.id}`}
@@ -72,7 +79,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               alt={product.name}
               className="product-image"
               loading="lazy"
-            />
+              style={{
+                width:'100%',
+                height: '100%',
+                objectFit: 'cover',
+                // borderRadius: 'var(--radius-image)',
+              }} />
           ) : (
             /* Placeholder if no image */
             <div className="product-image-placeholder">
@@ -80,34 +92,63 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </div>
           )}
 
+
           {/* Stock Status Badge */}
           <div className={`stock-badge ${stockStatus.className}`}>
             {stockStatus.text}
           </div>
         </div>
 
+      </Link>
         {/* Product Information */}
-        <div className="product-info">
-          {/* Product Name */}
-          <h3 className="product-name">{product.name}</h3>
-
-          {/* Product Price */}
-          <div className="product-price">{formatPrice(product.priceCents)}</div>
+        <div className="product-info"
+        style={{
+              paddingLeft: '30px',
+              paddingRight: '30px',
+              marginTop: '15px',
+              marginBottom: '15px',
+              // maxHeight: '120px',
+              // overflow: 'hidden',
+              // borderStyle:"dotted",
+        }}>
+          <div className="product-header"
+                style={{
+                height: '25px',
+                display:'block',
+          }}>
+            {/* Product Name */}
+            <h4 className="product-card-name"
+                style={{
+                float: 'left',
+                display:'block',
+            }}>
+              {product.name}
+            </h4>
+            {/* Product Price */}
+            <h4 className="product-card-price"
+                style={{
+                float:'right',
+                display:'block',
+            }}>
+              {formatPrice(product.priceCents)}
+            </h4>
+        </div>
 
           {/* Product Attributes - show a few key ones */}
-          <div className="product-attributes">
-            {/* Occasions */}
+          {/* Colours below */}
+          {/* <div className="product-attributes">
+            Occasions
             {product.occasions && product.occasions.length > 0 && (
               <div className="attribute-group">
-                <span className="attribute-label">Perfect for:</span>
+                <span className="attribute-label">Perfect for: product card.tsx</span>
                 <span className="attribute-value">
                   {formatAttributes(product.occasions.slice(0, 2))}
                   {product.occasions.length > 2 && '...'}
                 </span>
+                product attributes
               </div>
             )}
 
-            {/* Colors */}
             {product.colors && product.colors.length > 0 && (
               <div className="attribute-group">
                 <span className="attribute-label">Colors:</span>
@@ -117,35 +158,62 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 </span>
               </div>
             )}
-          </div>
+          </div> */}
 
           {/* Product Description - truncated */}
           {product.description && (
-            <div className="product-description">
+            <div className="product-card-description">
               {product.description.length > 100
                 ? `${product.description.substring(0, 100)}...`
                 : product.description}
             </div>
           )}
         </div>
-      </Link>
+
 
       {/* Card Actions */}
       <div className="product-actions">
         <button
-          className={`view-details-btn ${!product.inStock ? 'disabled' : ''}`}
+          className={`view-details-product-card-btn ${!product.inStock ? 'disabled' : ''}`}
           disabled={!product.inStock}
           onClick={() => navigate(`/products/${product.id}`)}
           aria-label={`${
             product.inStock ? 'View details for' : 'Out of stock:'
           } ${product.name}`}
-        >
-          {product.inStock ? 'View Details' : 'Out of Stock'}
+          style={{
+            float: 'left',
+            border:'1px solid',
+            borderColor: 'var(--border-colour)',
+          }}>
+          <h4>{product.inStock ? 'View Details' : 'Out of Stock'}</h4>
         </button>
+
+        {product.inStock && (
+          <button
+            className="buy-now-button"
+            onClick={(e) => {
+              e.preventDefault();
+              addItem({
+                product,
+                quantity: 1,
+              });
+              alert(`Added ${product.name} to cart!`);
+            }}
+            title="Add to cart"
+            style={{
+            float: 'right',
+            border:'1px solid',
+            borderColor: 'var(--border-colour)',
+            }}
+          >
+          <h4>Add to Cart</h4>
+          </button>
+        )}
       </div>
 
+{/* favourite button OUT OF SCOPE */}
       {/* Quick Action Buttons (outside the link so they don't trigger navigation) */}
-      <div className="quick-actions">
+      {/* <div className="quick-actions">
         <button
           className="quick-action-btn favorite-btn"
           onClick={(e) => {
@@ -174,7 +242,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             🛒
           </button>
         )}
-      </div>
+      </div> */}
 
     </article>
   );
