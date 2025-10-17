@@ -28,5 +28,5 @@ RUN pnpm run build
 # Expose port
 EXPOSE 3001
 
-# Start command (overridden in development)
-CMD ["pnpm", "start"]
+# Start command - runs migrations, seeds DB, then starts server
+CMD ["pnpm", "start:prod"]
