@@ -277,8 +277,8 @@
   font-size: 1rem;
   font-family: "Outfit", sans-serif;
   color: #595E4E;
-  background-color: #C8D7C4;
-  border: 2px solid #595E4E;
+  /* background-color: #C8D7C4;
+  border: 2px solid #595E4E; */
   border-radius: 10px;
   margin-bottom: 1rem;
 }
@@ -288,13 +288,13 @@
 }
 
 .total-line {
-  border: 2px solid #595E4E;
+  /* border: 2px solid #595E4E; */
   margin-top: 0;
   padding: 0.875rem 1.25rem;
   font-weight: 600;
   font-size: 1.125rem;
   font-family: "Outfit", sans-serif;
-  background-color: #C8D7C4;
+  /* background-color: #C8D7C4; */
 }
 
 .total-amount {
