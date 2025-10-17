@@ -60,6 +60,9 @@
     "tsx": "^4.20.5",
     "typescript": "^5.3.0"
   },
+  "prisma": {
+      "seed": "tsx prisma/seed.ts"
+    },
   "author": "Anthony, Bevan, Xiaoling, and Lily",
   "license": "MIT"
 }
