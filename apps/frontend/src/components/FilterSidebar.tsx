@@ -67,10 +67,10 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
     <div className="filter-sidebar">
       {/* Sidebar Header */}
       <header className="filter-header">
-        <h2>Filter Products</h2>
+        {/* <h4>Filter Products FilterSidebar.tsx</h4> */}
 
         {/* Show active filter count and clear button if filters are applied */}
-        {activeFilterCount > 0 && (
+        {/* {activeFilterCount > 0 && (
           <div className="filter-header-actions">
             <span className="active-filters">
               {activeFilterCount} filter{activeFilterCount > 1 ? 's' : ''}{' '}
@@ -83,19 +83,19 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
               Clear All
             </button>
           </div>
-        )}
+        )} */}
       </header>
 
       {/* Filter Options */}
       <div className="filter-options">
         {/* Price Range Filter */}
         <div className="filter-group">
-          <label
+          {/* <label
             htmlFor="price-filter"
             className="filter-label"
           >
             Price Range
-          </label>
+          </label> */}
           <select
             id="price-filter"
             value={selectedFilters.priceRange || ''}
@@ -103,11 +103,12 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
             className="filter-select"
             aria-label="Filter by price range"
           >
-            <option value="">All Prices</option>
+            <option value="" className="filter-select-menu">All Prices</option>
             {filterOptions.priceRanges.map((priceRange) => (
               <option
                 key={priceRange}
                 value={priceRange}
+                className="filter-select-menu"
               >
                 {formatFilterValue('priceRange', priceRange)}
               </option>
@@ -117,23 +118,24 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
         {/* Color Filter */}
         <div className="filter-group">
-          <label
+          {/* <label
             htmlFor="color-filter"
             className="filter-label"
           >
             Color
-          </label>
+          </label> */}
           <select
             id="color-filter"
             value={selectedFilters.color || ''}
             onChange={(e) => handleFilterChange('color', e.target.value)}
             className="filter-select"
           >
-            <option value="">All Colors</option>
+            <option value="" className="filter-select-menu">All Colors</option>
             {filterOptions.colors.map((color) => (
               <option
                 key={color}
                 value={color}
+                className="filter-select-menu"
               >
                 {formatFilterValue('color', color)}
               </option>
@@ -143,23 +145,24 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
         {/* Mood Filter */}
         <div className="filter-group">
-          <label
+          {/* <label
             htmlFor="mood-filter"
             className="filter-label"
           >
             Mood
-          </label>
+          </label> */}
           <select
             id="mood-filter"
             value={selectedFilters.mood || ''}
             onChange={(e) => handleFilterChange('mood', e.target.value)}
             className="filter-select"
           >
-            <option value="">All Moods</option>
+            <option value="" className="filter-select-menu">All Moods</option>
             {filterOptions.moods.map((mood) => (
               <option
                 key={mood}
                 value={mood}
+                className="filter-select-menu"
               >
                 {formatFilterValue('mood', mood)}
               </option>
@@ -169,23 +172,24 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
         {/* Season Filter */}
         <div className="filter-group">
-          <label
+          {/* <label
             htmlFor="season-filter"
             className="filter-label"
           >
             Season
-          </label>
+          </label> */}
           <select
             id="season-filter"
             value={selectedFilters.season || ''}
             onChange={(e) => handleFilterChange('season', e.target.value)}
             className="filter-select"
           >
-            <option value="">All Seasons</option>
+            <option value="" className="filter-select-menu">All Seasons</option>
             {filterOptions.seasons.map((season) => (
               <option
                 key={season}
                 value={season}
+                className="filter-select-menu"
               >
                 {formatFilterValue('season', season)}
               </option>
@@ -195,23 +199,24 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
         {/* Occasion Filter */}
         <div className="filter-group">
-          <label
+          {/* <label
             htmlFor="occasion-filter"
             className="filter-label"
           >
             Occasion
-          </label>
+          </label> */}
           <select
             id="occasion-filter"
             value={selectedFilters.occasion || ''}
             onChange={(e) => handleFilterChange('occasion', e.target.value)}
             className="filter-select"
           >
-            <option value="">All Occasions</option>
+            <option value="" className="filter-select-menu">All Occasions</option>
             {filterOptions.occasions.map((occasion) => (
               <option
                 key={occasion}
                 value={occasion}
+                className="filter-select-menu"
               >
                 {formatFilterValue('occasion', occasion)}
               </option>
@@ -221,23 +226,24 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
         {/* Product Type Filter */}
         <div className="filter-group">
-          <label
+          {/* <label
             htmlFor="type-filter"
             className="filter-label"
           >
             Product Type
-          </label>
+          </label> */}
           <select
             id="type-filter"
             value={selectedFilters.type || ''}
             onChange={(e) => handleFilterChange('type', e.target.value)}
             className="filter-select"
           >
-            <option value="">All Types</option>
+            <option className="filter-select-menu" value="">All Types</option>
             {filterOptions.types.map((type) => (
               <option
                 key={type}
                 value={type}
+                className="filter-select-menu"
               >
                 {formatFilterValue('type', type)}
               </option>
@@ -247,12 +253,12 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
         {/* Stock Filter */}
         <div className="filter-group">
-          <label
+          {/* <label
             htmlFor="stock-filter"
             className="filter-label"
           >
             Availability
-          </label>
+          </label> */}
           <select
             id="stock-filter"
             value={
@@ -270,22 +276,22 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
             }}
             className="filter-select"
           >
-            <option value="">All Products</option>
-            <option value="true">In Stock Only</option>
-            <option value="false">Out of Stock</option>
+            <option value="" className="filter-select-menu">All Products</option>
+            <option value="true" className="filter-select-menu">In Stock Only</option>
+            <option value="false" className="filter-select-menu">Out of Stock</option>
           </select>
         </div>
       </div>
 
       {/* Filter Tips */}
-      <div className="filter-tips">
+      {/* <div className="filter-tips">
         <h4>Filter Tips:</h4>
         <ul>
           <li>Select multiple filters to narrow down results</li>
           <li>Use search to find specific flower names</li>
           <li>Clear filters to see all available products</li>
         </ul>
-      </div>
+      </div> */}
     </div>
   );
 };

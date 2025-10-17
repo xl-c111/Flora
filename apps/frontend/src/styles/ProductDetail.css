@@ -17,13 +17,13 @@
   min-height: 100vh;
   background-color: #595E4E;
   padding: 2rem 0;
-}
+}*/
 
 .container {
-  max-width: 1200px;
+  max-width: 1650px;
   margin: 0 auto;
-  padding: 0 1rem;
-} */
+  /* padding: 0 1rem;*/
+}
 
 /* Loading & Error States */
 .loading-container,
@@ -118,14 +118,16 @@
   justify-content: center;
   position: sticky;
   background-color: blue;
+  width:30%;
+  height: 500px;
+  top: 25%;
 }
 
 .product-image {
   width: 100%;
   height: auto;
-  border-radius: 50px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  position: relative;
+  /* border-radius: 12px; */
+  /* box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); */
 }
 
 .image-placeholder {
@@ -242,11 +244,12 @@
 }
 
 .product-description {
-  font-size: 1rem;
-  font-family: "Outfit", sans-serif;
-  line-height: 1.8;
-  color: #595E4E;
+  color:red;
+  /* font-size: 1rem;
+  line-height: 1.8; */
+  /* color: #4a5568; */
   margin: 0 0 1.25rem 0;
+  font-family: "Outfit", sans-serif;
 }
 
 .product-description:last-child {

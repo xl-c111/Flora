@@ -13,6 +13,8 @@ import OrderHistory from "./pages/OrderHistory";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/Checkout";
 import OrderConfirmationPage from "./pages/OrderConfirmationPage";
+import { Button } from "react-day-picker";
+
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -106,7 +108,6 @@ function AppContent({ useAPI }: any) {
       {!hideHeaderFooter && <Header />}
 
       {!useAPI && <div className="demo-badge">🚧 Demo Mode - API Not Available</div>}
-
       <main className="main">
         {/* Define app routes. AuthCallback is not needed with Auth0 React SDK */}
         <Routes>
@@ -127,5 +128,4 @@ function AppContent({ useAPI }: any) {
     </div>
   );
 }
-
 export default App;

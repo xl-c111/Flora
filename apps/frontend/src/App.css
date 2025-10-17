@@ -37,8 +37,8 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
     sans-serif;
-  color: var(--text-primary);
-  background: var(--background);
+  color: var(--text-colour);
+  background: var(--background-colour);
   line-height: 1.6;
 }
 
@@ -50,6 +50,7 @@ body {
 
 /* Header */
 .header {
+  /* REMOVE
   background: linear-gradient(
     135deg,
     var(--primary-color),
@@ -57,8 +58,8 @@ body {
   );
   color: white;
   text-align: center;
-  padding: 2rem 1rem;
-  box-shadow: 0 2px 10px var(--shadow);
+  /* padding: 2rem 1rem; */
+  /* box-shadow: 0 2px 10px var(--shadow); */
 }
 
 .header h1 {
@@ -85,9 +86,9 @@ body {
 
 /* Main */
 .main {
-  flex: 1;
-  padding: 2rem 1rem;
-  max-width: 1200px;
+  /* flex: 1; */
+  /* padding: 2rem 1rem; */
+  /* max-width: 1200px; */
   margin: 0 auto;
   width: 100%;
 }
@@ -101,7 +102,7 @@ body {
 
 .hero h2 {
   font-size: 2.5rem;
-  color: var(--text-primary);
+  color: var(--text-colour);
   margin-bottom: 1rem;
 }
 
@@ -113,46 +114,49 @@ body {
 /* Products Section */
 .products h3 {
   font-size: 2rem;
-  color: var(--text-primary);
+  color: var(--text-colour);
   margin-bottom: 2rem;
   text-align: center;
 }
 
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  /* gap: 2rem; */
   margin-bottom: 3rem;
+  align-items:center;
+  justify-content: center;
+  place-items:center;
 }
 
 .product-card {
-  background: var(--background);
+  /* background: var(--background-colour);
   border: 1px solid var(--border);
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 2px 8px var(--shadow);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease; */
 }
 
 .product-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 25px var(--shadow);
+  /* transform: translateY(-4px);
+  box-shadow: 0 8px 25px var(--shadow); */
 }
 
 .product-image {
-  width: 100%;
+  /* width: 100%;
   height: 200px;
-  object-fit: cover;
+  object-fit: cover; */
 }
 
 .product-info {
-  padding: 1.5rem;
+  /* padding: 1.5rem; */
 }
 
 .product-info h4 {
-  font-size: 1.3rem;
-  color: var(--text-primary);
-  margin-bottom: 0.5rem;
+  /* font-size: 1.3rem; */
+  /* color: var(--text-colour);
+  margin-bottom: 0.5rem; */
 }
 
 .description {

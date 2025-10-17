@@ -394,7 +394,7 @@
 
 .view-details-btn {
   display: inline-block;
-  padding: 0.75rem 1.5rem;
+  /* padding: 0.75rem 1.5rem; */
   background: #6b7a5e;
   color: white;
   text-decoration: none;
