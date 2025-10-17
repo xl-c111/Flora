@@ -22,6 +22,9 @@ WORKDIR /app/apps/backend
 # Generate Prisma client
 RUN pnpm prisma generate
 
+# Build TypeScript (compile src/ to dist/)
+RUN pnpm run build
+
 # Expose port
 EXPOSE 3001
 
