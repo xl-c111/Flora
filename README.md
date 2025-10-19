@@ -109,9 +109,13 @@ pnpm docker:dev:bg       # Start containers (code changes auto-reload)
 
 ### **🗃️ Database Schema Changes (Prisma schema.prisma)**
 ```bash
-# Backend restart + database update
-pnpm docker:restart-backend    # Restart backend to reload Prisma
-pnpm docker:setup             # Apply schema changes + reseed
+# When YOU made schema changes (e.g., added a new field)
+docker exec -it flora-backend pnpm db:migrate   # Creates migration + applies it
+# Then commit both schema.prisma and migration files
+
+# When TEAMMATE made schema changes (you pulled their code)
+pnpm docker:restart-backend    # Restart backend to reload code
+pnpm docker:setup             # Apply migrations + reseed data
 ```
 
 ### **🌱 Want Fresh Test Data Only**
@@ -325,6 +329,130 @@ docker exec flora-frontend pnpm build
 3. 📤 Push to your branch
 4. 👀 Monitor GitHub Actions results
 5. 🔄 Fix any failures and repeat
+
+---
+
+## 🗃️ **Database & Prisma Workflow**
+
+### **Understanding Prisma Commands**
+
+| Command | What It Does | Creates Migration Files? | When To Use |
+|---------|--------------|-------------------------|-------------|
+| `db:migrate` | Creates migration file + applies it | ✅ YES | When YOU change schema.prisma |
+| `db:push` | Directly updates DB schema | ❌ NO | ⚠️ NEVER in team projects! |
+| `db:seed` | Fills database with sample data | N/A | After migrations or when you need test data |
+| `docker:setup` | Runs migrations + seed | N/A | After pulling teammate's schema changes |
+
+### **The Proper Prisma Workflow**
+
+#### **Scenario 1: YOU Make Schema Changes**
+
+```bash
+# 1. Edit schema.prisma (add field, change type, etc.)
+# Example: Add "stock" field to Product model
+
+# 2. Create migration (Docker environment)
+docker exec -it flora-backend pnpm db:migrate
+# This will:
+#   - Prompt for migration name (e.g., "add_stock_field")
+#   - Create migration file in prisma/migrations/
+#   - Apply migration to your local database
+#   - Update Prisma Client
+
+# 3. Commit BOTH files to git
+git add apps/backend/prisma/schema.prisma
+git add apps/backend/prisma/migrations/
+git commit -m "feat: add stock tracking to products"
+git push
+```
+
+#### **Scenario 2: TEAMMATE Made Schema Changes (You Pull Their Code)**
+
+```bash
+# 1. Pull latest code
+git pull
+
+# 2. Restart backend to reload code
+pnpm docker:restart-backend
+
+# 3. Apply migrations + reseed
+pnpm docker:setup
+# This runs: prisma migrate deploy && prisma db seed
+#   - migrate deploy: Applies new migration files
+#   - db seed: Refreshes sample data
+```
+
+#### **Scenario 3: Running Locally (Without Docker)**
+
+```bash
+# YOU make changes:
+pnpm --filter backend db:migrate    # Create + apply migration
+git add apps/backend/prisma/
+git commit -m "feat: update schema"
+
+# TEAMMATE pulls changes:
+pnpm --filter backend db:migrate    # Apply new migrations
+pnpm --filter backend db:seed       # (Optional) Refresh test data
+```
+
+### **Common Prisma Scenarios**
+
+**Q: I added a new field to schema.prisma, what do I do?**
+```bash
+# Docker:
+docker exec -it flora-backend pnpm db:migrate
+
+# Local:
+pnpm --filter backend db:migrate
+
+# Then commit migration files!
+```
+
+**Q: My teammate added a field, I pulled their code, now what?**
+```bash
+# Docker (recommended):
+pnpm docker:restart-backend
+pnpm docker:setup
+
+# Local:
+pnpm --filter backend db:migrate
+```
+
+**Q: When do I need to run db:seed?**
+```bash
+# Only when you want to refresh test data:
+# - After migration (to get sample products)
+# - When database is empty
+# - When testing features
+
+# Docker:
+pnpm docker:seed
+
+# Local:
+pnpm --filter backend db:seed
+```
+
+**Q: What's wrong with db:push?**
+```bash
+# ❌ db:push = No migration files (teammates won't get your changes!)
+# ✅ db:migrate = Creates migration files (proper team workflow)
+
+# Rule: NEVER use db:push in team projects
+```
+
+### **Migration Best Practices**
+
+✅ **DO:**
+- Use `db:migrate` for all schema changes
+- Commit migration files with schema.prisma
+- Run `docker:setup` after pulling teammate's schema changes
+- Keep UPSERT pattern in seed.ts (works on fresh + existing databases)
+
+❌ **DON'T:**
+- Use `db:push` in team projects (skips migration files!)
+- Forget to commit migration files
+- Manually edit migration files (let Prisma generate them)
+- Assume teammates' databases auto-update (they need to run migrations)
 
 ---
 
