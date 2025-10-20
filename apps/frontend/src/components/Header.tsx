@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
+import SearchBar from './SearchBar';
 import './Header.css';
 
 const Header: React.FC = () => {
@@ -9,6 +10,20 @@ const Header: React.FC = () => {
   const { user, login, logout, loading: authLoading } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Navigation and search functionality
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const currentSearch = searchParams.get('search') || '';
+
+  // Handle search from SearchBar component
+  const handleSearch = (searchQuery: string) => {
+    if (searchQuery.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchQuery)}`);
+    } else {
+      navigate('/products');
+    }
+  };
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -32,7 +47,12 @@ const Header: React.FC = () => {
       {/* Top Navigation Bar */}
       <div className="top-nav">
         <div className="top-nav-links">
-          <Link to="/products" className="top-nav-link">Search</Link>
+          <div className="header-search-wrapper">
+            <SearchBar
+              onSearchChange={handleSearch}
+              currentSearch={currentSearch}
+            />
+          </div>
           <Link to="/contact" className="top-nav-link">Contact Us</Link>
           {authLoading ? (
             <span className="top-nav-link">Loading...</span>
@@ -226,16 +246,16 @@ const Header: React.FC = () => {
                   <div className="banner-menu">
                       <ul>
                           <li>
-                              <a href="#">Shop All Flowers</a>
+                              <Link to="/products">Shop All Flowers</Link>
                           </li>
                           <li>
-                              <a href="#">Shop By Colour</a>
+                              <Link to="/products?filter=colour">Shop By Colour</Link>
                           </li>
                           <li>
-                              <a href="#">Shop By Occasion</a>
+                              <Link to="/products?filter=occasion">Shop By Occasion</Link>
                           </li>
                           <li>
-                              <a href="#">Bundle Up and Save</a>
+                              <Link to="/bundles">Bundle Up and Save</Link>
                           </li>
                       </ul>
                   </div>
@@ -244,20 +264,20 @@ const Header: React.FC = () => {
                   <div className="banner-menu">
                       <ul>
                         <li>
-                              <a href="#">Romantic / Love</a>
-                        </li> 
+                              <Link to="/products?category=romantic">Romantic / Love</Link>
+                        </li>
                         <li>
-                              <a href="#">Cheerful / Everyday Joy</a>
-                        </li> 
+                              <Link to="/products?category=cheerful">Cheerful / Everyday Joy</Link>
+                        </li>
                         <li>
-                              <a href="#">Elegant / Sophisticated</a>
-                        </li> 
+                              <Link to="/products?category=elegant">Elegant / Sophisticated</Link>
+                        </li>
                         <li>
-                              <a href="#">Seasonal / Nature Inspired</a>
-                        </li> 
+                              <Link to="/products?category=seasonal">Seasonal / Nature Inspired</Link>
+                        </li>
                         <li>
-                              <a href="#">Special Occasion</a>
-                        </li> 
+                              <Link to="/products?category=special">Special Occasion</Link>
+                        </li>
                       </ul>
                   </div>
               </div>

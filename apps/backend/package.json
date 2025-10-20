@@ -12,7 +12,7 @@
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
-    "db:setup": "pnpm db:generate && pnpm db:push && pnpm db:seed",
+    "db:setup": "prisma migrate deploy && pnpm db:seed",
     "db:reset": "prisma migrate reset --force",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -60,6 +60,9 @@
     "tsx": "^4.20.5",
     "typescript": "^5.3.0"
   },
+  "prisma": {
+      "seed": "tsx prisma/seed.ts"
+    },
   "author": "Anthony, Bevan, Xiaoling, and Lily",
   "license": "MIT"
 }

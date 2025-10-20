@@ -9,11 +9,11 @@ RUN npm install -g pnpm
 # Copy workspace configuration
 COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
 
-# Copy all apps
-COPY apps ./apps
+# Copy only frontend app (not backend to avoid Prisma issues)
+COPY apps/frontend ./apps/frontend
 
 # Install dependencies
-RUN pnpm install
+RUN pnpm install --filter frontend
 
 # Set working directory to frontend
 WORKDIR /app/apps/frontend
