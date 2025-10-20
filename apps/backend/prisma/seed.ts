@@ -13,8 +13,8 @@ const prisma = new PrismaClient();
 const sampleProducts = [
   {
     name: 'Red Rose Bouquet',
-    description: 'Classic red roses perfect for romantic occasions',
-    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
+    description: 'A classic bouquet of red roses — bold, timeless, and the ultimate expression of love.',
+    longDescription: 'This striking bouquet features deep red roses wrapped in vintage newspaper-style paper with elegant black ribbons — a perfect blend of romance and sophistication. Each rose symbolizes love, passion, and admiration, making it ideal for anniversaries, Valentine\’s Day, or heartfelt surprises. The rich crimson tones evoke winter warmth and timeless devotion, creating a bouquet that speaks louder than words — elegant, dramatic, and eternally romantic.',
     priceCents: 4599, // $45.99
     priceRange: PriceRange.RANGE_25_50,
     imageUrl: '/images/Roses.jpg',
@@ -27,8 +27,8 @@ const sampleProducts = [
   },
   {
     name: 'Spring Tulip Arrangement',
-    description: 'Beautiful mixed tulips in a ceramic vase',
-    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
+    description: 'Soft pink tulip bouquet — elegant, fresh, and full of spring\’s gentle promise and renewal.',
+    longDescription: 'This graceful bouquet features delicate pink tulips paired with tiny blue forget-me-nots, beautifully wrapped in soft beige paper and finished with a pastel blue ribbon. Perfect for spring, when tulips bloom in abundance, it symbolizes new beginnings, love, and hope. Whether for birthdays, anniversaries, or heartfelt gestures, this arrangement captures the essence of spring — pure, romantic, and effortlessly elegant, just like the season itself.',
     priceCents: 3250, // $32.50
     priceRange: PriceRange.RANGE_25_50,
     imageUrl: '/images/Tulips.jpg',
@@ -41,8 +41,8 @@ const sampleProducts = [
   },
   {
     name: 'White Orchid Plant',
-    description: 'Elegant white orchid in decorative pot',
-    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
+    description: ' A modern tropical bouquet — bold anthuriums and white blooms exuding elegance and summer energy.',
+    longDescription: ' This striking bouquet blends tropical flair with modern sophistication. Featuring pink-tipped anthuriums, pure white gladiolus, and soft carnations, it creates a sculptural arrangement full of contrast and movement. Perfect for summer, when exotic blooms flourish, it symbolizes confidence, grace, and vitality. Ideal for stylish events, weddings, or thoughtful gifts, this bouquet captures the warmth and bold spirit of a tropical summer breeze.',
     priceCents: 6800, // $68.00
     priceRange: PriceRange.RANGE_50_75,
     imageUrl: '/images/Orchids.jpg',
@@ -55,8 +55,8 @@ const sampleProducts = [
   },
   {
     name: 'Sunflower Happiness Bouquet',
-    description: 'Bright sunflowers to bring joy and warmth',
-    longDescription: 'Like rays of sunshine captured in bloom, these magnificent sunflowers radiate warmth and positive energy. Their bold, golden petals and impressive size make them impossible to ignore—and even harder not to smile at.\n\nPerfect for lifting spirits, celebrating achievements, or simply brightening someone\'s day, this cheerful bouquet brings the warmth of summer into any space. These aren\'t just flowers; they\'re happiness, delivered.',
+    description: 'A cheerful sunflower bouquet — bright, warm, and full of summer sunshine and positive energy.',
+    longDescription: 'Radiating pure happiness, this bouquet features a stunning sunflower surrounded by white daisies, baby\’s breath, and fresh greenery, wrapped in sunny yellow paper for a joyful touch. Perfect for summer, the sunflower symbolizes warmth, optimism, and strength — just like the season itself. Whether it\’s a birthday, congratulations, or a simple gesture of cheer, this bouquet captures the golden glow of summer days and the beauty of heartfelt positivity.',
     priceCents: 3875, // $38.75
     priceRange: PriceRange.RANGE_25_50,
     imageUrl: '/images/Sunflowers.jpg',
@@ -72,9 +72,9 @@ const sampleProducts = [
     type: ProductType.SUNFLOWER,
   },
   {
-    name: 'Pink Lily Arrangement',
-    description: 'Graceful pink lilies in an elegant vase',
-    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
+    name: 'White Lily Arrangement',
+    description: 'A pure white lily bouquet — elegant, serene, and perfect for heartfelt spring and summer moments.',
+    longDescription: 'Timeless and graceful, this bouquet features pristine white lilies paired with soft greenery, wrapped in rustic kraft paper for a natural finish. Each bloom radiates purity and calm, symbolizing renewal and sincerity — making it ideal for weddings, anniversaries, or meaningful gestures. Inspired by early summer mornings, when lilies open under gentle sunlight, this arrangement captures peace, elegance, and the quiet beauty of the season.',
     priceCents: 5500, // $55.00
     priceRange: PriceRange.RANGE_50_75,
     imageUrl: '/images/Lilys.jpg',
@@ -87,8 +87,8 @@ const sampleProducts = [
   },
   {
     name: 'Delicate Anemone Bouquet',
-    description: 'Stunning anemones with dark centers and vibrant petals',
-    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
+    description: 'An elegant winter bouquet of white anemones and ranunculus — pure, timeless, and graceful.',
+    longDescription: 'This bouquet captures the serene beauty of winter in bloom. Featuring ivory anemones with deep black centers, layered white ranunculus, and soft accents of lamb\’s ear and delicate blue forget-me-nots, it embodies purity and quiet elegance. Flowing satin ribbons add a romantic touch, perfect for modern weddings or minimalist spaces. Inspired by crisp winter mornings and frosted petals, this arrangement symbolizes grace, peace, and everlasting love.',
     priceCents: 3499, // $34.99
     priceRange: PriceRange.RANGE_25_50,
     imageUrl: '/images/Anemones.jpg',
@@ -101,8 +101,8 @@ const sampleProducts = [
   },
   {
     name: 'Sweet Carnation Mix',
-    description: 'Ruffled carnations in soft pastel shades',
-    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
+    description: 'A cheerful bouquet of pink-edged carnations — sweet, charming, and perfect for any celebration.',
+    longDescription: 'Bright and playful, this bouquet features bi-colored pink carnations wrapped in a red gingham sleeve, finished with a satin ribbon for a charming vintage touch. Each carnation symbolizes love, gratitude, and admiration — perfect for birthdays, thank-yous, or simply to brighten someone\’s day. With its soft petals and lively color palette, this bouquet captures the heart of spring and summer, evoking warmth, joy, and a timeless sense of affection.',
     priceCents: 2899, // $28.99
     priceRange: PriceRange.RANGE_25_50,
     imageUrl: '/images/Carnation.jpg',
@@ -129,8 +129,8 @@ const sampleProducts = [
   },
   {
     name: 'Fresh Daisy Bouquet',
-    description: 'Simple and charming white daisies',
-    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
+    description: 'A pure and delicate bouquet of daisies and baby\’s breath — timeless, light, and full of charm.',
+    longDescription: 'Simple yet captivating, this bouquet features a dreamy mix of white daisies and baby\’s breath tied with a satin ribbon. Its soft textures and airy form evoke the freshness of early summer meadows in full bloom. Perfect for minimalist weddings, graduations, or thoughtful gifts, it symbolizes innocence, purity, and heartfelt joy. This arrangement celebrates the effortless beauty of the season — light, natural, and eternally elegant.',
     priceCents: 2299, // $22.99
     priceRange: PriceRange.UNDER_25,
     imageUrl: '/images/Daisies.jpg',
@@ -143,8 +143,8 @@ const sampleProducts = [
   },
   {
     name: 'Fragrant Gardenia Plant',
-    description: 'Exotic gardenia with heavenly scent',
-    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
+    description: 'A timeless white bouquet — elegant tulips, gerberas, and baby\’s breath for serene spring beauty.',
+    longDescription: 'This elegant bouquet captures the purity and calm of spring mornings. Featuring pristine white tulips, classic white gerberas, and delicate baby\’s breath, it radiates grace and simplicity. Wrapped in neutral kraft paper for a natural touch, it\’s perfect for weddings, anniversaries, or heartfelt gifts. Symbolizing new beginnings and sincerity, this bouquet embodies the peaceful spirit of early spring — fresh, pure, and beautifully understated.',
     priceCents: 5899, // $58.99
     priceRange: PriceRange.RANGE_50_75,
     imageUrl: '/images/Gardenia.jpg',
@@ -157,8 +157,8 @@ const sampleProducts = [
   },
   {
     name: 'Golden Marigold Bunch',
-    description: 'Vibrant marigolds bursting with color',
-    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
+    description: 'A radiant bouquet of orange blooms — fresh, warm, and glowing with the spirit of early summer.',
+    longDescription: 'This bright and modern bouquet bursts with the warmth of early summer. Featuring vivid orange tulips, soft apricot blossoms, and sunny yellow buds, it celebrates joy, creativity, and optimism. The flowing greenery adds a touch of freshness, creating perfect balance and movement. Wrapped simply to highlight its natural beauty, this bouquet is ideal for graduations, celebrations, or any moment that calls for sunshine and cheer.',
     priceCents: 1999, // $19.99
     priceRange: PriceRange.UNDER_25,
     imageUrl: '/images/Merigold.jpg',
@@ -171,8 +171,8 @@ const sampleProducts = [
   },
   {
     name: 'Romantic Peony Bouquet',
-    description: 'Lush peonies in full bloom',
-    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
+    description: 'Soft pink peony bouquet — romantic, lush, and the perfect expression of spring\’s gentle beauty.',
+    longDescription: 'This elegant bouquet showcases the timeless charm of spring peonies, delicately wrapped in neutral kraft paper. Featuring full, fragrant blooms in shades of blush and soft pink, complemented by airy baby\’s breath, it exudes romance and grace. Peonies symbolize love, prosperity, and new beginnings — making this bouquet ideal for weddings, birthdays, or heartfelt gestures. A celebration of spring\’s fleeting beauty, it captures tenderness in its purest form.',
     priceCents: 7250, // $72.50
     priceRange: PriceRange.RANGE_50_75,
     imageUrl: '/images/Peonies.jpg',
@@ -185,8 +185,8 @@ const sampleProducts = [
   },
   {
     name: 'Premium Mixed Bouquet',
-    description: 'Luxurious arrangement with premium seasonal flowers',
-    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
+    description: 'A joyful spring bouquet bursting with bright wildflowers, perfect for any cheerful occasion.',
+    longDescription: 'Celebrate the spirit of spring with this vibrant hand-tied bouquet, a lively mix of seasonal blooms in shades of pink, purple, orange, yellow, and white. Fresh snapdragons, cornflowers, daisies, and carnations come together in a lush green base, capturing the energy of wild meadows after the first warm rains. Ideal for birthdays, thank-yous, or simply brightening a space, this bouquet embodies the freshness and renewal of the spring season.',
     priceCents: 12500, // $125.00
     priceRange: PriceRange.OVER_100,
     imageUrl: '/images/Filler.jpg',
@@ -199,8 +199,8 @@ const sampleProducts = [
   },
   {
     name: 'Succulent Garden Collection',
-    description: 'Mix of beautiful succulents in a modern planter',
-    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
+    description: 'A dreamy dried bouquet with soft pinks and creams, capturing the warmth of late summer fields.',
+    longDescription: 'This elegant dried bouquet brings the calm beauty of late summer into your home. Featuring preserved daisies, wheat stems, and soft pink larkspur, it blends rustic textures with delicate pastels for a timeless look. Perfect for long-lasting décor or gifting, each stem is naturally dried to retain its gentle hues and charm. Inspired by golden harvest fields, this bouquet evokes the serenity and warmth of late summer sunsets — effortless, organic, and eternally beautiful.',
     priceCents: 2399, // $23.99
     priceRange: PriceRange.UNDER_25,
     imageUrl: '/images/Filler2.jpg',
@@ -213,8 +213,8 @@ const sampleProducts = [
   },
   {
     name: 'Tropical Paradise Mix',
-    description: 'Exotic tropical flowers in vibrant colors',
-    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
+    description: 'A modern autumn bouquet with golden tones and lush greens—warm, bold, and full of seasonal charm.',
+    longDescription: 'This striking bouquet captures the golden glow of autumn. Featuring rich eucalyptus leaves, soft beige dried florals, and vibrant orange billy buttons, it blends natural texture with bold seasonal hues. Perfect for adding warmth to your home or gifting with meaning, this arrangement reflects the cozy transition from summer to fall—where crisp air, earthy tones, and golden light create a sense of calm and timeless beauty.',
     priceCents: 6499, // $64.99
     priceRange: PriceRange.RANGE_50_75,
     imageUrl: '/images/Filler3.jpg',
@@ -227,8 +227,8 @@ const sampleProducts = [
   },
   {
     name: 'Zen Garden Plant',
-    description: 'Peaceful bamboo and greenery arrangement',
-    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
+    description: 'A bright burst of yellow blooms symbolizing joy, sunshine, and the vibrant energy of spring.',
+    longDescription: 'Bring sunshine indoors with this radiant spring bouquet. A lively mix of golden billy buttons, mimosa, and fresh eucalyptus creates a cheerful, modern arrangement that captures the essence of renewal and optimism. Perfect for celebrating new beginnings or simply brightening someone\’s day, this bouquet embodies the warmth of spring mornings and the happiness of longer, lighter days — a joyful reminder that brighter times are always blooming.',
     priceCents: 4250, // $42.50
     priceRange: PriceRange.RANGE_25_50,
     imageUrl: '/images/Filler4.jpg',
@@ -241,8 +241,8 @@ const sampleProducts = [
   },
   {
     name: 'Autumn Harvest Bouquet',
-    description: 'Warm fall colors with seasonal blooms',
-    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
+    description: 'A soft pastel bouquet blooming with spring warmth — elegant, romantic, and effortlessly fresh.',
+    longDescription: 'This charming bouquet celebrates the gentle beauty of spring. A harmonious blend of creamy dahlias, blush roses, peach chrysanthemums, and golden daisies evokes the warmth of morning sunlight and the tenderness of new beginnings. Accented with delicate greenery and lilac sprigs, it captures the poetic calm of a spring garden in full bloom. Perfect for birthdays, weddings, or heartfelt gestures — it\’s a timeless expression of grace and renewal.',
     priceCents: 4899, // $48.99
     priceRange: PriceRange.RANGE_25_50,
     imageUrl: '/images/Filler5.jpg',
@@ -254,9 +254,9 @@ const sampleProducts = [
     type: ProductType.MIXED_FLOWERS,
   },
   {
-    name: 'Garden Rose Delight',
-    description: 'Premium garden roses in soft hues',
-    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
+    name: 'Gentle Spring Symphony',
+    description: ' A pastel dream bouquet — soft poppies, daisies, and delphiniums that embody spring\’s tender light.',
+    longDescription: ' This whimsical bouquet captures the pure magic of early spring. A poetic blend of pastel poppies, creamy cosmos, blue delphiniums, and petite daisies evokes the freshness of morning sunlight and the softness of new beginnings. The airy colors — peach, lilac, ivory, and baby blue — dance together like a watercolor painting. Perfect for birthdays, weddings, or simply brightening a room, it celebrates renewal, beauty, and the gentle joy of spring in bloom.',
     priceCents: 8999, // $89.99
     priceRange: PriceRange.RANGE_75_100,
     imageUrl: '/images/Filler6.jpg',
@@ -269,8 +269,8 @@ const sampleProducts = [
   },
   {
     name: 'Country Wildflower Mix',
-    description: 'Rustic wildflowers for a natural look',
-    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
+    description: 'A dreamy pastel bouquet bursting with soft poppies and daisies — pure joy in spring form.',
+    longDescription: 'This whimsical bouquet captures the essence of early spring, where every bloom feels like a fresh breath of light. Featuring delicate poppies, buttercream cosmos, powder-blue delphiniums, and petite daisies, it blends airy textures with soft pastel tones of peach, lilac, and cream. The arrangement feels effortless yet elegant — a perfect ode to renewal and new beginnings. Ideal for birthdays, weddings, or simply brightening a space with spring\’s gentle joy.',
     priceCents: 3150, // $31.50
     priceRange: PriceRange.RANGE_25_50,
     imageUrl: '/images/Filler7.jpg',
@@ -283,8 +283,8 @@ const sampleProducts = [
   },
   {
     name: 'Indoor Fern Collection',
-    description: 'Lush ferns perfect for home or office',
-    longDescription: 'The timeless elegance of red roses speaks the universal language of love. Each bloom in this stunning bouquet is hand-selected for its deep crimson color and perfect form, creating an arrangement that captures the essence of romance.\n\nWhether you\'re celebrating an anniversary, expressing your feelings on Valentine\'s Day, or simply reminding someone how much they mean to you, these classic red roses deliver your message with grace and beauty. Fresh, fragrant, and utterly romantic.',
+    description: 'A pastel dream of spring blooms — fresh, delicate, and filled with the joy of new beginnings.',
+    longDescription: 'This bouquet is a celebration of spring\’s sweetest moments. A soft, airy blend of cosmos, delphiniums, zinnias, scabiosa, and daisies in pastel hues of peach, lilac, blue, and white — each bloom radiates freshness and gentle charm. Designed to evoke the feeling of sunlight after rain, it\’s the perfect choice for birthdays, weddings, or simply to brighten any room. Every stem whispers renewal and joy — the true spirit of spring captured in flowers.',
     priceCents: 3599, // $35.99
     priceRange: PriceRange.RANGE_25_50,
     imageUrl: '/images/Filler8.jpg',
