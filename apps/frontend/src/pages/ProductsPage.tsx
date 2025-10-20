@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import type { Product, FilterOptions, ProductResponse } from '../types';
 import { apiService } from '../services/api';
-import SearchBar from '../components/SearchBar';
 import FilterSidebar from '../components/FilterSidebar';
 import ProductGrid from '../components/ProductGrid';
 import './ProductsPage.css';
@@ -21,6 +21,9 @@ interface ProductFilters {
 }
 
 const ProductsPage: React.FC = () => {
+  // Get URL query parameters (e.g., ?filter=colour or ?category=romantic)
+  const [searchParams] = useSearchParams();
+
   // State for storing the current products being displayed
   const [products, setProducts] = useState<Product[]>([]);
 
@@ -53,6 +56,36 @@ const ProductsPage: React.FC = () => {
 
   // State for error handling
   const [error, setError] = useState<string | null>(null);
+
+  /**
+   * Effect hook to read URL query parameters and apply filters on mount
+   * This allows links like /products?filter=colour or /products?search=roses to automatically filter
+   */
+  useEffect(() => {
+    const urlCategory = searchParams.get('category');
+    const urlSearch = searchParams.get('search');
+
+    // Map category names to appropriate filters
+    const categoryMapping: Record<string, Partial<ProductFilters>> = {
+      romantic: { mood: 'ROMANTIC' },
+      cheerful: { mood: 'CHEERFUL' },
+      elegant: { mood: 'ELEGANT' },
+      // "seasonal" shows all products (no filter)
+      seasonal: {},
+      // "special" could filter by special occasions, but for now show all
+      special: {},
+    };
+
+    const filters = urlCategory ? categoryMapping[urlCategory.toLowerCase()] || {} : {};
+
+    // Always reset filters to match URL params (or reset to default if no params)
+    setSelectedFilters({
+      page: 1,
+      limit: 12,
+      ...filters,
+      ...(urlSearch && { search: urlSearch }), // Add search term from URL if present
+    });
+  }, [searchParams]);
 
   /**
    * Function to fetch products from the backend API
@@ -90,7 +123,7 @@ const ProductsPage: React.FC = () => {
     }
   }, [selectedFilters]);
 
-  /**
+  /**i
    * Effect hook that runs when component mounts and when filters change
    * This ensures we always fetch fresh data when user changes filters
    */
@@ -110,18 +143,6 @@ const ProductsPage: React.FC = () => {
       ...prev,
       [filterType]: value,
       page: 1, // Reset to first page when filters change
-    }));
-  };
-
-  /**
-   * Function to handle search input changes
-   * Updates the search filter and resets to page 1
-   */
-  const handleSearchChange = (searchQuery: string) => {
-    setSelectedFilters((prev) => ({
-      ...prev,
-      search: searchQuery,
-      page: 1, // Reset to first page when searching
     }));
   };
 
@@ -172,7 +193,7 @@ const ProductsPage: React.FC = () => {
       }}>
         {/* <div className="page-header">
           <div className="header-container">
-                
+
             <SearchBar
               onSearchChange={handleSearchChange}
               currentSearch={selectedFilters.search || ''}
