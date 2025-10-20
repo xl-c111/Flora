@@ -62,18 +62,13 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, isLoading }) => {
         <div className="empty-state">
           <div className="empty-icon">🌸</div>
           <h3>No flowers found</h3>
-          <p>
+          <p className="empty-message">
             Try adjusting your filters or search terms to find more products.
           </p>
           <div className="empty-suggestions">
-            <h4>Suggestions:</h4>
-            <ul>
-              <li>Clear some filters to see more options</li>
-              <li>Try searching for different flower names</li>
-              <li>
-                Check if you've selected "In Stock Only" and try "All Products"
-              </li>
-            </ul>
+            <p className="suggestion-tip">💡 Clear some filters to see more options</p>
+            <p className="suggestion-tip">🔍 Try searching for different flower names</p>
+            <p className="suggestion-tip">📦 Check if "In Stock Only" is selected</p>
           </div>
         </div>
       </div>
