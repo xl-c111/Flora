@@ -303,17 +303,17 @@
 }
 
 .savings-note {
-  margin-top: 1rem;
+  margin-top: 2rem;
   padding: 0.75rem;
-  background-color: #595E4E;
+  background-color: #C8D7C4;
   border-radius: 10px;
-  color: #C8D7C4;
+  color: #595E4E;
   font-size: 1rem;
   font-weight: 600;
   font: bold;
   font-family: "Outfit", sans-serif;
   text-align: center;
-  border: 2px solid #595E4E;
+  border-left: 3px solid #b1b8a3
 }
 
 /* Purchase Type and Message Options */
@@ -538,7 +538,6 @@
   align-items: center;
   gap: 0.5rem;
   white-space: nowrap;
-  width: 545px;
 }
 
 .generate-ai-btn:hover:not(:disabled) {
