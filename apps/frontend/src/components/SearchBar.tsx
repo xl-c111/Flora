@@ -233,7 +233,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
             className="search-button"
             aria-label="Search"
           >
-            🔍
           </button>
 
           {/* Clear Button (only show if there's text) */}
