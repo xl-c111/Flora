@@ -12,9 +12,9 @@
 
 /* Override react-day-picker default styles to match Flora design */
 
-.rdp {
+.rdp-root {
   --rdp-cell-size: 45px;
-  --rdp-accent-color: #48bb78;
+  --rdp-accent-color:#98A389;
   --rdp-background-color: #f0fff4;
   --rdp-accent-color-dark: #38a169;
   --rdp-background-color-dark: #c6f6d5;
@@ -83,7 +83,7 @@
   border-radius: 8px;
   font-size: 0.9375rem;
   font-weight: 500;
-  color: #2d3748;
+  color: red;
   border: 2px solid transparent;
   transition: all 0.2s ease;
 }
@@ -98,7 +98,8 @@
   background-color: var(--rdp-accent-color) !important;
   color: white !important;
   font-weight: 700;
-  border-color: var(--rdp-accent-color) !important;
+  border: 2px solid var(--text-colur) !important;
+
 }
 
 .rdp-day_selected:hover {

@@ -180,11 +180,11 @@ const ProductDetail: React.FC = () => {
       <div className="container">
         {/* Breadcrumb */}
         <nav className="breadcrumb">
-          <button onClick={() => navigate('/products')} className="breadcrumb-link">
+          {/* <button onClick={() => navigate('/products')} className="breadcrumb-link">
             Products
           </button>
           <span className="breadcrumb-separator">/</span>
-          <span className="breadcrumb-current">{product.name}</span>
+          <span className="breadcrumb-current">{product.name}</span> */}
         </nav>
 
         {/* Product Detail Content */}
@@ -498,7 +498,7 @@ const ProductDetail: React.FC = () => {
                           alert(`Added ${similarProduct.name} to cart!`);
                         }}
                       >
-                        Quick Add
+                        Add to Cart
                       </button>
                     </div>
                   </div>
