@@ -2,24 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import type { Product, FilterOptions, ProductResponse } from '../types';
 import { apiService } from '../services/api';
-import FilterSidebar from '../components/FilterSidebar';
 import ProductGrid from '../components/ProductGrid';
 import './ProductsPage.css';
 import './LandingPage.css';
-
-// Interface to define what filters the user has selected
-interface ProductFilters {
-  occasion?: string;
-  season?: string;
-  mood?: string;
-  color?: string;
-  type?: string;
-  priceRange?: string;
-  inStock?: boolean;
-  search?: string;
-  page?: number;
-  limit?: number;
-}
 
 const LandingPage: React.FC = () => {
   // Get URL query parameters (e.g., ?filter=colour or ?category=romantic)
@@ -27,14 +12,6 @@ const LandingPage: React.FC = () => {
 
   // State for storing the current products being displayed
   const [products, setProducts] = useState<Product[]>([]);
-
-  // State for pagination information (current page, total pages, etc.)
-  const [pagination, setPagination] = useState({
-    page: 1,
-    limit: 3,
-    total: 0,
-    totalPages: 0,
-  });
 
   // State for storing available filter options (filled from backend)
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({
@@ -49,7 +26,7 @@ const LandingPage: React.FC = () => {
   // State for storing user's currently selected filters
   const [selectedFilters, setSelectedFilters] = useState<ProductFilters>({
     page: 1,
-    limit: 12,
+    limit: 3,
   });
 
   // State for loading indicator
@@ -114,7 +91,6 @@ const LandingPage: React.FC = () => {
 
       // Update our component state with the response data
       setProducts(response.products);
-      setPagination(response.pagination);
       setFilterOptions(response.filters);
     } catch (err) {
       console.error('Error fetching products:', err);
@@ -131,59 +107,7 @@ const LandingPage: React.FC = () => {
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
-
-  /**
-   * Function to handle when user changes any filter
-   * This updates our selectedFilters state and resets to page 1
-   */
-  const handleFilterChange = (
-    filterType: keyof ProductFilters,
-    value: string
-  ) => {
-    setSelectedFilters((prev) => ({
-      ...prev,
-      [filterType]: value,
-      page: 1, // Reset to first page when filters change
-    }));
-  };
-
-  /**
-   * Function to clear all selected filters
-   * Resets everything back to default state (show all products)
-   */
-  const handleClearFilters = () => {
-    setSelectedFilters({
-      page: 1,
-      limit: 12,
-    });
-  };
-
-  /**
-   * Function to handle pagination (when user clicks page numbers)
-   */
-  const handlePageChange = (newPage: number) => {
-    setSelectedFilters((prev) => ({
-      ...prev,
-      page: newPage,
-    }));
-  };
-
-  /**
-   * Function to count how many filters are currently active
-   * Used to show filter count to the user
-   */
-  const getActiveFilterCount = (): number => {
-    let count = 0;
-    if (selectedFilters.occasion) count++;
-    if (selectedFilters.season) count++;
-    if (selectedFilters.mood) count++;
-    if (selectedFilters.color) count++;
-    if (selectedFilters.type) count++;
-    if (selectedFilters.priceRange) count++;
-    if (selectedFilters.search) count++;
-    if (selectedFilters.inStock !== undefined) count++;
-    return count;
-  };
+  
 
   return (
     <div>
