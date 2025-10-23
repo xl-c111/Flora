@@ -173,6 +173,7 @@ const ProductDetail: React.FC = () => {
 
     // alert(message);
     navigate('/cart');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
     return (
