@@ -171,7 +171,7 @@ const ProductDetail: React.FC = () => {
     ? `Added ${product.name} (${selectedFrequency} subscription) to cart!`
     : `Added ${product.name} to cart!`;
 
-    alert(message);
+    // alert(message);
     navigate('/cart');
   };
 
