@@ -259,7 +259,7 @@ const ProductDetail: React.FC = () => {
                     setIsSubscription(true);
                   }}
                 >
-                  Reoccurring Subscription
+                  Reccurring Subscription
                 </button>
 
                 {/* Spontaneous Subscription */}
