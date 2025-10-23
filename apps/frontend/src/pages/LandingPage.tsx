@@ -31,7 +31,7 @@ const LandingPage: React.FC = () => {
   // State for pagination information (current page, total pages, etc.)
   const [pagination, setPagination] = useState({
     page: 1,
-    limit: 12,
+    limit: 3,
     total: 0,
     totalPages: 0,
   });
@@ -188,9 +188,9 @@ const LandingPage: React.FC = () => {
   return (
     <div>
       <div className="details-container">
-        <div className="details-card">
+        <div id="flower" className="details-card">
           <div className="details-icon">
-            <img src=""></img>
+            <img src="/src/assets/flower-icon.svg"></img>
           </div>
           <div className="details-text">
             <h4>Spontatous Subscription</h4>
@@ -198,35 +198,37 @@ const LandingPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="details-card">
+        <div id="calendar" className="details-card">
           <div className="details-icon">
-
+            <img src="/src/assets/calendar-icon.svg"></img>
           </div>
           <div className="details-text">
-            <h4>Spontatous Subscription</h4>
-            <p>Give a gift of surprise to your loved ones. Weekly, Fortnightly, Monthly and Yearly Subscriptions available.</p>
+            <h4>Reoccurring Subscription</h4>
+            <p>Set up a gift on repeat! With our subscription, you can send a gift for any occasion.</p>
           </div>
         </div>
-        <div className="details-card">
+      
+        <div id="colour" className="details-card">
           <div className="details-icon">
-
+            <img src="/src/assets/colour-icon.svg"></img>
           </div>
           <div className="details-text">
-            <h4>Spontatous Subscription</h4>
-            <p>Give a gift of surprise to your loved ones. Weekly, Fortnightly, Monthly and Yearly Subscriptions available.</p>
+            <h4>Mood Picker</h4>
+            <p>Pick a colour based on your mood and let our florists put together a bouquet of flowers.</p>
           </div>
         </div>
 
-        <div className="details-card">
+        <div id="details" className="details-card">
           <div className="details-icon">
-
+            <img src="/src/assets/delivery-icon.svg"></img>
           </div>
           <div className="details-text">
-            <h4>Spontatous Subscription</h4>
-            <p>Give a gift of surprise to your loved ones. Weekly, Fortnightly, Monthly and Yearly Subscriptions available.</p>
+            <h4>Same Day Delivery</h4>
+            <p>Based in Melbourne, send out a gift to your loved ones on the same day of purchase.</p>
           </div>
         </div>
       </div>
+
       <div className="picture-container">
         <div className="image-container">
           <img src="./src/assets/landing-image.png"></img>
@@ -236,7 +238,7 @@ const LandingPage: React.FC = () => {
       <div className="shop-by-container">
         <div className="shop-by-card">
           <div className="shop-by-image">
-
+            <img src="/src/assets/Filler1.jpg"></img>
           </div>
           <div className="shop-by-text">
               <p>Shop By All</p>
@@ -245,28 +247,28 @@ const LandingPage: React.FC = () => {
 
         <div className="shop-by-card">
           <div className="shop-by-image">
-
+            <img src="/src/assets/Filler2.jpg"></img>
           </div>
           <div className="shop-by-text">
-              <p>Shop By All</p>
+              <p>Shop By Colour</p>
           </div>
         </div>
 
         <div className="shop-by-card">
           <div className="shop-by-image">
-
+            <img src="/src/assets/Filler3.jpg"></img>
           </div>
           <div className="shop-by-text">
-              <p>Shop By All</p>
+              <p>Shop By Occasion</p>
           </div>
         </div>
 
         <div className="shop-by-card">
           <div className="shop-by-image">
-
+            <img src="/src/assets/Filler4.jpg"></img>
           </div>
           <div className="shop-by-text">
-              <p>Shop By All</p>
+              <p>Bundle Up and Save</p>
           </div>
         </div>
 

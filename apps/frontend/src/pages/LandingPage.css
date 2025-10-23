@@ -1,9 +1,35 @@
 .details-container{
     font-family: var(--primary-font-body-copy);
     /* background-color: blue; */
-    width: 80%;
-    height: 9rem;
+    width: 90%;
+    height: 11rem;
     margin:auto;
+    gap:10px;
+    display:flex;
+
+          .details-card{
+                /* background-color: red; */
+                width: 280px;
+                height: 120px;
+                margin:auto;
+                display:flex;
+
+                .details-icon{
+                    height: 80%;
+                    /* background-color:pink; */
+
+                    img{
+                        height:100%;
+                        /* width:300px; */
+                }
+            }
+          }
+          .details-text{
+            width: 220px;
+                p{
+                    font-size: 14px;
+                }
+          }
 }
 
 .picture-container{
@@ -43,17 +69,29 @@
     .shop-by-card{
         width: 220px;
         height: 350px;
-        background-color: blue;
+        /* background-color: blue; */
         margin:auto;
 
         .shop-by-image{
             width: 220px;
             height: 300px;
-            background-color: violet;
+            /* background-color: violet; */
+            
+            img{
+                width: 100%;
+                height: 100%;
+                object-fit: fill;
+                border-radius: 30px;
+            }
+
         }
         
         .shop-by-text{
-
+            text-align:center;
+            line-height: 50px;
+            font-family: var(--primary-font-web-copy);
+            color: var(--text-colour);
+            font-weight: 600;
         }
     }
 }
