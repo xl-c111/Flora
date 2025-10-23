@@ -778,7 +778,7 @@
 
 .similar-product-price {
   font-size: 1.125rem;
-  font-weight: 500;
+  font-weight: 600;
   font-family: "EB Garamond", sans-serif;
   color: #595E4E;
   margin: 0 0 1rem 0;
@@ -791,37 +791,53 @@
 
 .similar-product-view-btn {
   flex: 1;
+  font-family: "Outfit", sans-serif;
   background: white;
-  color: #374151;
-  border: 2px solid #e5e7eb;
+  color: var(--text-colour3);
+  border: 2px solid var(--button-colour2);
   padding: 0.75rem 1rem;
   border-radius: 8px;
-  font-weight: 500;
+  font-weight: 400;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .similar-product-view-btn:hover {
-  border-color: #595E4E;
+  background-color: var(--button-colour1);
   color: #595E4E;
+  border: 2px solid var(--text-colour)
+}
+
+.similar-product-view-btn:active {
+  background-color: var(--button-colour3);
+  color: var(--button-colour2);
+  border: 2px solid var(--text-colour)
 }
 
 .similar-product-quick-add-btn {
   flex: 1;
-  background: #C8D7C4;
+  font-family: "Outfit", sans-serif;
+  background: var(--button-colour2);
   color: #595E4E;
   border: none;
   padding: 0.75rem 1rem;
   border-radius: 8px;
-  font-weight: 600;
+  font-weight: 400;
   cursor: pointer;
   transition: all 0.2s ease;
+  border: 2px solid var(--text-colour)
 }
 
 .similar-product-quick-add-btn:hover {
-  background: #595E4E;
-  color: #C8D7C4;
-  transform: translateY(-1px);
+  background-color: var(--button-colour1);
+  color: #595E4E;
+  border: 2px solid var(--text-colour)
+}
+
+.similar-product-quick-add-btn:active {
+  background-color: var(--button-colour3);
+  color: var(--button-colour2);
+  border: 2px solid var(--text-colour)
 }
 
 /* Responsive adjustments for similar products */
