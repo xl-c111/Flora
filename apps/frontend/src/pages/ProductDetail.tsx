@@ -495,7 +495,7 @@ const ProductDetail: React.FC = () => {
                             quantity: 1,
                             isSubscription: false
                           });
-                          alert(`Added ${similarProduct.name} to cart!`);
+                          // alert(`Added ${similarProduct.name} to cart!`);
                         }}
                       >
                         Quick Add
