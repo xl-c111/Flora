@@ -189,6 +189,7 @@ export const useCart = () => {
   if (context === undefined) {
     throw new Error('useCart must be used within a CartProvider');
   }
+  // window.scrollTo({ top: 0, behavior: 'smooth' });
   return context;
 };
 
