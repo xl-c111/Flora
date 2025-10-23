@@ -174,6 +174,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  font-family: "Outfit", sans-serif;
 }
 
 .subscription-frequency {
@@ -181,6 +182,7 @@
   font-size: 0.95rem;
   font-weight: 600;
   margin: 0 0 0.25rem 0;
+  font-family: "Outfit", sans-serif;
 }
 
 .subscription-type {
@@ -194,6 +196,7 @@
   color: #8a8a7a;
   font-size: 0.875rem;
   margin: 0;
+  font-family: "Outfit", sans-serif;
 }
 
 .subscription-info-right {
@@ -210,6 +213,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  font-family: "Outfit", sans-serif;
 }
 
 .status-active {
@@ -286,12 +290,14 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-family: "Outfit", sans-serif;
 }
 
 .item-quantity {
   color: #8a8a7a;
   font-size: 0.875rem;
   margin: 0 0 0.25rem 0;
+  font-family: "EB Garamond", sans-serif;
 }
 
 .item-price {
@@ -299,6 +305,7 @@
   font-size: 0.875rem;
   font-weight: 600;
   margin: 0;
+  font-family: "Outfit", sans-serif;
 }
 
 /* Subscription Details */
@@ -357,6 +364,7 @@
   cursor: pointer;
   transition: all 0.3s;
   font-family: inherit;
+  font-family: "Outfit", sans-serif;
 }
 
 .action-btn:disabled {
