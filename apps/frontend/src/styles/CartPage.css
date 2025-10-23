@@ -538,6 +538,7 @@
   align-items: center;
   gap: 0.5rem;
   white-space: nowrap;
+  width: 584px;
 }
 
 .generate-ai-btn:hover:not(:disabled) {

@@ -298,24 +298,24 @@ const SubscriptionsPage = () => {
                   <div className="subscription-actions">
                     {subscription.status === 'ACTIVE' ? (
                       <>
-                        <button className="action-btn pause-btn" disabled>
+                        <button className="action-btn pause-btn">
                           ⏸ Pause
                         </button>
-                        <button className="action-btn skip-btn" disabled>
+                        <button className="action-btn skip-btn">
                           ⏭ Skip Next
                         </button>
                       </>
                     ) : subscription.status === 'PAUSED' ? (
-                      <button className="action-btn resume-btn" disabled>
+                      <button className="action-btn resume-btn">
                         ▶ Resume
                       </button>
                     ) : null}
-                    <button className="action-btn cancel-btn" disabled>
-                      🗑 Cancel
+                    <button className="action-btn cancel-btn">
+                      Cancel
                     </button>
-                    <span className="coming-soon-text">
+                    {/* <span className="coming-soon-text">
                       (Actions coming soon)
-                    </span>
+                    </span> */}
                   </div>
                 </div>
               </div>
