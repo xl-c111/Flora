@@ -188,16 +188,87 @@ const LandingPage: React.FC = () => {
   return (
     <div>
       <div className="details-container">
-        
-      </div>
-      <div className="picture-container">
-        <div className="image">
-          <p>Hello World</p>
-
+        <div className="details-card">
+          <div className="details-icon">
+            <img src=""></img>
+          </div>
+          <div className="details-text">
+            <h4>Spontatous Subscription</h4>
+            <p>Give a gift of surprise to your loved ones. Weekly, Fortnightly, Monthly and Yearly Subscriptions available.</p>
+          </div>
         </div>
 
+        <div className="details-card">
+          <div className="details-icon">
+
+          </div>
+          <div className="details-text">
+            <h4>Spontatous Subscription</h4>
+            <p>Give a gift of surprise to your loved ones. Weekly, Fortnightly, Monthly and Yearly Subscriptions available.</p>
+          </div>
+        </div>
+        <div className="details-card">
+          <div className="details-icon">
+
+          </div>
+          <div className="details-text">
+            <h4>Spontatous Subscription</h4>
+            <p>Give a gift of surprise to your loved ones. Weekly, Fortnightly, Monthly and Yearly Subscriptions available.</p>
+          </div>
+        </div>
+
+        <div className="details-card">
+          <div className="details-icon">
+
+          </div>
+          <div className="details-text">
+            <h4>Spontatous Subscription</h4>
+            <p>Give a gift of surprise to your loved ones. Weekly, Fortnightly, Monthly and Yearly Subscriptions available.</p>
+          </div>
+        </div>
       </div>
-      <div className="categories-container">
+      <div className="picture-container">
+        <div className="image-container">
+          <img src="./src/assets/landing-image.png"></img>
+        </div>
+      </div>
+
+      <div className="shop-by-container">
+        <div className="shop-by-card">
+          <div className="shop-by-image">
+
+          </div>
+          <div className="shop-by-text">
+              <p>Shop By All</p>
+          </div>
+        </div>
+
+        <div className="shop-by-card">
+          <div className="shop-by-image">
+
+          </div>
+          <div className="shop-by-text">
+              <p>Shop By All</p>
+          </div>
+        </div>
+
+        <div className="shop-by-card">
+          <div className="shop-by-image">
+
+          </div>
+          <div className="shop-by-text">
+              <p>Shop By All</p>
+          </div>
+        </div>
+
+        <div className="shop-by-card">
+          <div className="shop-by-image">
+
+          </div>
+          <div className="shop-by-text">
+              <p>Shop By All</p>
+          </div>
+        </div>
 
       </div>
       <div className="card-container">

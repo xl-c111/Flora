@@ -1,6 +1,6 @@
 .details-container{
     font-family: var(--primary-font-body-copy);
-    background-color: blue;
+    /* background-color: blue; */
     width: 80%;
     height: 9rem;
     margin:auto;
@@ -8,38 +8,68 @@
 
 .picture-container{
     font-family: var(--primary-font-body-copy);
-    background-color: red;
+    /* background-color: red; */
     width:auto;
-    height: 18rem;
+    height: 16rem;
 
-        .image{
-            color:blue;
-            background-color: violet;
-            width:500px;
+        .image-container{
+            /* background-color: violet; */
+            width:90%;
+            height:100%;
+            /* border-radius: 500px 50px 500px 50px; */
             margin:auto;
+
+            img{
+                width:100%;
+                height:100%;
+                object-fit:cover;
+                border-radius: 500px 50px 500px 50px;
+                border: 2px solid var(--button-colour3);  
+                object-position: 0% 80%;
+            }
         }
+
+
 }
 
-.categories-container{
+.shop-by-container{
     font-family: var(--primary-font-body-copy);
-    background-color: orange;
-    width:auto;
-    height: 500px;
+    /* background-color: orange; */
+    width: 90%;
+    height: 400px;
+    display:flex;
+    margin: auto;
 
+    .shop-by-card{
+        width: 220px;
+        height: 350px;
+        background-color: blue;
+        margin:auto;
+
+        .shop-by-image{
+            width: 220px;
+            height: 300px;
+            background-color: violet;
+        }
+        
+        .shop-by-text{
+
+        }
+    }
 }
 
 .card-container{
     font-family: var(--primary-font-body-copy);
-    background-color: green;
+    /* background-color: green; */
     width: auto;
     height: 600px;
     align-items: center;
     justify-content: center;
 
         .product-card-grid-container{
-            background-color: red;
+            /* background-color: red; */
             max-width:1200px;
             margin:auto;
-
         }
 }
+
