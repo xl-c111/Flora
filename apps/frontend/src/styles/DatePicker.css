@@ -12,7 +12,7 @@
 
 /* Override react-day-picker default styles to match Flora design */
 
-.rdp {
+.rdp-root {
   --rdp-cell-size: 45px;
   --rdp-accent-color: #48bb78;
   --rdp-background-color: #f0fff4;

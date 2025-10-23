@@ -197,7 +197,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 product,
                 quantity: 1,
               });
-              alert(`Added ${product.name} to cart!`);
+              // alert(`Added ${product.name} to cart!`);
             }}
             title="Add to cart"
             style={{
