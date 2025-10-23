@@ -479,7 +479,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
               value={formData.recipientAddress}
               onChange={handleInputChange}
             />
-            <p className="field-hint">Add a house number if you have one</p>
             {errors.recipientAddress && <span className="field-error">{errors.recipientAddress}</span>}
           </div>
 
@@ -537,7 +536,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
               type="tel"
               name="recipientPhone"
               className="form-input"
-              placeholder="Phone (optional)"
+              placeholder="Phone"
               value={formData.recipientPhone}
               onChange={handleInputChange}
             />
@@ -563,7 +562,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
           </div>
 
           {!formData.useSameAddress && (
-        <div className="form-section recipient-form">
+        <div className="recipient-form">
             <div className="form-field">
                 <label className="form-label-top">Country</label>
                 <input type="text" name="senderCountry" className="form-input" value="Australia" readOnly disabled />
@@ -614,7 +613,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
                   value={formData.senderAddress}
                   onChange={handleInputChange}
                 />
-                <p className="field-hint">Add a house number if you have one</p>
                 {errors.senderAddress && <span className="field-error">{errors.senderAddress}</span>}
               </div>
 
@@ -648,7 +646,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
                     value={formData.senderState}
                     onChange={handleInputChange}
                   >
-                    <option value="">State/territory *</option>
+                    <option value="">State/territory</option>
                     <option value="VIC">Victoria (VIC)</option>
                     <option value="NSW">New South Wales (NSW)</option>
                     <option value="QLD">Queensland (QLD)</option>

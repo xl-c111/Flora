@@ -8,28 +8,8 @@ const Footer: React.FC = () => {
       {/* Acknowledgment Section */}
       <div className="acknowledgment-section">
         <div className="flags">
-          <svg className="aboriginal-flag" viewBox="0 0 60 40" width="40" height="27">
-            <rect width="60" height="20" fill="#000000" />
-            <rect y="20" width="60" height="20" fill="#E03C31" />
-            <circle cx="30" cy="20" r="8" fill="#FFCD00" />
-          </svg>
-          <svg className="torres-strait-flag" viewBox="0 0 60 40" width="40" height="27">
-            <rect width="60" height="40" fill="#0F47AF" />
-            <g>
-              <line x1="0" y1="8" x2="60" y2="8" stroke="#000000" strokeWidth="3" />
-              <line x1="0" y1="32" x2="60" y2="32" stroke="#000000" strokeWidth="3" />
-            </g>
-            <g fill="#FFFFFF">
-              <polygon points="15,20 18,18 21,20 20,16.5 23,14.5 19.5,14.5 18,11 16.5,14.5 13,14.5 16,16.5" />
-              <polygon points="45,20 48,18 51,20 50,16.5 53,14.5 49.5,14.5 48,11 46.5,14.5 43,14.5 46,16.5" />
-              <polygon points="30,12 33,10 36,12 35,8.5 38,6.5 34.5,6.5 33,3 31.5,6.5 28,6.5 31,8.5" />
-              <polygon points="30,28 33,26 36,28 35,24.5 38,22.5 34.5,22.5 33,19 31.5,22.5 28,22.5 31,24.5" />
-              <polygon points="21,28 24,26 27,28 26,24.5 29,22.5 25.5,22.5 24,19 22.5,22.5 19,22.5 22,24.5" />
-            </g>
-            <circle cx="30" cy="20" r="5" fill="none" stroke="#FFFFFF" strokeWidth="1.5" />
-            <line x1="30" y1="15" x2="30" y2="10" stroke="#FFFFFF" strokeWidth="1" />
-            <line x1="30" y1="25" x2="30" y2="30" stroke="#FFFFFF" strokeWidth="1" />
-          </svg>
+          <img src="src/assets/flag-1.svg"></img>
+          <img src="src/assets/flag-2.svg"></img>
         </div>
         <p className="acknowledgment-text">
           Flora acknowledges the Traditional Owners of Country throughout Australia and acknowledges
@@ -42,7 +22,14 @@ const Footer: React.FC = () => {
       <div className="footer-main">
         {/* Brand Name */}
         <div className="footer-brand">
-          <h2>Flora Change with LOGO!</h2>
+          <div className="logo-image">
+          <a href="/">
+            <img src="src/assets/flora-logo.svg" alt="flora logo" width="75px">
+            </img>
+            <img src="src/assets/flora-text-cursive.svg" alt="flora text" width="150px">
+            </img>
+          </a>
+          </div>
         </div>
 
         {/* Navigation Links */}

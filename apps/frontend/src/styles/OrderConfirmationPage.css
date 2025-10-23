@@ -90,7 +90,10 @@
 /* Order Summary Section */
 .order-summary-section {
   /* background: #faf8f5; */
-  max-width: 100vh;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: center;
   margin: auto;
   padding: 2rem 2rem;
   margin-bottom: 0;
@@ -120,7 +123,7 @@
   border-radius: 16px;
   margin-bottom: 2rem;
   text-align: left;
-  /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); */
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
 .item-image-container {
@@ -196,10 +199,10 @@
 
 /* Price Breakdown - Full width of right side */
 .price-breakdown {
+  display: flex;
+  flex-direction: column;
   margin-top: 2rem;
   padding-top: 1.5rem;
-  margin: auto;
-  width: 92%;
 }
 
 .price-row {
@@ -224,9 +227,11 @@
 
 /* Shipping breakdown styles */
 .shipping-row {
+  display: flex;
   flex-direction: row;
+  justify-content: flex-end;
   align-items: flex-start;
-  gap: 0.5rem;
+  gap: 10rem;
 }
 
 .shipping-label-wrapper {
@@ -297,7 +302,7 @@
 
 /* Billing and Shipping Section */
 .billing-shipping-section {
-  background: #faf8f5;
+  /* background: #faf8f5; */
   /* padding: 3rem 2rem 2rem 2rem; */
   display: flex;
   flex-direction: column;
@@ -339,13 +344,13 @@
 }
 
 .payment-shipping-methods {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10rem;
-  margin-left: auto;
-  margin-right: auto;
+  display: flex;
+  width: 698.91px;
+  gap: 13.5rem;
+  justify-content: flex-start;
+  margin: auto;
   padding-top: 2rem;
-  border-top: 1px solid #e5e5e0;
+  /* border-top: 1px solid #e5e5e0; */
 }
 
 .method-column h3 {
@@ -376,6 +381,7 @@
   width: 550px;
   background: #595E4E;
   color: #C8D7C4;
+  border: 2px solid #595E4E;
   text-decoration: none;
   border-radius: 6px;
   font-weight: 500;
@@ -387,9 +393,9 @@
 }
 
 .back-home-btn:hover {
-  background: #5a6a4e;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(107, 122, 94, 0.3);
+  background: #E0E8E0;
+  border: 2px solid #595E4E;
+  color: #595E4E;
 }
 
 /* Loading State */

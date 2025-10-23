@@ -224,7 +224,7 @@ input.message-input {
 }
 
 .sign-in-link {
-  color: #f5f5f5;
+  color: #C8D7C4;
   text-decoration: underline;
   font-size: 0.9375rem;
   font-weight: 500;
@@ -299,7 +299,7 @@ input.message-input {
 
 .delivery-option {
   width: 100%;
-  background-color: #e0e8e0;
+  background-color: #C8D7C4;
   border: 2px solid #595E4E;
   border-radius: 10px;
   padding: 1rem 1.5rem;
@@ -312,13 +312,14 @@ input.message-input {
   font-family: "Outfit", sans-serif;
 }
 
+.delivery-option:hover {
+  background-color: #E0E8E0;
+  color: #595E4E;
+}
 .delivery-option.active {
   background-color: #595E4E;
 }
 
-.delivery-option:hover {
-  opacity: 75%;
-}
 
 .delivery-option input[type="radio"] {
   position: absolute;
@@ -392,16 +393,14 @@ input.message-input {
 }
 
 .recipient-form {
-  background-color: #10bb90;
-  border: 2px solid #333;
+  background-color: #C8D7C4;
   border-radius: 16px;
-  padding: 2rem;
 }
 
 .recipient-form .form-input {
   background-color: #e0e8e0;
-  border: 2px solid #595E4E;
-  border-radius: 10px;
+  /* border: 2px solid #595E4E; */
+  /* border-radius: 10px; */
   font-family: "Outfit", sans-serif;
 }
 
