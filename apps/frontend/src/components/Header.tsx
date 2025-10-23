@@ -182,8 +182,8 @@ const Header: React.FC = () => {
       {/* Floral Background Section */}
       {/* <div className="floral-background">
         <svg className="floral-illustration" viewBox="0 0 1200 200" preserveAspectRatio="xMidYMid slice"> */}
-          {/* Subtle floral illustrations */}
-          {/* <defs>
+      {/* Subtle floral illustrations */}
+      {/* <defs>
             <linearGradient id="floral-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" style={{ stopColor: '#f5f5f0', stopOpacity: 1 }} />
               <stop offset="50%" style={{ stopColor: '#e8f0e8', stopOpacity: 1 }} />
@@ -192,30 +192,30 @@ const Header: React.FC = () => {
           </defs>
           <rect width="1200" height="200" fill="url(#floral-gradient)" /> */}
 
-          {/* Rose illustrations */}
-          {/* <g opacity="0.15" fill="#7a9b7a"> */}
-            {/* Left rose */}
-            {/* <circle cx="150" cy="100" r="30" />
+      {/* Rose illustrations */}
+      {/* <g opacity="0.15" fill="#7a9b7a"> */}
+      {/* Left rose */}
+      {/* <circle cx="150" cy="100" r="30" />
             <circle cx="140" cy="90" r="15" />
             <circle cx="160" cy="95" r="18" />
             <path d="M 150 130 Q 145 160, 140 180" stroke="#7a9b7a" strokeWidth="3" fill="none" />
             <path d="M 135 145 Q 120 150, 110 155" stroke="#7a9b7a" strokeWidth="2" fill="none" /> */}
 
-            {/* Right rose */}
-            {/* <circle cx="1050" cy="120" r="35" />
+      {/* Right rose */}
+      {/* <circle cx="1050" cy="120" r="35" />
             <circle cx="1040" cy="105" r="18" />
             <circle cx="1065" cy="110" r="20" />
             <path d="M 1050 155 Q 1055 175, 1060 190" stroke="#7a9b7a" strokeWidth="3" fill="none" />
             <path d="M 1070 140 Q 1085 145, 1095 150" stroke="#7a9b7a" strokeWidth="2" fill="none" /> */}
 
-            {/* Center small flowers */}
-            {/* <circle cx="600" cy="80" r="25" />
+      {/* Center small flowers */}
+      {/* <circle cx="600" cy="80" r="25" />
             <circle cx="595" cy="70" r="12" />
             <circle cx="610" cy="75" r="14" />
           </g> */}
 
-          {/* Leaves and stems */}
-          {/* <g opacity="0.1" stroke="#7a9b7a" strokeWidth="2" fill="none">
+      {/* Leaves and stems */}
+      {/* <g opacity="0.1" stroke="#7a9b7a" strokeWidth="2" fill="none">
             <path d="M 300 160 Q 320 140, 340 130 Q 360 120, 380 115" />
             <ellipse cx="330" cy="145" rx="15" ry="8" transform="rotate(-30 330 145)" fill="#a8c5a8" />
             <ellipse cx="360" cy="125" rx="15" ry="8" transform="rotate(-40 360 125)" fill="#a8c5a8" />
@@ -236,51 +236,59 @@ const Header: React.FC = () => {
         <Link to="/products?category=special" className="secondary-link">Special Occasion</Link>
       </nav> */}
 
-      <div className="banner-container" 
-                style={{
-                  width: 'auto',
-                  /* height: 240px; */
-                  /* background-color:blue; */
-                  // marginBottom: '5rem',
-                }}>
-                  <div className="banner-menu">
-                      <ul>
-                          <li>
-                              <Link to="/products">Shop All Flowers</Link>
-                          </li>
-                          <li>
-                              <Link to="/products?filter=colour">Shop By Colour</Link>
-                          </li>
-                          <li>
-                              <Link to="/products?filter=occasion">Shop By Occasion</Link>
-                          </li>
-                          <li>
-                              <Link to="/bundles">Bundle Up and Save</Link>
-                          </li>
-                      </ul>
-                  </div>
-                  <div className="banner-image">
-                  </div>
-                  <div className="banner-menu">
-                      <ul>
-                        <li>
-                              <Link to="/products?category=romantic">Romantic / Love</Link>
-                        </li>
-                        <li>
-                              <Link to="/products?category=cheerful">Cheerful / Everyday Joy</Link>
-                        </li>
-                        <li>
-                              <Link to="/products?category=elegant">Elegant / Sophisticated</Link>
-                        </li>
-                        <li>
-                              <Link to="/products?category=seasonal">Seasonal / Nature Inspired</Link>
-                        </li>
-                        <li>
-                              <Link to="/products?category=special">Special Occasion</Link>
-                        </li>
-                      </ul>
-                  </div>
-              </div>
+      <div className="banner-container"
+        style={{
+          width: 'auto',
+          /* height: 240px; */
+          /* background-color:blue; */
+          // marginBottom: '5rem',
+        }}>
+        <div className="banner-menu">
+          <ul>
+            <li>
+              <Link to="/products">Shop All Flowers</Link>
+            </li>
+            <li>
+              <Link to="/products?filter=colour">Shop By Colour</Link>
+            </li>
+            <li>
+              <Link to="/products?filter=occasion">Shop By Occasion</Link>
+            </li>
+            <li>
+              <Link to="/bundles">Bundle Up and Save</Link>
+            </li>
+          </ul>
+        </div>
+        <div className="banner-image">
+          <div className="logo-image">
+          <a href="/">
+            <img src="src/assets/flora-logo.svg" alt="flora logo" width="75px">
+            </img>
+            <img src="src/assets/flora-text-cursive.svg" alt="flora text" width="150px">
+            </img>
+          </a>
+          </div>
+        </div>
+        <div className="banner-menu">
+          <ul>
+            <li>
+              <Link to="/products?category=romantic">Romantic / Love</Link>
+            </li>
+            <li>
+              <Link to="/products?category=cheerful">Cheerful / Everyday Joy</Link>
+            </li>
+            <li>
+              <Link to="/products?category=elegant">Elegant / Sophisticated</Link>
+            </li>
+            <li>
+              <Link to="/products?category=seasonal">Seasonal / Nature Inspired</Link>
+            </li>
+            <li>
+              <Link to="/products?category=special">Special Occasion</Link>
+            </li>
+          </ul>
+        </div>
+      </div>
     </header>
   );
 };

@@ -7,15 +7,23 @@
     align-items:center;
 }
 
+.logo-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+}
+
 .banner-image{
     width: 100%;
-    height: 80px;
+    height: 100px;
     background: url('../assets/banner-image.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-color: var(--banner-colour-1);
 }
+
 /*-----*/
 
 .flora-header {

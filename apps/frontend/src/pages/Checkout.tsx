@@ -134,7 +134,14 @@ const CheckoutPage: React.FC = () => {
     <div className="checkout-page">
       <div className="checkout-container">
         <div className="checkout-left">
-          <div className="checkout-logo-placeholder">logo here</div>
+          <div className="checkout-logo-placeholder">
+            <a href="/">
+            <img src="src/assets/flora-logo.svg" alt="flora logo" width="75px" height="150px">
+            </img>
+            <img src="src/assets/flora-text-cursive.svg" alt="flora text" width="150px" height="150px">
+            </img>
+            </a>
+          </div>
           {getErrorDisplay()}
           {isProcessing && <div className="loading-message">Processing...</div>}
 
@@ -147,7 +154,7 @@ const CheckoutPage: React.FC = () => {
             deliveryInfo={deliveryInfo}
             selectedDeliveryType={selectedDeliveryType}
             onDeliveryTypeChange={setSelectedDeliveryType}
-            />
+          />
         </div>
 
         <div className="checkout-right">
