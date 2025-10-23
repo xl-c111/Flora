@@ -84,16 +84,18 @@
 
 .search-input {
   width: 100%;
-  padding: 0.75rem 3rem 0.75rem 1rem;
+  padding: 0.3rem 1rem 0.3rem 1rem;
   border: 2px solid #ddd;
   border-radius: 25px;
+  font-family: var(--primary-font-body-copy);
   font-size: 1rem;
   outline: none;
   transition: border-color 0.3s ease;
+  height: auto;
 }
 
 .search-input:focus {
-  border-color: #4a90e2;
+  border-color: var(--banner-colour-1);
   box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
 }
 
@@ -555,24 +557,29 @@
 }
 
 .pagination-btn {
+  color:var(--button-colour3);
+  border: 2px solid var(--button-colour3);
+  background: var(--button-colour1);
+
   padding: 0.5rem 1rem;
-  border: 1px solid var(--button-colour);
-  background: var(--button-colour);
   cursor: pointer;
   border-radius: var(--radius-button);
   font-size: 0.875rem;
   /* transition: all 0.3s ease; */
   font-weight: 400;
-}
-
-.pagination-btn:hover:not(:disabled) {
-  opacity:70%;
+  font-family:var(--primary-font-body-copy);
 }
 
 .pagination-btn.active {
-  background: var(--button-hover-colour);
-  color: var(--button-text-hover-colour);
-  border-color: ;
+  background: var(--button-colour3);
+  color: var(--button-colour1);
+  /* border-color: 2px solid blue; */
+}
+
+.pagination-btn:hover:not(.active):not(:disabled) {
+  background: var(--button-colour2);
+  color: var(--button-colour3);
+  border-color: 2px solid var(--button-colour3);
 }
 
 .pagination-btn:disabled {

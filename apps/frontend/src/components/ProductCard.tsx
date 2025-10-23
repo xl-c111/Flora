@@ -182,10 +182,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           } ${product.name}`}
           style={{
             float: 'left',
-            border:'1px solid',
-            borderColor: 'var(--border-colour)',
+            // border:'1px solid',
+            // borderColor: 'var(--border-colour)',
           }}>
-          <h4>{product.inStock ? 'View Details' : 'Out of Stock'}</h4>
+          <p>{product.inStock ? 'View Details' : 'Out of Stock'}</p>
         </button>
 
         {product.inStock && (
@@ -202,11 +202,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             title="Add to cart"
             style={{
             float: 'right',
-            border:'1px solid',
-            borderColor: 'var(--border-colour)',
+            // border:'1px solid',
+            // borderColor: 'var(--border-colour)',
             }}
           >
-          <h4>Add to Cart</h4>
+          <p>Add to Cart</p>
           </button>
         )}
       </div>

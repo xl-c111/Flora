@@ -31,6 +31,10 @@
     --button-text-hover-colour: #C8D7C4;
     --button-hover-colour: #595E4E;
 
+    --button-colour1: #C8D7C4;
+    --button-colour2: #E0E8E0;
+    --button-colour3: #595E4E;
+    
     --primary-font-web-copy: "EB Garamond",Georgia, serif;
     --primary-font-body-copy: "Outfit", Arial, sans-serif;
 }
@@ -160,4 +164,26 @@ p {
 
 #root {
   isolation: isolate;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: var(--background-colour);
+  border-left: 2px solid var(--banner-colour-2);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #98A389;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-colour);
 }
