@@ -1,0 +1,45 @@
+.details-container{
+    font-family: var(--primary-font-body-copy);
+    background-color: blue;
+    width: 80%;
+    height: 9rem;
+    margin:auto;
+}
+
+.picture-container{
+    font-family: var(--primary-font-body-copy);
+    background-color: red;
+    width:auto;
+    height: 18rem;
+
+        .image{
+            color:blue;
+            background-color: violet;
+            width:500px;
+            margin:auto;
+        }
+}
+
+.categories-container{
+    font-family: var(--primary-font-body-copy);
+    background-color: orange;
+    width:auto;
+    height: 500px;
+
+}
+
+.card-container{
+    font-family: var(--primary-font-body-copy);
+    background-color: green;
+    width: auto;
+    height: 600px;
+    align-items: center;
+    justify-content: center;
+
+        .product-card-grid-container{
+            background-color: red;
+            max-width:1200px;
+            margin:auto;
+
+        }
+}
