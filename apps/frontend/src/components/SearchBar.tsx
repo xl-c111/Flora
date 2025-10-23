@@ -271,7 +271,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     aria-selected={index === selectedIndex}
                     tabIndex={-1}
                   >
-                    🌸 {suggestion}
+                    {suggestion}
                   </div>
                 ))}
 
@@ -281,7 +281,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     className="suggestion-item search-exact"
                     onClick={() => handleSuggestionClick(inputValue.trim())}
                   >
-                    🔍 Search for "{inputValue.trim()}"
+                    Search for "{inputValue.trim()}"
                   </div>
                 )}
               </>
