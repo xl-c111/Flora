@@ -73,8 +73,9 @@
 
 .checkout-container {
   display: grid;
-  grid-template-columns: 1.2fr 750px 13rem;
+  grid-template-columns: 1fr 1fr;
   min-height: 100vh;
+  /* background-color: red; */
 }
 
 /* Left Column - Form */
@@ -82,8 +83,8 @@
   padding: 2rem;
   /* background-color: #ffffff; */
   /* max-width: 700px; */
-  /* width: 100%; */
-  margin: 0 5rem 0 10rem;
+  width: 100%;
+  margin: 0 5rem 0 0.5rem;
 }
 
 .checkout-logo-placeholder {
@@ -153,6 +154,10 @@
   font-weight: 600;
 }
 
+.checkout-right-container{
+  padding:50px;
+}
+
 /* Right Column - Order Summary */
 .checkout-right {
   background-color: #C8D7C4;
@@ -162,9 +167,10 @@
   position: sticky;
   top: 0;
   height: 100vh;
+  margin:0px;
   /* overflow-y: auto; */
   font-family: "Outfit", sans-serif;
-  width: auto;
+  width: 100%;
 }
 
 /* Error & Loading States */
