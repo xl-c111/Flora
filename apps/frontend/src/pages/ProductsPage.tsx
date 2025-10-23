@@ -85,6 +85,7 @@ const ProductsPage: React.FC = () => {
       ...filters,
       ...(urlSearch && { search: urlSearch }), // Add search term from URL if present
     });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [searchParams]);
 
   /**
@@ -165,6 +166,7 @@ const ProductsPage: React.FC = () => {
       ...prev,
       page: newPage,
     }));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   /**
