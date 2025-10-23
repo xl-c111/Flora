@@ -5,6 +5,7 @@ import { useAuth } from "./contexts/AuthContext";
 import { useAuth0 } from "@auth0/auth0-react";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import LandingPage from "./pages/LandingPage";
 import ProductsPage from "./pages/ProductsPage";
 import ProductDetail from "./pages/ProductDetail";
 import SubscriptionsPage from "./pages/SubscriptionsPage";
@@ -111,7 +112,7 @@ function AppContent({ useAPI }: any) {
       <main className="main">
         {/* Define app routes. AuthCallback is not needed with Auth0 React SDK */}
         <Routes>
-          <Route path="/" element={<ProductsPage />} />
+          <Route path="/" element={<LandingPage />} />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/subscriptions" element={<SubscriptionsPage />} />

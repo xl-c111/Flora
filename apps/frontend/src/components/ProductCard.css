@@ -130,9 +130,9 @@
 }
 
 .product-card-name {
-  /* font-size: 1.25rem; */
-  font-weight: 600;
-  color: orange;
+  font-size: 1.1rem;
+  /* font-weight: 600; */
+  color: var(--text-colour);
   margin: 0;
   line-height: 1.3;
   min-height: 2.6rem;
@@ -141,12 +141,13 @@
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  height:auto;
 }
 
 .product-card-price {
-  font-size: 1.5rem;
+  font-size: 1rem;
   font-weight: 700;
-    color: blue;
+  color: var(--text-colour);
   margin: 0;
 }
 
@@ -183,8 +184,10 @@
   font-family: var(--primary-font-body-copy);
   font-weight: 420;
   font-size: 0.875rem;
-  color: violet;
+  color: var(--text-colour);
   line-height: 1.2;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 0.3rem;
   /* margin-top: auto; */
 }
 
@@ -195,21 +198,56 @@
   background-color: var(--background-colour);
 }
 
-.product-actions button{
-    width: 40%;
-    background-color: var(--button-colour);
-    border:none;
-    color: var(--button-text-colour);
-    font-family: var(--primary-font-body-copy);
-    cursor: pointer;
+.product-actions p{
+  font-weight: 400;
+}
 
+.product-actions .view-details-product-card-btn{
+  color: var(--button-colour3);
+  background-color: white;
+  border: 2px solid var(--button-colour2);
+  font-family: var(--primary-font-body-copy);
+  
+  cursor: pointer;
+  width: 40%;
     height: 50px;
     border-radius: var(--radius-button);
 }
 
-.product-actions button:hover{
-  color: var(--button-text-hover-colour);
-  background-color: var(--button-hover-colour)
+.product-actions .view-details-product-card-btn:hover{
+  color: var(--button-colour3);
+  background-color: var(--button-colour1);
+  border: 2px solid var(--button-colour3);
+}
+
+.product-actions .view-details-product-card-btn:active{
+  color: var(--button-colour1);
+  background-color: var(--button-colour3);
+  border: 2px solid var(--button-colour3);
+}
+
+.product-actions .buy-now-button{
+  color: var(--button-colour3);
+  background-color: var(--button-colour2);
+  border: 2px solid var(--button-colour3);
+  font-family: var(--primary-font-body-copy);
+  
+  cursor: pointer;
+  width: 40%;
+    height: 50px;
+    border-radius: var(--radius-button);
+}
+
+.product-actions .buy-now-button:hover{
+  color: var(--button-colour3);
+  background-color: var(--button-colour1);
+  border: 2px solid var(--button-colour3);
+}
+
+.product-actions .buy-now-button:active{
+  color: var(--button-colour1);
+  background-color: var(--button-colour3);
+  border: 2px solid var(--button-colour3);
 }
 
 .view-details-product-card-btn {
