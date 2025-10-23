@@ -64,7 +64,9 @@
     width: 90%;
     height: 400px;
     display:flex;
-    margin: auto;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
 
     .shop-by-card{
         width: 220px;
@@ -72,6 +74,10 @@
         /* background-color: blue; */
         margin:auto;
 
+        a{
+            /* background-color:red; */
+            display:block;
+        }
         .shop-by-image{
             width: 220px;
             height: 300px;
@@ -82,8 +88,9 @@
                 height: 100%;
                 object-fit: fill;
                 border-radius: 30px;
+                /* border: 1px solid var(--text-colour); */
+                box-shadow: 0 8px 25px rgba(0, 0, 0, .25);
             }
-
         }
         
         .shop-by-text{

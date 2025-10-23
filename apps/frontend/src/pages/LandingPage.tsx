@@ -161,39 +161,47 @@ const LandingPage: React.FC = () => {
 
       <div className="shop-by-container">
         <div className="shop-by-card">
-          <div className="shop-by-image">
-            <img src="/src/assets/Filler1.jpg"></img>
-          </div>
-          <div className="shop-by-text">
-              <p>Shop By All</p>
-          </div>
+          <a href="/products">
+            <div className="shop-by-image">
+              <img src="/src/assets/Filler1.jpg"></img>
+            </div>
+            <div className="shop-by-text">
+                <p>Shop By All</p>
+            </div>
+          </a>
         </div>
 
         <div className="shop-by-card">
+          <a href="/products?filter=colour">
           <div className="shop-by-image">
             <img src="/src/assets/Filler2.jpg"></img>
           </div>
           <div className="shop-by-text">
               <p>Shop By Colour</p>
           </div>
+          </a>
         </div>
 
         <div className="shop-by-card">
+          <a href="/products?filter=occasion">
           <div className="shop-by-image">
             <img src="/src/assets/Filler3.jpg"></img>
           </div>
           <div className="shop-by-text">
               <p>Shop By Occasion</p>
           </div>
+          </a>
         </div>
 
         <div className="shop-by-card">
+          <a href="/products">
           <div className="shop-by-image">
             <img src="/src/assets/Filler4.jpg"></img>
           </div>
           <div className="shop-by-text">
               <p>Bundle Up and Save</p>
           </div>
+          </a>
         </div>
 
       </div>
