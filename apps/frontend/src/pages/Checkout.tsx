@@ -157,14 +157,16 @@ const CheckoutPage: React.FC = () => {
           />
         </div>
 
-        <div className="checkout-right">
-          <OrderSummary
-            items={state.items}
-            subtotal={state.total}
-            shipping={SHIPPING_COST}
-            total={state.total + SHIPPING_COST}
-            shippingBreakdown={shippingBreakdown}
-          />
+        <div className="checkout-right-container">
+          <div className="checkout-right">
+            <OrderSummary
+              items={state.items}
+              subtotal={state.total}
+              shipping={SHIPPING_COST}
+              total={state.total + SHIPPING_COST}
+              shippingBreakdown={shippingBreakdown}
+            />
+          </div>
         </div>
       </div>
     </div>
