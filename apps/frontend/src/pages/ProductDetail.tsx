@@ -21,10 +21,9 @@ const ProductDetail: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [isSubscription, setIsSubscription] = useState(false);
     const [selectedFrequency, setSelectedFrequency] = useState<'weekly' | 'fortnightly' | 'monthly'>('monthly');
-    const [quantity, setQuantity] = useState(1);
+    const quantity = 1;
     const [showAuthPrompt, setShowAuthPrompt] = useState(false);
     const [similarProducts, setSimilarProducts] = useState<Product[]>([]);
-    const [similarProductsLoading, setSimilarProductsLoading] = useState(false);
     const [purchaseType, setPurchaseType] = useState<'one-time' | 'recurring' | 'spontaneous'>('one-time');
     const [likesCount] = useState(256); // Placeholder for likes feature
     const [openAccordion, setOpenAccordion] = useState<string | null>(null);
@@ -72,7 +71,6 @@ const ProductDetail: React.FC = () => {
       if (!product?.id) return;
 
     try {
-      setSimilarProductsLoading(true);
     const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/products/${product.id}/similar`);
     const data = await response.json();
 
@@ -82,7 +80,6 @@ const ProductDetail: React.FC = () => {
       } catch (error) {
       console.error('Error fetching similar products:', error);
       } finally {
-      setSimilarProductsLoading(false);
       }
     };
 
@@ -118,34 +115,6 @@ const ProductDetail: React.FC = () => {
     return `$${(priceCents / 100).toFixed(2)}`;
   };
 
-  const formatAttributes = (attributes: string[]): string => {
-    return attributes
-      .map((attr) => attr.charAt(0).toUpperCase() + attr.slice(1).toLowerCase())
-    .join(', ');
-  };
-
-  const getDisplayPrice = () => {
-    if (isSubscription) {
-      const discountedPrice = calculateSubscriptionPrice(product.priceCents, selectedFrequency);
-    return formatPrice(discountedPrice);
-    }
-    return formatPrice(product.priceCents);
-  };
-
-  const getSubscriptionInfo = () => {
-    if (!isSubscription) return null;
-
-    const option = SUBSCRIPTION_OPTIONS.find(opt => opt.frequency === selectedFrequency);
-    const savings = formatSubscriptionSavings(product.priceCents, selectedFrequency);
-
-    return (
-    <div className="subscription-info">
-      <span className="savings-badge">{savings} with subscription!</span>
-      <span className="frequency-label">{option?.label}</span>
-    </div>
-    );
-  };
-
   const handleAddToCart = () => {
     // Check authentication for subscription items
     if (isSubscription && !user) {
@@ -167,11 +136,6 @@ const ProductDetail: React.FC = () => {
     selectedDate
     });
 
-    const message = isSubscription
-    ? `Added ${product.name} (${selectedFrequency} subscription) to cart!`
-    : `Added ${product.name} to cart!`;
-
-    // alert(message);
     navigate('/cart');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

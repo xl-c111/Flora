@@ -36,7 +36,7 @@
     font-family: var(--primary-font-body-copy);
     /* background-color: red; */
     width:auto;
-    height: 16rem;
+    height: 10rem;
 
         .image-container{
             /* background-color: violet; */
@@ -50,7 +50,7 @@
                 height:100%;
                 object-fit:cover;
                 border-radius: 500px 50px 500px 50px;
-                border: 2px solid var(--button-colour3);  
+                border: 1px solid var(--button-colour3);  
                 object-position: 0% 80%;
             }
         }
@@ -117,5 +117,3 @@
             margin:auto;
         }
 }
-
-

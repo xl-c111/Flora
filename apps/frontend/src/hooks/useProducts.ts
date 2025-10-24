@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import api from '../services/api';
-import type { Product } from '../types';
+import { apiService } from '../services/api';
+import type { Product, ProductResponse } from '../types';
 
 export const useProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -11,8 +11,8 @@ export const useProducts = () => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await api.get('/products');
-        setProducts(response.data);
+        const response: ProductResponse = await apiService.getProducts();
+        setProducts(response.products);
         setError(null);
       } catch (err) {
         setError('Failed to fetch products');
@@ -28,8 +28,8 @@ export const useProducts = () => {
   const refetch = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/products');
-      setProducts(response.data);
+      const response: ProductResponse = await apiService.getProducts();
+      setProducts(response.products);
       setError(null);
     } catch (err) {
       setError('Failed to fetch products');
@@ -56,8 +56,8 @@ export const useProduct = (id: string | undefined) => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const response = await api.get(`/products/${id}`);
-        setProduct(response.data);
+        const response = await apiService.getProduct(id);
+        setProduct(response);
         setError(null);
       } catch (err) {
         setError('Failed to fetch product');
@@ -87,8 +87,8 @@ export const useProductsByCategory = (categoryId: string | undefined) => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await api.get(`/categories/${categoryId}/products`);
-        setProducts(response.data);
+        const response = await apiService.getProductsByCategory(categoryId);
+        setProducts(response);
         setError(null);
       } catch (err) {
         setError('Failed to fetch products');

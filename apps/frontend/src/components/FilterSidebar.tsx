@@ -1,5 +1,5 @@
 import React from 'react';
-import type { FilterOptions } from '../types';
+import type { FilterOptions, ProductFilters } from '../types';
 import { formatFilterValue } from '../utils/filterFormatting';
 
 /**
@@ -13,20 +13,6 @@ import { formatFilterValue } from '../utils/filterFormatting';
  * and current selections from the parent component.
  */
 
-// Interface for the filters that user has selected
-interface ProductFilters {
-  occasion?: string;
-  season?: string;
-  mood?: string;
-  color?: string;
-  type?: string;
-  priceRange?: string;
-  inStock?: boolean;
-  search?: string;
-  page?: number;
-  limit?: number;
-}
-
 interface FilterSidebarProps {
   // Available filter options from the backend (what can be selected)
   filterOptions: FilterOptions;
@@ -37,11 +23,9 @@ interface FilterSidebarProps {
   // Function to call when user changes a filter
   onFilterChange: (filterType: keyof ProductFilters, value: string) => void;
 
-  // Function to clear all filters
-  onClearFilters: () => void;
-
-  // Number of currently active filters (for display)
-  activeFilterCount: number;
+  // Optional handlers used for filter summaries
+  onClearFilters?: () => void;
+  activeFilterCount?: number;
 }
 
 const FilterSidebar: React.FC<FilterSidebarProps> = ({
@@ -49,7 +33,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
   selectedFilters,
   onFilterChange,
   onClearFilters,
-  activeFilterCount,
+  activeFilterCount = 0,
 }) => {
   /**
    * Handle filter change and ensure we pass empty string for "All" option
@@ -67,23 +51,21 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
     <div className="filter-sidebar">
       {/* Sidebar Header */}
       <header className="filter-header">
-        {/* <h4>Filter Products FilterSidebar.tsx</h4> */}
-
-        {/* Show active filter count and clear button if filters are applied */}
-        {/* {activeFilterCount > 0 && (
+        {activeFilterCount > 0 && (
           <div className="filter-header-actions">
             <span className="active-filters">
-              {activeFilterCount} filter{activeFilterCount > 1 ? 's' : ''}{' '}
-              active
+              {activeFilterCount} filter{activeFilterCount > 1 ? 's' : ''} active
             </span>
-            <button
-              className="clear-all-btn"
-              onClick={onClearFilters}
-            >
-              Clear All
-            </button>
+            {onClearFilters && (
+              <button
+                className="clear-all-btn"
+                onClick={onClearFilters}
+              >
+                Clear All
+              </button>
+            )}
           </div>
-        )} */}
+        )}
       </header>
 
       {/* Filter Options */}

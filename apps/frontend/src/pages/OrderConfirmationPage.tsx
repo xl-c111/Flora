@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { useCart, groupItemsByDeliveryDate } from "../contexts/CartContext";
+import { useCart } from "../contexts/CartContext";
 import { useAuth } from "../contexts/AuthContext";
 import orderService from "../services/orderService";
 import type { Order } from "../services/orderService";
@@ -63,10 +63,36 @@ const OrderConfirmationPage: React.FC = () => {
     return countries[countryCode || "AU"] || countryCode || "Australia";
   };
 
-  const getCustomerName = () => {
-    if (order?.shippingFirstName && order?.shippingLastName) {
-      return `${order.shippingFirstName} ${order.shippingLastName}`;
+  const getBuyerName = () => {
+    if (!order) return "Valued Customer";
+
+    const userName = order.user
+      ? [order.user.firstName, order.user.lastName].filter(Boolean).join(" ").trim()
+      : "";
+    if (userName) {
+      return userName;
     }
+
+    if (order.user?.email) {
+      return order.user.email;
+    }
+
+    const billingName = [order.billingFirstName, order.billingLastName]
+      .filter(Boolean)
+      .join(" ")
+      .trim();
+    if (billingName) {
+      return billingName;
+    }
+
+    if (order.guestEmail) {
+      return order.guestEmail;
+    }
+
+    if (order.shippingFirstName || order.shippingLastName) {
+      return [order.shippingFirstName, order.shippingLastName].filter(Boolean).join(" ").trim();
+    }
+
     return "Valued Customer";
   };
 
@@ -117,23 +143,20 @@ const OrderConfirmationPage: React.FC = () => {
   const getShippingBreakdown = () => {
     if (!order || !order.items) return [];
 
-    // Convert order items to cart item format for grouping
-    const cartItems = order.items.map(item => ({
-      id: item.id,
-      product: item.product,
-      quantity: item.quantity,
-      selectedDate: item.requestedDeliveryDate ? new Date(item.requestedDeliveryDate) : undefined,
-    }));
+    const groups = new Map<string, number>();
 
-    // Group by delivery date
-    const groups = groupItemsByDeliveryDate(cartItems);
+    order.items.forEach((item) => {
+      const dateKey = item.requestedDeliveryDate
+        ? new Date(item.requestedDeliveryDate).toISOString().split('T')[0]
+        : 'no-date';
+      groups.set(dateKey, (groups.get(dateKey) || 0) + item.quantity);
+    });
 
-    // Calculate shipping cost per group
     const shippingPerDelivery = order.deliveryType === 'PICKUP' ? 0 : 899; // $8.99 in cents
 
-    return groups.map(group => ({
-      date: group.date,
-      itemCount: group.items.reduce((sum, item) => sum + item.quantity, 0),
+    return Array.from(groups.entries()).map(([dateKey, itemCount]) => ({
+      date: dateKey === 'no-date' ? null : dateKey,
+      itemCount,
       shippingCost: shippingPerDelivery,
     }));
   };
@@ -190,7 +213,7 @@ const OrderConfirmationPage: React.FC = () => {
               <span className="order-number-value">#{order.orderNumber}</span>
             </div>
           )}
-          <p className="thank-you-message">{getCustomerName()}, thank you for your order!</p>
+          <p className="thank-you-message">{getBuyerName()}, thank you for your order!</p>
           <p className="info-message">
             We've received your order and will contact you as soon as your package is shipped. You can find your
             purchase information below.
