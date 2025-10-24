@@ -1,0 +1,68 @@
+name: Flora CI
+
+on:
+  push:
+    branches:
+      - main
+      - xiaoling-prisma_migration
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: flora_test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://test_user:test_password@localhost:5432/flora_test_db
+      AUTH0_DOMAIN: test-domain.auth0.com
+      AUTH0_AUDIENCE: https://flora-api.com
+      AUTH0_CLIENT_SECRET: test-secret
+      STRIPE_SECRET_KEY: sk_test_mock_key_for_ci
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Prepare backend database
+        working-directory: apps/backend
+        run: |
+          pnpm db:generate
+          pnpm db:push
+          pnpm db:seed
+
+      - name: Run backend tests
+        working-directory: apps/backend
+        run: pnpm exec jest --runInBand --ci --passWithNoTests
+
+      - name: Build backend
+        working-directory: apps/backend
+        run: pnpm build
