@@ -5,7 +5,11 @@ import { useAuth } from '../contexts/AuthContext';
 import SearchBar from './SearchBar';
 import './Header.css';
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  isLanding?: boolean;
+}
+
+const Header: React.FC<HeaderProps> = ({ isLanding = false }) => {
   const { getItemCount } = useCart();
   const { user, login, logout, loading: authLoading } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -42,8 +46,10 @@ const Header: React.FC = () => {
     };
   }, [isDropdownOpen]);
 
+  const headerClass = isLanding ? 'flora-header' : 'flora-header flora-header-sticky';
+
   return (
-    <header className="flora-header flora-header-sticky">
+    <header className={headerClass}>
       {/* Top Navigation Bar */}
       <div className="top-nav">
         <div className="top-nav-links">

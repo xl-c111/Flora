@@ -101,9 +101,6 @@ const CheckoutPage: React.FC = () => {
   const shippingBreakdown = getShippingBreakdown();
   const SHIPPING_COST = shippingBreakdown.reduce((sum, group) => sum + group.shippingCost, 0);
 
-  // Check if cart contains subscription items
-  const hasSubscriptionItems = state.items.some(item => item.isSubscription);
-
   // Create user-friendly error message
   const getErrorDisplay = () => {
     if (!error) return null;

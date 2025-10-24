@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { DayPicker } from 'react-day-picker';
-import { format, addDays, addMonths } from 'date-fns';
+import { format, addDays } from 'date-fns';
 import 'react-day-picker/src/style.css';
 import '../styles/DatePicker.css';
 

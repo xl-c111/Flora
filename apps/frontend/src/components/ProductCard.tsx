@@ -32,16 +32,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   /**
-   * Format array of attributes for display
-   * Takes an array like ['ROMANTIC', 'ELEGANT'] and makes it readable
-   */
-  const formatAttributes = (attributes: string[]): string => {
-    return attributes
-      .map((attr) => attr.charAt(0).toUpperCase() + attr.slice(1).toLowerCase())
-      .join(', ');
-  };
-
-  /**
    * Get stock status styling
    */
   const getStockStatus = () => {
@@ -101,35 +91,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
       </Link>
         {/* Product Information */}
-        <div className="product-info"
-        style={{
-              paddingLeft: '30px',
-              paddingRight: '30px',
-              marginTop: '15px',
-              marginBottom: '15px',
-              // maxHeight: '120px',
-              // overflow: 'hidden',
-              // borderStyle:"dotted",
-        }}>
-          <div className="product-header"
-                style={{
-                height: '25px',
-                display:'block',
-          }}>
+        <div className="product-info">
+          <div className="product-header">
             {/* Product Name */}
-            <h4 className="product-card-name"
-                style={{
-                float: 'left',
-                display:'block',
-            }}>
+            <h4 className="product-card-name">
               {product.name}
             </h4>
             {/* Product Price */}
-            <h4 className="product-card-price"
-                style={{
-                float:'right',
-                display:'block',
-            }}>
+            <h4 className="product-card-price">
               {formatPrice(product.priceCents)}
             </h4>
         </div>

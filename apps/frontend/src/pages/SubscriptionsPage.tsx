@@ -81,7 +81,6 @@ const SubscriptionsPage = () => {
   const getSubscriptionTypeInfo = (type: string) => {
     // Extract frequency and whether it's spontaneous or recurring
     const isSpontaneous = type.includes('SPONTANEOUS');
-    const isRecurring = type.includes('RECURRING');
 
     let frequency = '';
     let discount = 0;
@@ -274,7 +273,7 @@ const SubscriptionsPage = () => {
                     <div className="detail-row">
                       <span className="label">Next Delivery:</span>
                       <span className="value next-delivery">
-                        {formatDate(subscription.nextDeliveryDate)}
+                        {getNextDeliveryDisplay(subscription) || 'Not scheduled'}
                       </span>
                     </div>
                     {subscription.lastDeliveryDate && (
