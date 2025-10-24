@@ -20,6 +20,7 @@ const CartPage: React.FC = () => {
   const [isGenerating, setIsGenerating] = React.useState(false);
   const [generateError, setGenerateError] = React.useState<string | null>(null);
   const [selectedTone, setSelectedTone] = React.useState('warm');
+  const [lastAIGeneratedMessage, setLastAIGeneratedMessage] = React.useState<string | null>(null);
 
   const handleProductClick = (productId: string) => {
     navigate(`/products/${productId}`);
@@ -46,7 +47,7 @@ const CartPage: React.FC = () => {
       };
 
       const trimmedMessage = giftMessage.message?.trim();
-      if (trimmedMessage) {
+      if (trimmedMessage && trimmedMessage !== lastAIGeneratedMessage) {
         requestPayload.userPrompt = trimmedMessage;
       }
 
@@ -54,6 +55,7 @@ const CartPage: React.FC = () => {
 
       if (response.success && response.data?.message) {
         setGiftMessage({ ...giftMessage, message: response.data.message });
+        setLastAIGeneratedMessage(response.data.message);
       } else {
         setGenerateError('Failed to generate message. Please try again.');
       }
@@ -256,7 +258,13 @@ const CartPage: React.FC = () => {
               <textarea
                 placeholder="Message:"
                 value={giftMessage.message}
-                onChange={(e) => setGiftMessage({ ...giftMessage, message: e.target.value })}
+                onChange={(e) => {
+                  const newValue = e.target.value;
+                  setGiftMessage({ ...giftMessage, message: newValue });
+                  if (lastAIGeneratedMessage && newValue !== lastAIGeneratedMessage) {
+                    setLastAIGeneratedMessage(null);
+                  }
+                }}
                 rows={4}
               />
               <div className="ai-tone-selector">

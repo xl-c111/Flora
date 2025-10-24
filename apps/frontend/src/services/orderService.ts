@@ -74,6 +74,13 @@ export interface Order {
   billingZipCode?: string;
   billingCountry?: string;
   billingPhone?: string;
+  guestEmail?: string | null;
+  user?: {
+    id: string;
+    email: string | null;
+    firstName: string | null;
+    lastName: string | null;
+  } | null;
   items: Array<{
     id: string;
     productId: string;
