@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import type { Product, FilterOptions, ProductResponse } from '../types';
+import type { Product, ProductResponse, ProductFilters } from '../types';
 import { apiService } from '../services/api';
 import ProductGrid from '../components/ProductGrid';
 import './ProductsPage.css';
@@ -12,16 +12,6 @@ const LandingPage: React.FC = () => {
 
   // State for storing the current products being displayed
   const [products, setProducts] = useState<Product[]>([]);
-
-  // State for storing available filter options (filled from backend)
-  const [filterOptions, setFilterOptions] = useState<FilterOptions>({
-    occasions: [],
-    seasons: [],
-    moods: [],
-    colors: [],
-    types: [],
-    priceRanges: [],
-  });
 
   // State for storing user's currently selected filters
   const [selectedFilters, setSelectedFilters] = useState<ProductFilters>({
@@ -91,7 +81,6 @@ const LandingPage: React.FC = () => {
 
       // Update our component state with the response data
       setProducts(response.products);
-      setFilterOptions(response.filters);
     } catch (err) {
       console.error('Error fetching products:', err);
       setError('Failed to load products. Please try again.');
@@ -206,6 +195,11 @@ const LandingPage: React.FC = () => {
 
       </div>
       <div className="card-container">
+              {error && (
+                <div className="landing-error">
+                  {error}
+                </div>
+              )}
               <div className="product-card-grid-container">
                 <ProductGrid
                   products={products}

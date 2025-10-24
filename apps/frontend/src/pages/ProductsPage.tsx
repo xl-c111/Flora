@@ -1,24 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import type { Product, FilterOptions, ProductResponse } from '../types';
+import type { Product, FilterOptions, ProductResponse, ProductFilters } from '../types';
 import { apiService } from '../services/api';
 import FilterSidebar from '../components/FilterSidebar';
 import ProductGrid from '../components/ProductGrid';
 import './ProductsPage.css';
-
-// Interface to define what filters the user has selected
-interface ProductFilters {
-  occasion?: string;
-  season?: string;
-  mood?: string;
-  color?: string;
-  type?: string;
-  priceRange?: string;
-  inStock?: boolean;
-  search?: string;
-  page?: number;
-  limit?: number;
-}
 
 const ProductsPage: React.FC = () => {
   // Get URL query parameters (e.g., ?filter=colour or ?category=romantic)

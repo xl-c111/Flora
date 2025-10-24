@@ -40,6 +40,11 @@ export const apiService = {
     return response.data;
   },
 
+  getProductsByCategory: async (categoryId: string): Promise<Product[]> => {
+    const response = await api.get(`/categories/${categoryId}/products`);
+    return response.data;
+  },
+
   getFilterOptions: async (): Promise<any> => {
     const response = await api.get('/products/filters/options');
     return response.data;

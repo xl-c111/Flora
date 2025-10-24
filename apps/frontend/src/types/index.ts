@@ -48,3 +48,16 @@ export interface FilterOptions {
   types: string[];
   priceRanges: string[];
 }
+
+export interface ProductFilters {
+  occasion?: string;
+  season?: string;
+  mood?: string;
+  color?: string;
+  type?: string;
+  priceRange?: string;
+  inStock?: boolean;
+  search?: string;
+  page?: number;
+  limit?: number;
+}

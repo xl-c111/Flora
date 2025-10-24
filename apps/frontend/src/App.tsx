@@ -14,9 +14,6 @@ import OrderHistory from "./pages/OrderHistory";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/Checkout";
 import OrderConfirmationPage from "./pages/OrderConfirmationPage";
-import { Button } from "react-day-picker";
-
-
 function App() {
   const [loading, setLoading] = useState(true);
   const [useAPI, setUseAPI] = useState(false);
@@ -85,6 +82,7 @@ function AppContent({ useAPI }: any) {
   // Check if we're on the order confirmation or checkout page
   const hideHeaderFooter =
     location.pathname.startsWith("/order-confirmation") || location.pathname.startsWith("/checkout");
+  const isLandingPage = location.pathname === "/";
 
   useEffect(() => {
     // Handle Auth0 redirect callback - wait until Auth0 finishes processing
@@ -106,7 +104,7 @@ function AppContent({ useAPI }: any) {
   return (
     <div className="app">
       {/* Hide header on order confirmation and checkout pages */}
-      {!hideHeaderFooter && <Header />}
+      {!hideHeaderFooter && <Header isLanding={isLandingPage} />}
 
       {!useAPI && <div className="demo-badge">🚧 Demo Mode - API Not Available</div>}
       <main className="main">

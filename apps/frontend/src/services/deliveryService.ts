@@ -1,5 +1,3 @@
-import { apiService } from './api';
-
 export interface DeliveryInfo {
   serviceArea: {
     name: string;

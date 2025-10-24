@@ -2,9 +2,12 @@ name: Flora Test Suite
 
 on:
   push:
-    branches: [ main, li-dev, anth-branch, bevan-branch, xiaoling ]
+    branches:
+      - main
+      - xiaoling-prisma_migration
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   backend-tests:
