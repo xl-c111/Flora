@@ -80,33 +80,47 @@
   position: relative;
   display: flex;
   align-items: center;
+  background: #fff;
+  border: 2px solid #ddd;
+  border-radius: 25px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, padding-right 0.2s ease;
+  padding-right: 1rem;
+}
+
+.search-input-container.active {
+  padding-right: 2.5rem;
+}
+
+.search-input-container:focus-within {
+  border-color: var(--banner-colour-1);
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
 }
 
 .search-input {
   width: 100%;
   padding: 0.3rem 1rem 0.3rem 1rem;
-  border: 2px solid #ddd;
-  border-radius: 25px;
+  border: none;
+  background: transparent;
   font-family: var(--primary-font-body-copy);
   font-size: 1rem;
   outline: none;
-  transition: border-color 0.3s ease;
   height: auto;
 }
 
 .search-input:focus {
-  border-color: var(--banner-colour-1);
-  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+  outline: none;
 }
 
 .search-button {
   position: absolute;
-  right: 0.5rem;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
   background: none;
   border: none;
   font-size: 1.2rem;
   cursor: pointer;
-  padding: 0.5rem;
+  padding: 0.3rem;
   border-radius: 50%;
   transition: background-color 0.3s ease;
 }
@@ -117,18 +131,38 @@
 
 .search-clear-button {
   position: absolute;
-  right: 2.5rem;
+  right: 2.6rem;
+  top: 50%;
+  transform: translateY(-50%);
   background: none;
   border: none;
   font-size: 1rem;
   cursor: pointer;
-  padding: 0.25rem;
+  padding: 0.2rem;
   color: #666;
   border-radius: 50%;
 }
 
 .search-clear-button:hover {
   background-color: #f0f0f0;
+}
+
+.search-toggle {
+  width: 100%;
+  padding: 0.4rem 1rem;
+  background: transparent;
+  border: none;
+  text-align: left;
+  color: var(--text-colour);
+  font-family: var(--primary-font-body-copy);
+  font-size: 1rem;
+  cursor: text;
+  border-radius: 25px;
+}
+
+.search-toggle:focus-visible {
+  outline: 2px solid rgba(89, 94, 78, 0.4);
+  outline-offset: 2px;
 }
 
 /* Suggestions Dropdown */
