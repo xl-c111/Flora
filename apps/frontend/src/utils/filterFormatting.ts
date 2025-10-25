@@ -36,8 +36,13 @@ export const formatFilterValue = (
     }
 
     case 'season':
-      // Simple capitalization for seasons: "SUMMER" -> "Summer"
-      return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+      // Handle seasons with underscores like "ALL_SEASON" -> "All Season"
+      return value
+        .split('_')
+        .map(
+          (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        )
+        .join(' ');
 
     case 'occasion': {
       // Handle complex occasion formatting: "MOTHERS_DAY" -> "Mother's Day"
