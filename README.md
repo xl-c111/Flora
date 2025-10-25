@@ -28,10 +28,11 @@ Flora is a full‑stack ecommerce experience dedicated to bouquets and floral su
 ## Key Features
 - **Bouquet commerce** – one‑time orders, scheduled subscriptions, and spontaneous surprise deliveries.
 - **Discovery tools** – rich filtering (price, season, mood, occasion), search suggestions, and curated seasonal collections.
-- **Secure checkout** – Auth0 login, persistent carts, Stripe payment intents, and branded order confirmation emails.
+- **Authentication & carting** – Auth0 login, persistent carts, and guest-friendly flows.
+- **Payments** – Stripe payment intents with support for one-off charges and subscription billing.
+- **Messaging** – Nodemailer SMTP order confirmations and Gemini-powered gift message suggestions.
 - **Delivery intelligence** – postcode validation for metropolitan Melbourne and shipping cost breakdowns per delivery date.
-- **Customer hub** – profile dashboard, detailed order history, and subscription pause/resume/cancel.
-- **AI gift messages** – Gemini‑powered copy suggestions with safe fallbacks.
+- **Customer hub** – profile dashboard, detailed order history, and subscription pause/resume/cancel controls.
 - **Operational tooling** – Prisma migrations & seeding, sample accounts, targeted backend test suites, and CI integration.
 
 ---
@@ -112,27 +113,16 @@ Logs: `pnpm docker:logs --tail 20`
 
 ## Environment Configuration
 
-Copy each example file, then fill in secrets specific to your environment.
+Copy each example file and populate the values listed inside:
 
-| File | Purpose |
-|------|---------|
-| `apps/backend/.env.example` → `.env` | Database, Auth0, Stripe, email, Gemini, subscription toggles |
-| `apps/frontend/.env.example` → `.env` | Auth0 SPA config, API base URL, Stripe publishable key |
+- `apps/backend/.env.example` → `apps/backend/.env`
+- `apps/frontend/.env.example` → `apps/frontend/.env`
 
-**Backend essentials**
-- `DATABASE_URL`, `PORT`, `FRONTEND_URL`
-- `AUTH0_DOMAIN`, `AUTH0_CLIENT_ID`, `AUTH0_CLIENT_SECRET`, `AUTH0_AUDIENCE`
-- `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PUBLISHABLE_KEY`
-- `STRIPE_WEEKLY_PRICE_ID`, `STRIPE_MONTHLY_PRICE_ID`, `STRIPE_SPONTANEOUS_PRICE_ID`
-- `ENABLE_SUBSCRIPTION_PAYMENTS` (`true` to enable Stripe subscription flow)
-- `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `FROM_EMAIL`, `CONTACT_EMAIL`
-- `GEMINI_API_KEY`
-
-**Frontend essentials**
-- `VITE_AUTH0_DOMAIN`, `VITE_AUTH0_CLIENT_ID`, `VITE_AUTH0_AUDIENCE`
-- `VITE_API_URL` (default `http://localhost:3001/api`)
-- `VITE_STRIPE_PUBLISHABLE_KEY`
-- `VITE_APP_NAME`, `VITE_APP_URL`
+Each template contains inline comments describing the required secrets (database, Auth0, Stripe, SMTP, Gemini, etc.).  
+You will need access to:
+- an **Auth0** tenant (application + API audience)
+- **Stripe** test keys (secret, publishable, price IDs, webhook secret)
+- a **Gmail SMTP** account or equivalent transactional email provider
 
 ---
 
@@ -140,10 +130,10 @@ Copy each example file, then fill in secrets specific to your environment.
 Running the backend seed (`db:seed` or `db:setup`) loads:
 - Sample floral products, categories, and collections
 - Melbourne delivery zones and rate tables
-- Auth0‑compatible user placeholders (`test@flora.com`, `demo@flora.com`)
+- Placeholder customer records (`test@flora.com`, `demo@flora.com`) that you can map to Auth0 users
 - Subscription plans and Stripe price placeholders
 
-Use these seeded users for local demos; map them to actual Auth0 profiles when integrating with a live tenant. See `docs/TESTING_GUIDE.md` for additional workflows.
+If you prefer different demo accounts, update `prisma/seed.ts` or change the emails in your Auth0 tenant to match. See `docs/TESTING_GUIDE.md` for additional workflows.
 
 ---
 
@@ -157,6 +147,10 @@ Use these seeded users for local demos; map them to actual Auth0 profiles when i
 | `pnpm --filter frontend dev` | Run Vite dev server |
 | `pnpm docker:dev:bg` | Start full stack via Docker |
 | `pnpm docker:restart-backend` / `docker:restart-frontend` | Restart individual services |
+| `pnpm --filter backend test` | Run backend tests against real Prisma client (requires generated client & DB) |
+| `pnpm --filter backend test:mock` | Run backend tests with mocked Prisma client (no DB required; for sandbox use) |
+
+> Use the mock variant only when Prisma engines cannot be generated (e.g., sandbox or no network access). For local development and CI, prefer the real client test command above.
 
 ---
 
