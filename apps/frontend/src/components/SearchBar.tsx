@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 /**
  * SearchBar Component
@@ -22,6 +22,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 }) => {
   // State for the text the user is currently typing (different from selected search)
   const [inputValue, setInputValue] = useState<string>(currentSearch);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
 
   // State for storing autocomplete suggestions from backend
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -35,6 +36,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
   // State for keyboard navigation in suggestions dropdown
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   /**
    * Update input value when currentSearch prop changes
@@ -43,6 +45,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
   useEffect(() => {
     setInputValue(currentSearch);
   }, [currentSearch]);
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditing]);
 
   /**
    * Fetch search suggestions from backend
@@ -149,6 +158,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const handleSuggestionClick = (suggestion: string) => {
     setInputValue(suggestion);
     setShowSuggestions(false);
+    setIsEditing(false);
     onSearchChange(suggestion); // Trigger the actual search
   };
 
@@ -159,6 +169,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setShowSuggestions(false);
+    setIsEditing(false);
     onSearchChange(inputValue.trim());
   };
 
@@ -179,6 +190,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     // Delay hiding suggestions to allow clicks on suggestions
     setTimeout(() => {
       setShowSuggestions(false);
+      setIsEditing(false);
     }, 200);
   };
 
@@ -189,8 +201,16 @@ const SearchBar: React.FC<SearchBarProps> = ({
     setInputValue('');
     setSuggestions([]);
     setShowSuggestions(false);
+    setIsEditing(false);
     onSearchChange(''); // Clear the search in parent component
   };
+
+  const handleActivateSearch = () => {
+    setIsEditing(true);
+  };
+
+  const containerClassName = `search-input-container${isEditing ? ' active' : ''}`;
+  const displayValue = inputValue.trim() ? inputValue : 'Search';
 
   return (
     <div className="search-bar">
@@ -208,42 +228,55 @@ const SearchBar: React.FC<SearchBarProps> = ({
         onSubmit={handleSubmit}
         className="search-form"
       >
-        <div className="search-input-container">
-          {/* Search Input */}
-          <input
-            type="text"
-            value={inputValue}
-            onChange={handleInputChange}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            onKeyDown={handleKeyDown}
-            placeholder="Search for flowers, occasions, colors..."
-            className="search-input"
-            autoComplete="off"
-            aria-label="Search for flowers"
-            aria-describedby="search-instructions"
-            role="searchbox"
-            aria-expanded={showSuggestions}
-            aria-haspopup="listbox"
-          />
+        <div className={containerClassName}>
+          {isEditing ? (
+            <>
+              <input
+                ref={inputRef}
+                type="text"
+                value={inputValue}
+                onChange={handleInputChange}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+                onKeyDown={handleKeyDown}
+                placeholder="Search for flowers, occasions, colors..."
+                className="search-input"
+                autoComplete="off"
+                aria-label="Search for flowers"
+                aria-describedby="search-instructions"
+                role="searchbox"
+                aria-expanded={showSuggestions}
+                aria-haspopup="listbox"
+              />
 
-          {/* Search Button */}
-          <button
-            type="submit"
-            className="search-button"
-            aria-label="Search"
-          >
-          </button>
+              {inputValue && (
+                <button
+                  type="button"
+                  onClick={handleClear}
+                  className="search-clear-button"
+                  aria-label="Clear search"
+                >
+                  ✕
+                </button>
+              )}
 
-          {/* Clear Button (only show if there's text) */}
-          {inputValue && (
+              <button
+                type="submit"
+                className="search-button"
+                aria-label="Search"
+              >
+                🔍
+              </button>
+            </>
+          ) : (
             <button
               type="button"
-              onClick={handleClear}
-              className="search-clear-button"
-              aria-label="Clear search"
+              className="search-toggle"
+              onClick={handleActivateSearch}
+              aria-label="Activate search"
+              aria-describedby="search-instructions"
             >
-              ✕
+              {displayValue}
             </button>
           )}
         </div>
