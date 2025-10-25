@@ -5,6 +5,7 @@
     justify-content: center;
     display:flex;
     align-items:center;
+    margin: 0.3rem 0;
 }
 
 .logo-image {
@@ -17,7 +18,7 @@
 
 .banner-image{
     width: 100%;
-    height: 60px;
+    height: 70px;
     background: url('../assets/banner-image.png');
     background-size: cover;
     background-position: center;
@@ -39,7 +40,7 @@
 
 .flora-header {
   width: 100%;
-  background: white;
+  background: var(--banner-colour-1);
 }
 
 .flora-header-sticky {
@@ -50,31 +51,96 @@
 
 /* Top Navigation Bar */
 .top-nav {
-  background: white;
-  padding: 0.25rem 1.5rem;
-  border-bottom: 1px solid #e5e5e5;
+  background: var(--banner-colour-1);
+  padding: 0.6rem 2rem 0.4rem;
+  border-bottom: 0.5px solid rgba(89, 94, 78, 0.12);
 }
 
 .top-nav-links {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 2rem;
-  max-width: 1400px;
+  gap: 1.5rem;
+  max-width: 1200px;
   margin: 0 auto;
+  width: 100%;
+}
+
+.header-search-wrapper {
+  flex: 1;
+  max-width: 420px;
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+}
+
+.flora-header .search-bar {
+  width: 100%;
+  max-width: 100%;
+}
+
+.flora-header .search-input-container {
+  background: white;
+  border-radius: var(--radius-button);
+  border: 1.5px solid rgba(89, 94, 78, 0.2);
+  padding-right: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.flora-header .search-input-container.active {
+  padding-right: 2.5rem;
+}
+
+.flora-header .search-input {
+  border: none;
+  padding: 0.25rem 3rem 0.25rem 1rem;
+  height: 1.9rem;
+  font-size: 0.95rem;
+  color: var(--text-colour);
+  background: transparent;
+}
+
+.flora-header .search-input:focus {
+  box-shadow: none;
+}
+
+.flora-header .search-input-container:focus-within {
+  border-color: rgba(89, 94, 78, 0.45);
+  box-shadow: 0 0 0 3px rgba(200, 215, 196, 0.4);
+}
+
+.flora-header .search-button,
+.flora-header .search-clear-button {
+  right: 0.75rem;
+  color: var(--text-colour);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.flora-header .search-clear-button {
+  right: 2.6rem;
+}
+
+.flora-header .search-toggle {
+  font-size: 0.95rem;
+  color: var(--text-colour);
+  padding: 0.25rem 1rem;
+  height: 1.9rem;
+  display: flex;
+  align-items: center;
 }
 
 .top-nav-link {
-  color: #333;
+  color: var(--text-colour);
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: 500;
   transition: color 0.2s ease;
   background: none;
   border: none;
   cursor: pointer;
   padding: 0;
-  font-family: inherit;
+  font-family: var(--primary-font-body-copy);
 }
 
 .top-nav-link:hover {
