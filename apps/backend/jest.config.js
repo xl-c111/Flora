@@ -1,3 +1,5 @@
+const usePrismaMock = process.env.USE_PRISMA_TEST_MOCK === 'true';
+
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
@@ -23,6 +25,11 @@ module.exports = {
     'lcov',
     'html'
   ],
+  moduleNameMapper: usePrismaMock
+    ? {
+        '^@prisma/client$': '<rootDir>/src/test/prismaClient.mock.ts',
+      }
+    : {},
   setupFilesAfterEnv: ['<rootDir>/src/test/setup.ts'],
   testTimeout: 10000,
   clearMocks: true,

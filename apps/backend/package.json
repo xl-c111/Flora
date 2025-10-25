@@ -15,6 +15,7 @@
     "db:setup": "prisma migrate deploy && pnpm db:seed",
     "db:reset": "prisma migrate reset --force",
     "test": "jest",
+    "test:mock": "USE_PRISMA_TEST_MOCK=true pnpm test",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:auth": "jest --testPathPatterns=auth",

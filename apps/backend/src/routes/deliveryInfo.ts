@@ -1,4 +1,5 @@
 import express, { Router } from 'express';
+import { DeliveryType } from '@prisma/client';
 import { DeliveryService } from '../config/deliveryConfig';
 import { ApiResponse } from '../types/api';
 
@@ -39,7 +40,9 @@ router.get('/validate/:postcode', (req, res) => {
     }
 
     const isAvailable = DeliveryService.isDeliveryAvailable(postcode);
-    const estimate = isAvailable ? DeliveryService.getDeliveryEstimate('STANDARD') : null;
+    const estimate = isAvailable
+      ? DeliveryService.getDeliveryEstimate(DeliveryType.STANDARD)
+      : null;
 
     const response: ApiResponse = {
       success: true,
