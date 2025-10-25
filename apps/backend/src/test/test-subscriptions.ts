@@ -8,7 +8,11 @@
  * Usage: npx tsx src/test/test-subscriptions.ts
  */
 
-import { PrismaClient } from '@prisma/client';
+import {
+  PrismaClient,
+  SubscriptionType,
+  DeliveryType,
+} from '@prisma/client';
 import { SubscriptionService } from '../services/SubscriptionService';
 import { DeliveryService } from '../config/deliveryConfig';
 import dotenv from 'dotenv';
@@ -19,7 +23,7 @@ const prisma = new PrismaClient();
 
 interface TestSubscriptionData {
   productId: string;
-  subscriptionType: 'RECURRING_WEEKLY' | 'RECURRING_MONTHLY' | 'SPONTANEOUS';
+  subscriptionType: SubscriptionType;
   shippingAddress: {
     firstName: string;
     lastName: string;
@@ -31,7 +35,7 @@ interface TestSubscriptionData {
     phone?: string;
   };
   quantity: number;
-  deliveryType: 'STANDARD' | 'EXPRESS';
+  deliveryType: DeliveryType;
   deliveryNotes?: string;
 }
 
@@ -85,7 +89,7 @@ class SubscriptionTester {
       // Melbourne address for testing
       const testData: TestSubscriptionData = {
         productId: product.id,
-        subscriptionType: 'RECURRING_WEEKLY',
+        subscriptionType: SubscriptionType.RECURRING_WEEKLY,
         shippingAddress: {
           firstName: 'Emma',
           lastName: 'Melbourne',
@@ -97,7 +101,7 @@ class SubscriptionTester {
           phone: '+61-3-9555-1234'
         },
         quantity: 1,
-        deliveryType: 'STANDARD',
+        deliveryType: DeliveryType.STANDARD,
         deliveryNotes: 'Test subscription - simplified approach'
       };
 
@@ -110,7 +114,9 @@ class SubscriptionTester {
       console.log(`📮 Postcode ${testData.shippingAddress.zipCode}: ${isValidPostcode ? '✅ Valid' : '❌ Invalid'}`);
 
       // Calculate delivery fee
-      const deliveryFee = DeliveryService.getDeliveryFee(testData.deliveryType);
+      const deliveryFee = DeliveryService.getDeliveryFee(
+        testData.deliveryType
+      );
       console.log(`🚚 Delivery fee: $${(deliveryFee / 100).toFixed(2)} AUD`);
 
       // Create subscription using simplified flow (no user/address auto-creation)
@@ -190,7 +196,7 @@ class SubscriptionTester {
       // Create a spontaneous subscription first (Melbourne address)
       const spontaneousSubscription = await this.subscriptionService.createSubscription({
         userId: this.existingUserId,
-        type: 'SPONTANEOUS',
+        type: SubscriptionType.SPONTANEOUS,
         shippingAddress: {
           firstName: 'Sarah',
           lastName: 'Spontaneous',
@@ -200,7 +206,7 @@ class SubscriptionTester {
           zipCode: '3141',
           phone: '+61-3-9555-7890'
         },
-        deliveryType: 'EXPRESS',
+        deliveryType: DeliveryType.EXPRESS,
         deliveryNotes: 'Test spontaneous subscription - Melbourne',
         items: [{ productId: product.id, quantity: 2 }]
       });
@@ -223,7 +229,11 @@ class SubscriptionTester {
 
       console.log('✅ Spontaneous delivery created!');
       console.log(`   📦 Order created for subscription ${spontaneousSubscription.id}`);
-      console.log(`   💰 Includes $${(DeliveryService.getDeliveryFee('EXPRESS') / 100).toFixed(2)} AUD express delivery`);
+      console.log(
+        `   💰 Includes $${(
+          DeliveryService.getDeliveryFee(DeliveryType.EXPRESS) / 100
+        ).toFixed(2)} AUD express delivery`
+      );
 
       return true;
 
@@ -288,7 +298,7 @@ class SubscriptionTester {
       try {
         await this.subscriptionService.createSubscription({
           userId: `${this.existingUserId}_error`,
-          type: 'RECURRING_WEEKLY',
+        type: SubscriptionType.RECURRING_WEEKLY,
           shippingAddress: {
             firstName: 'Error',
             lastName: 'Test',
@@ -297,7 +307,7 @@ class SubscriptionTester {
             state: 'ER',
             zipCode: '00000'
           },
-          deliveryType: 'STANDARD',
+          deliveryType: DeliveryType.STANDARD,
           items: [{ productId: 'invalid-product-id', quantity: 1 }]
         });
         console.log('❌ Should have failed with invalid product ID');
