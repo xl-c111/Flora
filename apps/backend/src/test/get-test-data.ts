@@ -27,7 +27,7 @@ async function getTestData() {
       }
     });
 
-    users.forEach((user) => {
+    users.forEach((user: { email: string; id: string }) => {
       console.log(`   📧 ${user.email} (ID: ${user.id})`);
     });
 
@@ -44,7 +44,15 @@ async function getTestData() {
       }
     });
 
-    addresses.forEach((addr) => {
+    addresses.forEach(
+      (addr: {
+        label: string;
+        street1: string;
+        city: string;
+        isDefault: boolean;
+        id: string;
+        userId: string;
+      }) => {
       const defaultFlag = addr.isDefault ? ' ⭐ DEFAULT' : '';
       console.log(`   🏠 ${addr.label}: ${addr.street1}, ${addr.city}${defaultFlag}`);
       console.log(`      📋 Address ID: ${addr.id}`);
@@ -62,7 +70,8 @@ async function getTestData() {
       take: 3
     });
 
-    products.forEach((product) => {
+    products.forEach(
+      (product: { name: string; priceCents: number; id: string }) => {
       const price = (product.priceCents / 100).toFixed(2);
       console.log(`   🌸 ${product.name} - $${price}`);
       console.log(`      📋 Product ID: ${product.id}`);
@@ -73,7 +82,8 @@ async function getTestData() {
     console.log('─'.repeat(50));
 
     const sampleAddress =
-      addresses.find((address) => address.isDefault) || addresses[0];
+      addresses.find((address: { isDefault: boolean }) => address.isDefault) ||
+      addresses[0];
     const sampleProduct = products[0];
 
     if (sampleAddress && sampleProduct) {
