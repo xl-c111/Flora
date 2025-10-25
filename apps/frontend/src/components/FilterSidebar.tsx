@@ -2,6 +2,9 @@ import React from 'react';
 import type { FilterOptions, ProductFilters } from '../types';
 import { formatFilterValue } from '../utils/filterFormatting';
 
+const PRICE_ORDER = ['UNDER_25', 'RANGE_25_50', 'RANGE_50_75', 'RANGE_75_100', 'OVER_100'];
+const SEASON_ORDER = ['SPRING', 'SUMMER', 'FALL', 'WINTER', 'ALL_SEASON'];
+
 /**
  * FilterSidebar Component
  *
@@ -35,6 +38,36 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
   onClearFilters,
   activeFilterCount = 0,
 }) => {
+  const sortedPriceRanges = React.useMemo(
+    () =>
+      [...filterOptions.priceRanges].sort((a, b) => {
+        const indexA = PRICE_ORDER.indexOf(a);
+        const indexB = PRICE_ORDER.indexOf(b);
+        const safeIndexA = indexA === -1 ? PRICE_ORDER.length : indexA;
+        const safeIndexB = indexB === -1 ? PRICE_ORDER.length : indexB;
+        if (safeIndexA === safeIndexB) {
+          return a.localeCompare(b);
+        }
+        return safeIndexA - safeIndexB;
+      }),
+    [filterOptions.priceRanges]
+  );
+
+  const sortedSeasons = React.useMemo(
+    () =>
+      [...filterOptions.seasons].sort((a, b) => {
+        const indexA = SEASON_ORDER.indexOf(a);
+        const indexB = SEASON_ORDER.indexOf(b);
+        const safeIndexA = indexA === -1 ? SEASON_ORDER.length : indexA;
+        const safeIndexB = indexB === -1 ? SEASON_ORDER.length : indexB;
+        if (safeIndexA === safeIndexB) {
+          return a.localeCompare(b);
+        }
+        return safeIndexA - safeIndexB;
+      }),
+    [filterOptions.seasons]
+  );
+
   /**
    * Handle filter change and ensure we pass empty string for "All" option
    */
@@ -86,7 +119,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
             aria-label="Filter by price range"
           >
             <option value="" className="filter-select-menu">All Prices</option>
-            {filterOptions.priceRanges.map((priceRange) => (
+            {sortedPriceRanges.map((priceRange) => (
               <option
                 key={priceRange}
                 value={priceRange}
@@ -167,7 +200,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
             className="filter-select"
           >
             <option value="" className="filter-select-menu">All Seasons</option>
-            {filterOptions.seasons.map((season) => (
+            {sortedSeasons.map((season) => (
               <option
                 key={season}
                 value={season}

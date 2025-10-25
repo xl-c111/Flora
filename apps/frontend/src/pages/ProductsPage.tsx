@@ -249,16 +249,6 @@ const ProductsPage: React.FC = () => {
                   )}
                 </div>
 
-                {/* Clear Filters Button (only show if filters are applied) */}
-                {getActiveFilterCount() > 0 && (
-                  <button
-                    className="clear-filters-btn"
-                    onClick={handleClearFilters}
-                    aria-label={`Clear all ${getActiveFilterCount()} active filters`}
-                  >
-                    Clear All Filters
-                  </button>
-                )}
               </div>
 
               {/* Error Message */}
