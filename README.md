@@ -148,7 +148,7 @@ If you prefer different demo accounts, update `prisma/seed.ts` or change the ema
 | `pnpm docker:dev:bg` | Start full stack via Docker |
 | `pnpm docker:restart-backend` / `docker:restart-frontend` | Restart individual services |
 | `pnpm --filter backend test` | Run backend tests against real Prisma client (requires generated client & DB) |
-| `pnpm --filter backend test:mock` | Run backend tests with mocked Prisma client (no DB required; for sandbox use) |
+| `pnpm --filter backend run test:mock` | Run backend tests with mocked Prisma client (no DB required; for sandbox use) |
 
 > Use the mock variant only when Prisma engines cannot be generated (e.g., sandbox or no network access). For local development and CI, prefer the real client test command above.
 

@@ -103,30 +103,63 @@ export class ProductService {
     ]);
 
     // Get available filter options (for frontend dropdowns)
-    const [occasions, seasons, moods, colors, types, priceRanges] =
-      await Promise.all([
-        prisma.product.findMany({
-          select: { occasions: true },
-          distinct: ['occasions'],
-        }),
-        prisma.product.findMany({
-          select: { seasons: true },
-          distinct: ['seasons'],
-        }),
-        prisma.product.findMany({
-          select: { moods: true },
-          distinct: ['moods'],
-        }),
-        prisma.product.findMany({
-          select: { colors: true },
-          distinct: ['colors'],
-        }),
-        prisma.product.findMany({ select: { type: true }, distinct: ['type'] }),
-        prisma.product.findMany({
-          select: { priceRange: true },
-          distinct: ['priceRange'],
-        }),
-      ]);
+    const [
+      occasionRecords,
+      seasonRecords,
+      moodRecords,
+      colorRecords,
+      typeRecords,
+      priceRangeRecords,
+    ] = (await Promise.all([
+      prisma.product.findMany({
+        select: { occasions: true },
+        distinct: ['occasions'],
+      }),
+      prisma.product.findMany({
+        select: { seasons: true },
+        distinct: ['seasons'],
+      }),
+      prisma.product.findMany({
+        select: { moods: true },
+        distinct: ['moods'],
+      }),
+      prisma.product.findMany({
+        select: { colors: true },
+        distinct: ['colors'],
+      }),
+      prisma.product.findMany({
+        select: { type: true },
+        distinct: ['type'],
+      }),
+      prisma.product.findMany({
+        select: { priceRange: true },
+        distinct: ['priceRange'],
+      }),
+    ])) as [
+      Array<{ occasions: Occasion[] }>,
+      Array<{ seasons: Season[] }>,
+      Array<{ moods: Mood[] }>,
+      Array<{ colors: Color[] }>,
+      Array<{ type: ProductType }>,
+      Array<{ priceRange: PriceRange }>
+    ];
+
+    const occasionOptions = Array.from(
+      new Set(occasionRecords.flatMap((record) => record.occasions))
+    );
+    const seasonOptions = Array.from(
+      new Set(seasonRecords.flatMap((record) => record.seasons))
+    );
+    const moodOptions = Array.from(
+      new Set(moodRecords.flatMap((record) => record.moods))
+    );
+    const colorOptions = Array.from(
+      new Set(colorRecords.flatMap((record) => record.colors))
+    );
+    const typeOptions = typeRecords.map((record) => record.type);
+    const priceRangeOptions = priceRangeRecords.map(
+      (record) => record.priceRange
+    );
 
     return {
       products,
@@ -137,12 +170,12 @@ export class ProductService {
         totalPages: Math.ceil(total / limit),
       },
       filters: {
-        occasions: [...new Set(occasions.flatMap((p) => p.occasions))],
-        seasons: [...new Set(seasons.flatMap((p) => p.seasons))],
-        moods: [...new Set(moods.flatMap((p) => p.moods))],
-        colors: [...new Set(colors.flatMap((p) => p.colors))],
-        types: types.map((p) => p.type),
-        priceRanges: priceRanges.map((p) => p.priceRange),
+        occasions: occasionOptions,
+        seasons: seasonOptions,
+        moods: moodOptions,
+        colors: colorOptions,
+        types: typeOptions,
+        priceRanges: priceRangeOptions,
       },
     };
   }
@@ -163,7 +196,7 @@ export class ProductService {
    * Get search suggestions for autocomplete
    */
   static async getSearchSuggestions(query: string): Promise<string[]> {
-    const products = await prisma.product.findMany({
+    const products = (await prisma.product.findMany({
       where: {
         AND: [
           { isActive: true }, // Only active products in suggestions
@@ -178,9 +211,9 @@ export class ProductService {
       select: { name: true },
       take: 10,
       orderBy: { createdAt: 'desc' },
-    });
+    })) as Array<{ name: string }>;
 
-    return products.map((p) => p.name);
+    return products.map((product) => product.name);
   }
 
   /**
