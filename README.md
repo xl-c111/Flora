@@ -1,586 +1,206 @@
-# 🌸 Flora - Flowers & Plants Marketplace
+# Flora – Modern Floral Marketplace
 
-**Team:** Anthony, Bevan, Xiaoling, and Lily | **Timeline:** 5-6 weeks | **Holberton Final Project**
-
-**Built with ❤️ and lots of learning** 🌸
-
-_Flora - Where every purchase blooms into joy_
-
-Flora is a modern flowers and plants marketplace featuring flexible purchasing options including one-time purchases and subscription services. Built with React + TypeScript, Node.js/Express, Prisma, PostgreSQL, and Docker.
-
-## 🎯 Project Features
-
-### **Core Shopping Experience**
-✅ **Product browsing** with search/filter \
-✅ **Guest checkout** (no account required) \
-✅ **User authentication** (Auth0) \
-✅ **Calendar delivery date selection** (choose specific delivery dates) \
-✅ **AI-powered gift messages** 🤖 (generate/enhance personalized messages by Gemini AI)
-
-### **Purchase Options** (3 Types)
-✅ **One-time purchase** - Single delivery \
-✅ **Recurring subscription** - Regular deliveries (weekly/fortnightly/monthly) with savings \
-✅ **Spontaneous subscription** - Surprise deliveries at random times within chosen frequency
-
-### **User Account Features**
-✅ **User Profile** - View account stats (orders, subscriptions, total spent) \
-✅ **Order History** - Browse past orders with pagination \
-✅ **Subscriptions Management** - Pause, resume, or cancel active subscriptions
-
-### **Delivery & Payments**
-✅ **Melbourne delivery zone validation** - Real-time postcode validation (100+ postcodes) \
-✅ **Smart address validation** - Postcode + state cross-validation \
-✅ **Flat-rate pricing** - $8.99 standard, $15.99 express delivery (AUD) \
-✅ **Stripe payment processing** - Secure checkout with payment intents \
-✅ **Order confirmations** - Email notifications for completed orders
-
-### **Quality & Reliability**
-✅ **Automated testing** - 64+ backend tests with CI/CD \
-✅ **Graceful degradation** - System remains functional if validation APIs fail \
-✅ **Type-safe** - Full TypeScript coverage (frontend + backend)
+Flora is a full‑stack ecommerce experience dedicated to bouquets and floral subscriptions. The project pairs a React 19 TypeScript storefront with an Express/Prisma API, Stripe billing, Auth0 authentication, and Melbourne‑specific delivery validation.
 
 ---
 
-## 🚀 Quick Start Guide
-
-### 📥 **Step 1: Get the Code**
-```bash
-git clone https://github.com/Aldore-88/holbertonschool-final_project.git
-cd holbertonschool-final_project
-```
-
-### 🐳 **Step 2: First-Time Setup (Docker - Recommended)**
-```bash
-# Build containers and setup database (first time only)
-pnpm docker:dev:build    # Build containers with dependencies
-pnpm docker:setup        # Setup database (migrations + seeding)
-```
-
-### 🎯 **Step 3: Daily Development**
-```bash
-# Start development (every day)
-pnpm docker:dev:bg       # Start in background
-```
-#### Frontend check:
-
-1. Check frontend logs: `docker logs flora-frontend` or `pnpm docker:logs frontend --tail 10`
-2. Open http://localhost:5173
-3. Check browser console for errors (F12)
-4. Test user interactions (clicking, typing)
-
-#### Backend check:
-
-1. Check backend logs:
-`docker logs flora-backend --tail 10` or `pnpm docker:logs backend --tail 5`
-1. Check http://localhost:3001/api/health
-3. Use browser or Postman to test API endpoints
-
-```bash
-# Test subscription system
-docker exec flora-backend pnpm test:subscriptions
-
-# Test delivery endpoints
-curl http://localhost:3001/api/delivery/info
-```
-
-4. Check all logs together: `pnpm docker:logs --tail 5` (add --tail 10 => to see 10 most recent logs)
-
-#### Database Testing:
-
-1. Check data with Prisma Studio: `npx prisma studio`
-2. Verify API responses return correct data
+## Table of Contents
+- [Flora – Modern Floral Marketplace](#flora--modern-floral-marketplace)
+  - [Table of Contents](#table-of-contents)
+  - [Key Features](#key-features)
+  - [Tech Stack](#tech-stack)
+  - [Repository Layout](#repository-layout)
+  - [Prerequisites](#prerequisites)
+  - [Quick Start](#quick-start)
+    - [Option A – pnpm (local runtimes)](#option-a--pnpm-local-runtimes)
+    - [Option B – Docker Compose](#option-b--docker-compose)
+  - [Environment Configuration](#environment-configuration)
+  - [Demo Data \& Test Accounts](#demo-data--test-accounts)
+  - [Core Scripts](#core-scripts)
+  - [Testing \& Quality Gates](#testing--quality-gates)
+  - [Troubleshooting](#troubleshooting)
+  - [Documentation](#documentation)
+  - [Future Development](#future-development)
+  - [Maintainers \& License](#maintainers--license)
 
 ---
 
-## 🔄 **When Do I Need to Rebuild vs Restart?**
+## Key Features
+- **Bouquet commerce** – one‑time orders, scheduled subscriptions, and spontaneous surprise deliveries.
+- **Discovery tools** – rich filtering (price, season, mood, occasion), search suggestions, and curated seasonal collections.
+- **Secure checkout** – Auth0 login, persistent carts, Stripe payment intents, and branded order confirmation emails.
+- **Delivery intelligence** – postcode validation for metropolitan Melbourne and shipping cost breakdowns per delivery date.
+- **Customer hub** – profile dashboard, detailed order history, and subscription pause/resume/cancel.
+- **AI gift messages** – Gemini‑powered copy suggestions with safe fallbacks.
+- **Operational tooling** – Prisma migrations & seeding, sample accounts, targeted backend test suites, and CI integration.
 
-### **📦 Package.json Changes (Added/Updated Dependencies)**
-```bash
-# Need full rebuild when you add/update dependencies
-pnpm docker:dev:build    # Rebuild containers with new dependencies
-pnpm docker:dev:bg       # Start with new dependencies
+---
+
+## Tech Stack
+
+**Frontend**
+- React 19 + TypeScript, Vite, React Router
+- Auth0 SDK, Stripe Elements, React Query, React Hook Form
+- Custom component styling with vanilla CSS
+
+**Backend**
+- Node.js + Express (TypeScript)
+- Prisma ORM + PostgreSQL
+- Stripe, Nodemailer, Google Generative AI, Auth0 JWT validation
+- Jest unit & integration testing
+
+**Tooling**
+- pnpm workspaces (monorepo)
+- Docker Compose (dev/prod)
+- GitHub Actions CI
+
+---
+
+## Repository Layout
 ```
-
-### **💻 Code Changes (TypeScript, React, CSS)**
-```bash
-# Just restart - hot reload handles code changes
-pnpm docker:dev:bg       # Start containers (code changes auto-reload)
-```
-
-### **🗃️ Database Schema Changes (Prisma schema.prisma)**
-```bash
-# When YOU made schema changes (e.g., added a new field)
-docker exec -it flora-backend pnpm db:migrate   # Creates migration + applies it
-# Then commit both schema.prisma and migration files
-
-# When TEAMMATE made schema changes (you pulled their code)
-pnpm docker:restart-backend    # Restart backend to reload code
-pnpm docker:setup             # Apply migrations + reseed data
-```
-
-### **🌱 Want Fresh Test Data Only**
-```bash
-# No restart needed - just reseed
-docker exec flora-backend pnpm db:seed    # Fresh sample data
+.
+├── apps
+│   ├── frontend/            # React storefront (Vite + TS)
+│   └── backend/             # Express API (Prisma + Stripe)
+├── docs/                    # Supplemental guides (AI, subscriptions, testing, Stripe)
+├── docker-compose*.yml      # Local & production orchestration
+├── package.json             # Workspace scripts
+└── README.md
 ```
 
 ---
 
-## 📋 **Essential Commands Reference**
-
-### **🚀 Development Commands**
-```bash
-# First time setup
-pnpm docker:dev:build         # Build containers
-pnpm docker:setup             # Setup database
-
-# Daily development
-pnpm docker:dev:bg            # Start in background
-pnpm docker:logs              # View logs
-pnpm docker:stop              # Stop all containers
-
-# Individual service restarts
-pnpm docker:restart-backend   # Restart backend only
-pnpm docker:restart-frontend  # Restart frontend only
-```
-**Troubleshooting Commands**
-
-```bash
-# Check what's running
-docker ps                                    # Show running containers
-
-# View logs
-docker logs flora-backend                    # Backend logs only
-docker logs flora-frontend                   # Frontend logs only
-pnpm docker:logs                             # All logs together
-```
-
-
-```bash
-# Database updated
-pnpm docker:seed          # Re-seed database with fresh sample data
-pnpm db:reset             # Reset database (WARNING: deletes all data!)
-
-# 🔧 Maintenance & Debugging
-pnpm docker:stop          # Stop all containers
-pnpm docker:build         # Rebuild containers without starting them
-pnpm docker:clean         # Remove containers and volumes (fresh start, keep images)
-pnpm docker:clean-project # Full cleanup: remove containers, images, and volumes
-pnpm docker:dev:build     # Full rebuild
-
-# 🎯 Production
-pnpm docker:prod          # Run production build
-```
+## Prerequisites
+- **Node.js** ≥ 18
+- **pnpm** ≥ 8 (preferred package manager)
+- **Docker & Docker Compose** (optional, recommended for parity)
+- **PostgreSQL** instance (only needed if not using Docker)
 
 ---
 
-## 🧪 **Testing & Quality Assurance**
+## Quick Start
 
-### **Local Testing Commands**
-
-Always test inside Docker containers to match the CI environment:
-
+Clone the repository and install workspace dependencies:
 ```bash
-# 🔍 Run All Tests
-docker exec flora-backend pnpm test                 # All tests with coverage
-
-# 🎯 Run Specific Test Suites
-docker exec flora-backend pnpm test:auth            # Authentication & JWT tests
-docker exec flora-backend pnpm test:order           # Order creation & processing tests
-docker exec flora-backend pnpm test:payment         # Stripe payment & refund tests
-docker exec flora-backend pnpm test:email           # Email service & templates tests
-docker exec flora-backend pnpm test:integration     # Full end-to-end integration tests
-
-# 🔄 Development Testing
-docker exec flora-backend pnpm test:watch           # Auto-rerun tests on file changes
-docker exec flora-backend pnpm test:coverage        # Generate detailed coverage reports
-
-# 🛠️ Manual Testing Tools
-docker exec flora-backend pnpm test:live-email      # Send real test emails
-docker exec flora-backend pnpm get-token            # Get Auth0 JWT for API testing
+git clone https://github.com/xl-c111/Flora.git
+cd Flora
+pnpm install
 ```
 
-### **Test Command Breakdown**
-
-| Command | What It Does | When To Use |
-|---------|--------------|-------------|
-| `jest` | Runs all `.test.ts` files using Jest test runner | Standard test execution |
-| `jest --watch` | Continuously runs tests when files change | Active development |
-| `jest --coverage` | Generates HTML/text coverage reports | Quality checks before commits |
-| `jest --testPathPatterns=auth` | Only runs tests with "auth" in the filename | Testing specific features |
-| `tsx src/test/script.ts` | Runs TypeScript files directly | Utility scripts & manual testing |
-
-### **Understanding Test Output**
-
+### Option A – pnpm (local runtimes)
+Run backend and frontend in separate terminals:
 ```bash
-# ✅ Success Example
-PASS src/test/auth.test.ts (12.5s)
-  ✓ should authenticate valid user (145ms)
-  ✓ should reject invalid token (89ms)
+# Backend
+pnpm --filter backend db:setup   # applies migrations & seeds demo data (run once)
+pnpm --filter backend dev
 
-# ❌ Failure Example
-FAIL src/test/payment.test.ts
-  ✗ should process payment (234ms)
-    Error: Stripe API connection failed
-
-# 📊 Coverage Summary
-Coverage: 85.2% of statements
-         83.1% of branches
-         91.7% of functions
-         85.2% of lines
+# Frontend
+pnpm --filter frontend dev
 ```
+- API health check: http://localhost:3001/api/health  
+- Storefront: http://localhost:5173
+
+### Option B – Docker Compose
+```bash
+pnpm docker:dev:build   # build/rebuild containers
+pnpm docker:dev:bg      # start containers in background
+pnpm docker:setup       # run migrations + seed inside backend container
+```
+Logs: `pnpm docker:logs --tail 20`
 
 ---
 
-## 🚀 **CI/CD Pipeline**
+## Environment Configuration
 
-### **Automated Testing**
+Copy each example file, then fill in secrets specific to your environment.
 
-**Triggers:** Every push to any team branch + all pull requests to `main`
+| File | Purpose |
+|------|---------|
+| `apps/backend/.env.example` → `.env` | Database, Auth0, Stripe, email, Gemini, subscription toggles |
+| `apps/frontend/.env.example` → `.env` | Auth0 SPA config, API base URL, Stripe publishable key |
 
-**Supported Branches:**
-- `main` (production)
-- `li-dev` (integration)
-- `anth-branch`, `bevan-branch`, `xiaoling` (team member branches)
+**Backend essentials**
+- `DATABASE_URL`, `PORT`, `FRONTEND_URL`
+- `AUTH0_DOMAIN`, `AUTH0_CLIENT_ID`, `AUTH0_CLIENT_SECRET`, `AUTH0_AUDIENCE`
+- `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PUBLISHABLE_KEY`
+- `STRIPE_WEEKLY_PRICE_ID`, `STRIPE_MONTHLY_PRICE_ID`, `STRIPE_SPONTANEOUS_PRICE_ID`
+- `ENABLE_SUBSCRIPTION_PAYMENTS` (`true` to enable Stripe subscription flow)
+- `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `FROM_EMAIL`, `CONTACT_EMAIL`
+- `GEMINI_API_KEY`
 
-**Current CI Configuration (Simplified for Development):**
-
-1. **🧪 Backend Tests** ✅ ACTIVE
-   - All Jest test suites (64/64 passing)
-   - Code coverage reporting
-   - PostgreSQL database tests
-   - Delivery endpoint validation
-
-2. **🎨 Frontend Tests** ⏸️ DISABLED (Runs locally only)
-   - Reason: CI environment setup issues
-   - Local verification: `docker exec flora-frontend pnpm build`
-   - Re-enable after graduation: See `.github/workflows/test.yml`
-
-3. **🔍 Type Checking** ⏸️ DISABLED (Runs locally only)
-   - Reason: Warnings allowed in development
-   - Local verification: `docker exec flora-frontend pnpm type-check`
-   - Re-enable after graduation: See `.github/workflows/test.yml`
-
-> **Note for Team:** All tests pass locally! CI is simplified to backend tests only.
-> Before pushing, always run the **Pre-Commit Checklist** below to ensure quality.
-
-### **GitHub Actions Workflow Files**
-
-```bash
-.github/workflows/test.yml       # Main CI/CD testing pipeline
-.github/workflows/security.yml   # Weekly security & dependency audits
-```
-
-### **CI/CD Best Practices We Follow**
-
-- ✅ **Branch Protection:** All tests must pass before merging
-- ✅ **Parallel Execution:** 3 concurrent jobs for fast feedback
-- ✅ **Real Database:** PostgreSQL in CI matches production environment
-- ✅ **Code Coverage:** Tracks test coverage trends over time
-- ✅ **Security Scanning:** Automated dependency vulnerability checks
-- ✅ **Type Safety:** Compilation errors fail the build
-
-### **Monitoring CI/CD Status**
-
-```bash
-# 📊 Check GitHub Actions Status
-# Go to: https://github.com/your-repo/actions
-
-# 🔍 View CI Logs Locally
-git push origin your-branch
-# Then visit GitHub Actions tab to see real-time results
-```
-
-### **Before You Push - Pre-Commit Checklist** ✅
-
-**Run these commands locally to ensure CI/CD will pass:**
-
-```bash
-# 1️⃣ Run all backend tests (must pass)
-docker exec flora-backend pnpm test
-
-# 2️⃣ Run frontend type-check (warnings OK, but script must exist)
-docker exec flora-frontend pnpm type-check || echo "Type warnings are OK"
-
-# 3️⃣ Build frontend to catch critical errors
-docker exec flora-frontend pnpm build
-```
-
-**Quick verification:**
-- ✅ All backend tests pass (80/80 tests)
-- ✅ Frontend type-check runs (warnings allowed)
-- ✅ Frontend builds successfully
-- ✅ Docker containers running: `docker ps`
-
-### **Troubleshooting Failed CI/CD**
-
-**Common Issues & Solutions:**
-
-| Error | Cause | Solution |
-|-------|-------|----------|
-| `Tests failed` | Broken functionality | Run `docker exec flora-backend pnpm test` locally |
-| `Build failed` | TypeScript errors | Run `docker exec flora-backend pnpm build` locally |
-| `Lint failed` | Code style issues | Run `docker exec flora-frontend pnpm lint --fix` |
-| `type-check script not found` | Missing script in package.json | Rebuild: `pnpm docker:dev:build` |
-
-**Development Workflow:**
-1. 🔧 Make changes locally
-2. 🧪 Run pre-push checklist (see above)
-3. 📤 Push to your branch
-4. 👀 Monitor GitHub Actions results
-5. 🔄 Fix any failures and repeat
+**Frontend essentials**
+- `VITE_AUTH0_DOMAIN`, `VITE_AUTH0_CLIENT_ID`, `VITE_AUTH0_AUDIENCE`
+- `VITE_API_URL` (default `http://localhost:3001/api`)
+- `VITE_STRIPE_PUBLISHABLE_KEY`
+- `VITE_APP_NAME`, `VITE_APP_URL`
 
 ---
 
-## 🗃️ **Database & Prisma Workflow**
+## Demo Data & Test Accounts
+Running the backend seed (`db:seed` or `db:setup`) loads:
+- Sample floral products, categories, and collections
+- Melbourne delivery zones and rate tables
+- Auth0‑compatible user placeholders (`test@flora.com`, `demo@flora.com`)
+- Subscription plans and Stripe price placeholders
 
-### **Understanding Prisma Commands**
-
-| Command | What It Does | Creates Migration Files? | When To Use |
-|---------|--------------|-------------------------|-------------|
-| `db:migrate` | Creates migration file + applies it | ✅ YES | When YOU change schema.prisma |
-| `db:push` | Directly updates DB schema | ❌ NO | ⚠️ NEVER in team projects! |
-| `db:seed` | Fills database with sample data | N/A | After migrations or when you need test data |
-| `docker:setup` | Runs migrations + seed | N/A | After pulling teammate's schema changes |
-
-### **The Proper Prisma Workflow**
-
-#### **Scenario 1: YOU Make Schema Changes**
-
-```bash
-# 1. Edit schema.prisma (add field, change type, etc.)
-# Example: Add "stock" field to Product model
-
-# 2. Create migration (Docker environment)
-docker exec -it flora-backend pnpm db:migrate
-# This will:
-#   - Prompt for migration name (e.g., "add_stock_field")
-#   - Create migration file in prisma/migrations/
-#   - Apply migration to your local database
-#   - Update Prisma Client
-
-# 3. Commit BOTH files to git
-git add apps/backend/prisma/schema.prisma
-git add apps/backend/prisma/migrations/
-git commit -m "feat: add stock tracking to products"
-git push
-```
-
-#### **Scenario 2: TEAMMATE Made Schema Changes (You Pull Their Code)**
-
-```bash
-# 1. Pull latest code
-git pull
-
-# 2. Restart backend to reload code
-pnpm docker:restart-backend
-
-# 3. Apply migrations + reseed
-pnpm docker:setup
-# This runs: prisma migrate deploy && prisma db seed
-#   - migrate deploy: Applies new migration files
-#   - db seed: Refreshes sample data
-```
-
-#### **Scenario 3: Running Locally (Without Docker)**
-
-```bash
-# YOU make changes:
-pnpm --filter backend db:migrate    # Create + apply migration
-git add apps/backend/prisma/
-git commit -m "feat: update schema"
-
-# TEAMMATE pulls changes:
-pnpm --filter backend db:migrate    # Apply new migrations
-pnpm --filter backend db:seed       # (Optional) Refresh test data
-```
-
-### **Common Prisma Scenarios**
-
-**Q: I added a new field to schema.prisma, what do I do?**
-```bash
-# Docker:
-docker exec -it flora-backend pnpm db:migrate
-
-# Local:
-pnpm --filter backend db:migrate
-
-# Then commit migration files!
-```
-
-**Q: My teammate added a field, I pulled their code, now what?**
-```bash
-# Docker (recommended):
-pnpm docker:restart-backend
-pnpm docker:setup
-
-# Local:
-pnpm --filter backend db:migrate
-```
-
-**Q: When do I need to run db:seed?**
-```bash
-# Only when you want to refresh test data:
-# - After migration (to get sample products)
-# - When database is empty
-# - When testing features
-
-# Docker:
-pnpm docker:seed
-
-# Local:
-pnpm --filter backend db:seed
-```
-
-**Q: What's wrong with db:push?**
-```bash
-# ❌ db:push = No migration files (teammates won't get your changes!)
-# ✅ db:migrate = Creates migration files (proper team workflow)
-
-# Rule: NEVER use db:push in team projects
-```
-
-### **Migration Best Practices**
-
-✅ **DO:**
-- Use `db:migrate` for all schema changes
-- Commit migration files with schema.prisma
-- Run `docker:setup` after pulling teammate's schema changes
-- Keep UPSERT pattern in seed.ts (works on fresh + existing databases)
-
-❌ **DON'T:**
-- Use `db:push` in team projects (skips migration files!)
-- Forget to commit migration files
-- Manually edit migration files (let Prisma generate them)
-- Assume teammates' databases auto-update (they need to run migrations)
+Use these seeded users for local demos; map them to actual Auth0 profiles when integrating with a live tenant. See `docs/TESTING_GUIDE.md` for additional workflows.
 
 ---
 
-## 🛠️ **Tech Stack**
+## Core Scripts
 
-### **Frontend**
-- ⚛️ **React 19** with TypeScript
-- ⚡ **Vite** for fast development
-- 🔐 **Auth0** for authentication
-- 🎨 **Custom CSS** styling
-
-### **Backend**
-- 🟢 **Node.js + Express** with TypeScript
-- 🗃️ **Prisma ORM** with PostgreSQL
-- 🔐 **Auth0** JWT authentication
-- 📧 **Email service** integration
-- 💳 **Stripe** payment processing
-
-### **Development**
-- 📦 **pnpm** workspaces (monorepo)
-- 🐳 **Docker** containerization
-- 🧪 **Automated testing** with CI/CD
-- 🇦🇺 **Melbourne delivery** system
+| Script | Description |
+|--------|-------------|
+| `pnpm --filter backend dev` | Run API with live reload |
+| `pnpm --filter backend db:setup` | Apply migrations and seed data |
+| `pnpm --filter backend db:seed` | Reseed without recreating schema |
+| `pnpm --filter frontend dev` | Run Vite dev server |
+| `pnpm docker:dev:bg` | Start full stack via Docker |
+| `pnpm docker:restart-backend` / `docker:restart-frontend` | Restart individual services |
 
 ---
 
-## 📁 **Project Structure**
+## Testing & Quality Gates
 
-```
-holbertonschool-final_project/
-├── apps/
-│   ├── frontend/              # React TypeScript app
-│   │   ├── src/
-│   │   │   ├── components/    # Reusable UI components
-│   │   │   ├── pages/         # Page components
-│   │   │   ├── hooks/         # Custom React hooks
-│   │   │   └── services/      # API communication
-│   │   └── package.json
-│   └── backend/               # Node.js Express API
-│       ├── src/
-│       │   ├── controllers/   # HTTP request handlers
-│       │   ├── services/      # Business logic
-│       │   ├── routes/        # API endpoints
-│       │   ├── middleware/    # Auth, validation, etc.
-│       │   └── config/        # Database, auth config
-│       ├── prisma/
-│       │   ├── schema.prisma  # Database schema
-│       │   └── seed.ts        # Test data
-│       └── package.json
-├── docs/                      # Documentation
-│   ├── TESTING_GUIDE.md       # Comprehensive testing guide
-│   └── SUBSCRIPTIONS.md       # Subscription system docs
-├── .github/workflows/         # CI/CD automation
-└── docker-compose*.yml       # Docker configuration
-```
+| Target | Command | Notes |
+|--------|---------|-------|
+| Backend unit/integration | `pnpm --filter backend test` | Jest suites (payments, auth, subscriptions, AI, etc.) |
+| Coverage report | `pnpm --filter backend test:coverage` | Generates coverage summary |
+| Frontend lint | `pnpm --filter frontend lint` | ESLint with React & TypeScript rules |
+| Frontend type check | `pnpm --filter frontend type-check` | Verifies TS configuration |
+
+Stripe webhook and AI scenarios have dedicated guides in `docs/`.
 
 ---
 
-## 🚨 **Common Issues & Solutions**
-
-### **Problem: "Module not found" errors**
-```bash
-# Solution: Rebuild containers with fresh dependencies
-pnpm docker:dev:build
-```
-
-### **Problem: Database connection errors**
-```bash
-# Solution: Restart backend and setup database
-pnpm docker:restart-backend
-pnpm docker:setup
-```
-
-### **Problem: Old data showing up**
-```bash
-# Solution: Refresh test data (no restart needed)
-docker exec flora-backend pnpm db:seed
-```
-
-### **Problem: "No products found" in tests**
-```bash
-# Solution: Make sure database is seeded
-docker exec flora-backend pnpm db:seed
-```
-
-### **Problem: Everything is broken**
-```bash
-# Nuclear option: Clean and rebuild everything
-pnpm docker:clean-project
-pnpm docker:dev:build
-pnpm docker:setup
-```
+## Troubleshooting
+- **Dependency changes** – rerun `pnpm install` (local) or `pnpm docker:dev:build` (containers).
+- **Database drift** – `pnpm --filter backend db:migrate` or `pnpm docker:setup`.
+- **Old data** – reseed with `pnpm --filter backend db:seed`.
+- **Auth/Stripe issues** – confirm `.env` secrets and webhook tunnels (ngrok) are configured.
+- **CI failures** – review GitHub Actions logs; ensure tests and linting pass locally.
 
 ---
 
-## 🎯 **Demo Day Ready Features**
-
-### **Shopping & Checkout**
-- ✅ **3 purchase types** (one-time, recurring subscription, spontaneous subscription)
-- ✅ **Calendar date picker** (select delivery dates 1-90 days ahead)
-- ✅ **Smart validation** (Melbourne postcodes 3000-3199 with state verification)
-- ✅ **AUD pricing** ($8.99 standard, $15.99 express delivery)
-- ✅ **Stripe payments** (secure payment intent flow)
-
-### **User Experience**
-- ✅ **Auth0 authentication** (email/password + Google login)
-- ✅ **User Profile page** (stats: orders, subscriptions, total spent)
-- ✅ **Order History** (paginated list of past orders)
-- ✅ **Subscription management** (pause, resume, cancel active subscriptions)
-- ✅ **Email confirmations** (automated order confirmation emails)
-
-### **Technical Excellence**
-- ✅ **64 automated tests** (Jest + integration tests passing)
-- ✅ **CI/CD pipeline** (GitHub Actions with backend tests)
-- ✅ **Melbourne delivery zones** (100+ postcode validation)
-- ✅ **Real order integration** (subscriptions create actual orders)
-- ✅ **Graceful error handling** (validates but degrades gracefully if APIs fail)
+## Documentation
+- `docs/TESTING_GUIDE.md` – End‑to‑end testing checklist
+- `docs/SUBSCRIPTIONS.md` – Subscription flows and Stripe setup
+- `docs/AI_Message_Guide.md` – Gemini integration notes
+- `docs/Stripe-cli_Testing_Guide.md` – Webhook testing via Stripe CLI
+- `docs/stripe_payment_webhook_flow.md` – Payment lifecycle reference
 
 ---
 
-## 👥 **Team**
+## Future Development
+- **Personalised gifting** – richer recipient profiles, reminders, and custom packaging add-ons.
+- **Design studio** – interactive bouquet builder and augmented-reality previews for arrangements.
+- **Marketplace expansion** – florist partner onboarding, order routing, and supplier analytics.
+- **Sustainability insights** – carbon-conscious delivery options and seasonal growing guidance.
+- **Operations tooling** – staff dashboards for fulfillment, delivery scheduling, and customer support workflows.
 
-Created by the Holberton team:
-- **Anthony**
-- **Bevan**
-- **Xiaoling**
-- **Lily**
+---
 
-## 📄 **License**
+## Maintainers & License
 
-MIT License - feel free to use this project for learning and demonstration purposes.
+Created by **Anthony**, **Bevan**, **Xiaoling**, and **Lily** for the Holberton School final project.  
+Released under the **MIT License**. Contributions and feedback are welcome.
