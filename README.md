@@ -1,6 +1,6 @@
 # Flora – Modern Floral Marketplace
 
-Flora is a full‑stack ecommerce experience dedicated to bouquets and floral subscriptions. The project pairs a React 19 TypeScript storefront with an Express/Prisma API, Stripe billing, Auth0 authentication, and Melbourne‑specific delivery validation.
+Flora is a full‑stack ecommerce experience dedicated to bouquets and floral subscriptions. The project pairs a React 19 TypeScript storefront with an Express/Prisma API, augmented by curated discovery filters, Stripe billing, Auth0 authentication, AI-powered gift message suggestions.
 
 ---
 
@@ -26,14 +26,14 @@ Flora is a full‑stack ecommerce experience dedicated to bouquets and floral su
 ---
 
 ## Key Features
-- **Bouquet commerce** – one‑time orders, scheduled subscriptions, and spontaneous surprise deliveries.
-- **Discovery tools** – rich filtering (price, season, mood, occasion), search suggestions, and curated seasonal collections.
-- **Authentication & carting** – Auth0 login, persistent carts, and guest-friendly flows.
-- **Payments** – Stripe payment intents with support for one-off charges and subscription billing.
-- **Messaging** – Nodemailer SMTP order confirmations and Gemini-powered gift message suggestions.
-- **Delivery intelligence** – postcode validation for metropolitan Melbourne and shipping cost breakdowns per delivery date.
-- **Customer hub** – profile dashboard, detailed order history, and subscription pause/resume/cancel controls.
-- **Operational tooling** – Prisma migrations & seeding, sample accounts, targeted backend test suites, and CI integration.
+- **Bouquet commerce** fuels one-time orders, scheduled subscriptions, and spontaneous surprise deliveries.
+- **Discovery tools** surface rich filtering by price, season, mood, and occasion alongside search suggestions and curated seasonal collections.
+- **Authentication & carting** provide Auth0 login, persistent carts, and guest-friendly checkout flows.
+- **Payments** rely on Stripe payment intents that support both one-off charges and subscription billing.
+- **Messaging** sends Nodemailer SMTP order confirmations after purchase and lets shoppers craft pre-purchase gift notes with Gemini-powered suggestions.
+- **Delivery intelligence** enforces postcode validation for metropolitan Melbourne and details shipping cost breakdowns per delivery date.
+- **Customer hub** offers a profile dashboard with detailed order history plus pause, resume, and cancel controls for subscriptions.
+- **Operational tooling** covers Prisma migrations, seeding workflows, sample accounts, targeted backend test suites, and CI integration.
 
 ---
 
