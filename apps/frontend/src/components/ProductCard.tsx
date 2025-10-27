@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import type { Product } from '../types';
 import { useCart } from '../contexts/CartContext';
 import { getImageUrl } from '../services/api';
-import './ProductCard.css';
+import '../styles/ProductCard.css';
 
 /**
  * ProductCard Component

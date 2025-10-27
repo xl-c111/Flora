@@ -12,7 +12,7 @@ import SubscriptionsPage from "./pages/SubscriptionsPage";
 import UserProfile from "./pages/UserProfile";
 import OrderHistory from "./pages/OrderHistory";
 import CartPage from "./pages/CartPage";
-import CheckoutPage from "./pages/Checkout";
+import CheckoutPage from "./pages/CheckoutPage";
 import OrderConfirmationPage from "./pages/OrderConfirmationPage";
 function App() {
   const [loading, setLoading] = useState(true);

@@ -1,6 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './Footer.css';
+import '../styles/Footer.css';
+import flag1 from '../assets/flag-1.svg';
+import flag2 from '../assets/flag-2.svg';
+import logoSvg from '../assets/flora-logo.svg';
+import logoTextSvg from '../assets/flora-text-cursive.svg';
 
 const Footer: React.FC = () => {
   return (
@@ -8,8 +12,8 @@ const Footer: React.FC = () => {
       {/* Acknowledgment Section */}
       <div className="acknowledgment-section">
         <div className="flags">
-          <img src="src/assets/flag-1.svg"></img>
-          <img src="src/assets/flag-2.svg"></img>
+          <img src={flag1} alt="Aboriginal flag" />
+          <img src={flag2} alt="Torres Strait Islander flag" />
         </div>
         <p className="acknowledgment-text">
           Flora acknowledges the Traditional Owners of Country throughout Australia and acknowledges
@@ -23,12 +27,10 @@ const Footer: React.FC = () => {
         {/* Brand Name */}
         <div className="footer-brand">
           <div className="logo-image">
-          <a href="/">
-            <img src="src/assets/flora-logo.svg" alt="flora logo" width="75px">
-            </img>
-            <img src="src/assets/flora-text-cursive.svg" alt="flora text" width="150px">
-            </img>
-          </a>
+            <Link to="/">
+              <img src={logoSvg} alt="flora logo" width="75" />
+              <img src={logoTextSvg} alt="flora text" width="150" />
+            </Link>
           </div>
         </div>
 
