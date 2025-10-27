@@ -6,6 +6,8 @@ import orderService from "../services/orderService";
 import type { Order } from "../services/orderService";
 import { getImageUrl } from "../services/api";
 import "../styles/OrderConfirmationPage.css";
+import logoSvg from '../assets/flora-logo.svg';
+import logoTextSvg from '../assets/flora-text-cursive.svg';
 
 const OrderConfirmationPage: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>();
@@ -195,12 +197,10 @@ const OrderConfirmationPage: React.FC = () => {
         {/* Logo */}
         <div className="logo-section">
           <div className="logo-image">
-          <a href="/">
-            <img src="/src/assets/flora-logo.svg" alt="flora logo" width="75px">
-            </img>
-            <img src="/src/assets/flora-text-cursive.svg" alt="flora text" width="150px">
-            </img>
-          </a>
+            <Link to="/">
+              <img src={logoSvg} alt="flora logo" width="75" />
+              <img src={logoTextSvg} alt="flora text" width="150" />
+            </Link>
           </div>
         </div>
 

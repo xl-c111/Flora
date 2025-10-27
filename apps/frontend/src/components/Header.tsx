@@ -3,7 +3,9 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 import SearchBar from './SearchBar';
-import './Header.css';
+import '../styles/Header.css';
+import logoSvg from '../assets/flora-logo.svg';
+import logoTextSvg from '../assets/flora-text-cursive.svg';
 
 interface HeaderProps {
   isLanding?: boolean;
@@ -14,6 +16,7 @@ const Header: React.FC<HeaderProps> = ({ isLanding = false }) => {
   const { user, login, logout, loading: authLoading } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   // Navigation and search functionality
   const navigate = useNavigate();
@@ -46,7 +49,26 @@ const Header: React.FC<HeaderProps> = ({ isLanding = false }) => {
     };
   }, [isDropdownOpen]);
 
-  const headerClass = isLanding ? 'flora-header' : 'flora-header flora-header-sticky';
+  // Compact-on-scroll behavior
+  useEffect(() => {
+    const onScroll = () => {
+      const scrolled = window.scrollY > 16;
+      setIsScrolled(scrolled);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+  // Tall header only on landing by default; compact elsewhere.
+  // Also add a smaller style once the user scrolls.
+  const headerClass = [
+    'flora-header',
+    !isLanding && 'flora-header-sticky',
+    !isLanding && 'compact',
+    isScrolled && 'scrolled',
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <header className={headerClass}>
@@ -267,12 +289,10 @@ const Header: React.FC<HeaderProps> = ({ isLanding = false }) => {
         </div>
         <div className="banner-image">
           <div className="logo-image">
-          <a href="/">
-            <img src="src/assets/flora-logo.svg" alt="flora logo" width="75px">
-            </img>
-            <img src="src/assets/flora-text-cursive.svg" alt="flora text" width="150px">
-            </img>
-          </a>
+            <Link to="/">
+              <img src={logoSvg} alt="flora logo" width="75px" />
+              <img src={logoTextSvg} alt="flora text" width="150px" />
+            </Link>
           </div>
         </div>
         <div className="banner-menu">

@@ -8,6 +8,8 @@ import { useCheckout } from '../hooks/useCheckout';
 import deliveryService, { type DeliveryInfo } from '../services/deliveryService';
 import type { CheckoutFormData } from '../components/CheckoutForm';
 import '../styles/CheckoutPage.css';
+import logoSvg from '../assets/flora-logo.svg';
+import logoTextSvg from '../assets/flora-text-cursive.svg';
 
 const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
@@ -133,10 +135,8 @@ const CheckoutPage: React.FC = () => {
         <div className="checkout-left">
           <div className="checkout-logo-placeholder">
             <a href="/">
-            <img src="src/assets/flora-logo.svg" alt="flora logo" width="75px" height="150px">
-            </img>
-            <img src="src/assets/flora-text-cursive.svg" alt="flora text" width="150px" height="150px">
-            </img>
+              <img src={logoSvg} alt="flora logo" width="75" height="150" />
+              <img src={logoTextSvg} alt="flora text" width="150" height="150" />
             </a>
           </div>
           {getErrorDisplay()}
