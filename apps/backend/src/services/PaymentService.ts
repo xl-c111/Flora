@@ -12,7 +12,7 @@ export class PaymentService {
   private emailService: EmailService;
 
   constructor() {
-    this.emailService = new EmailService();
+    this.emailService = EmailService.getInstance();
   }
 
   async createPaymentIntent(data: {
