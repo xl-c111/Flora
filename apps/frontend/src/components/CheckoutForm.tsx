@@ -59,7 +59,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
   selectedDeliveryType,
   onDeliveryTypeChange,
 }) => {
-  const { login, user, loading } = useAuth();
+  const { login, user } = useAuth();
   const { state: cartState, setGiftMessage } = useCart();
   const [isEditingMessage, setIsEditingMessage] = useState(false);
   const [savedMessage, setSavedMessage] = useState({ to: "", from: "", message: "" });
