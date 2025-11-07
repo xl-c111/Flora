@@ -7,20 +7,21 @@ export const stockCheckMiddleware = async (req: Request, res: Response, next: Ne
       for (const item of req.body.items) {
         const product = await prisma.product.findUnique({
           where: { id: item.productId },
+          select: { name: true, isActive: true, inStock: true, stockCount: true },
         });
 
-        if (!product || !product.inStock) {
-          return res.status(400).json({
-            success: false,
-            error: `Product ${product?.name || item.productId} is sold out`,
-          });
+        const label = product?.name || item.productId;
+
+        if (!product || product.isActive === false) {
+          return res.status(400).json({ success: false, error: `Product ${label} is not available` });
+        }
+
+        if (!product.inStock) {
+          return res.status(400).json({ success: false, error: `Product ${label} is out of stock` });
         }
 
         if (product.stockCount < item.quantity) {
-          return res.status(400).json({
-            success: false,
-            error: `Product ${product.name} has insufficient stock, only ${product.stockCount} left`,
-          });
+          return res.status(400).json({ success: false, error: `Product ${label} has only ${product.stockCount} left` });
         }
       }
     }
