@@ -310,6 +310,18 @@ export class PaymentService {
         const order = await prisma.order.findUnique({
           where: { id: orderId },
           include: {
+            items: {
+              include: {
+                product: {
+                  select: {
+                    id: true,
+                    name: true,
+                    priceCents: true,
+                    imageUrl: true,
+                  },
+                },
+              },
+            },
             user: {
               select: {
                 id: true,

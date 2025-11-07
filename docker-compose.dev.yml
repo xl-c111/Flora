@@ -14,6 +14,8 @@ services:
       - AUTH0_CLIENT_ID=tegmEuc40IvXfYFDLIRnJmbsa1izkTVL
       - AUTH0_CLIENT_SECRET=your-auth0-client-secret
     command: ["pnpm", "dev"]
+    env_file:
+      - apps/backend/.env
     volumes:
       - ./apps/backend:/app/apps/backend
       - /app/apps/backend/node_modules
@@ -21,6 +23,8 @@ services:
     ports:
       - "3001:3001"
       - "5555:5555"  # Prisma Studio
+    networks:
+      - flora-network
 
   frontend:
     build:
@@ -39,6 +43,8 @@ services:
     working_dir: /app/apps/frontend
     ports:
       - "5173:5173"
+    networks:
+      - flora-network
 
   postgres:
     image: postgres:15-alpine
@@ -49,6 +55,8 @@ services:
     ports:
       - "5432:5432"
     command: postgres -c log_statement=all -c log_destination=stderr
+    networks:
+      - flora-network
 
   stripe-cli:
     image: stripe/stripe-cli:latest
@@ -60,3 +68,7 @@ services:
       - backend
     networks:
       - flora-network
+
+networks:
+  flora-network:
+    driver: bridge
