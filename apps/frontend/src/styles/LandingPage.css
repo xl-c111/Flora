@@ -1,6 +1,5 @@
 .details-container{
     font-family: var(--primary-font-body-copy);
-    /* background-color: blue; */
     width: 90%;
     height: 11rem;
     margin:auto;
@@ -8,7 +7,6 @@
     display:flex;
 
           .details-card{
-                /* background-color: red; */
                 width: 280px;
                 height: 120px;
                 margin:auto;
@@ -16,11 +14,9 @@
 
                 .details-icon{
                     height: 80%;
-                    /* background-color:pink; */
 
                     img{
                         height:100%;
-                        /* width:300px; */
                 }
             }
           }
@@ -34,15 +30,12 @@
 
 .picture-container{
     font-family: var(--primary-font-body-copy);
-    /* background-color: red; */
     width:auto;
     height: 10rem;
 
         .image-container{
-            /* background-color: violet; */
             width:90%;
             height:100%;
-            /* border-radius: 500px 50px 500px 50px; */
             margin:auto;
 
             img{
@@ -50,7 +43,7 @@
                 height:100%;
                 object-fit:cover;
                 border-radius: 500px 50px 500px 50px;
-                border: 1px solid var(--button-colour3);  
+                border: 1px solid var(--button-colour3);
                 object-position: 0% 80%;
             }
         }
@@ -60,7 +53,6 @@
 
 .shop-by-container{
     font-family: var(--primary-font-body-copy);
-    /* background-color: orange; */
     width: 90%;
     height: 400px;
     display:flex;
@@ -71,24 +63,20 @@
     .shop-by-card{
         width: 220px;
         height: 350px;
-        /* background-color: blue; */
         margin:auto;
 
         a{
-            /* background-color:red; */
             display:block;
         }
         .shop-by-image{
             width: 220px;
             height: 300px;
-            /* background-color: violet; */
-            
+
             img{
                 width: 100%;
                 height: 100%;
                 object-fit: fill;
                 border-radius: 30px;
-                /* border: 1px solid var(--text-colour); */
                 box-shadow: 0 8px 25px rgba(0, 0, 0, .25);
             }
         }
@@ -105,16 +93,159 @@
 
 .card-container{
     font-family: var(--primary-font-body-copy);
-    /* background-color: green; */
     width: auto;
     height: 600px;
     align-items: center;
     justify-content: center;
 
         .product-card-grid-container{
-            /* background-color: red; */
             max-width:1200px;
             margin:auto;
         }
+}
+
+/* Responsive Adjustments for Landing Page */
+@media (max-width: 1024px) {
+    .details-container {
+        width: 95%;
+        height: auto;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .details-container .details-card {
+        width: 45%;
+        min-width: 250px;
+    }
+
+    .shop-by-container {
+        width: 95%;
+        height: auto;
+        flex-wrap: wrap;
+    }
+
+    .shop-by-container .shop-by-card {
+        width: 200px;
+        height: auto;
+    }
+
+    .shop-by-container .shop-by-card .shop-by-image {
+        width: 200px;
+        height: 260px;
+    }
+
+    .card-container {
+        height: auto;
+        min-height: 500px;
+    }
+}
+
+@media (max-width: 768px) {
+    .details-container {
+        flex-direction: column;
+        height: auto;
+        padding: 1rem 0;
+    }
+
+    .details-container .details-card {
+        width: 90%;
+        max-width: 350px;
+        height: auto;
+        margin-bottom: 1rem;
+    }
+
+    .picture-container {
+        height: 8rem;
+    }
+
+    .picture-container .image-container img {
+        border-radius: 300px 30px 300px 30px;
+    }
+
+    .shop-by-container {
+        width: 95%;
+        height: auto;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .shop-by-container .shop-by-card {
+        width: 85%;
+        max-width: 280px;
+        height: auto;
+        margin-bottom: 1.5rem;
+    }
+
+    .shop-by-container .shop-by-card .shop-by-image {
+        width: 100%;
+        height: 320px;
+    }
+
+    .card-container {
+        height: auto;
+        padding: 1rem 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .details-container {
+        gap: 8px;
+    }
+
+    .details-container .details-card {
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        height: auto;
+        padding: 0.5rem;
+        min-height: auto;
+    }
+
+    .details-container .details-card .details-icon {
+        height: 60px;
+        margin-bottom: 0.5rem;
+    }
+
+    .details-container .details-card .details-text {
+        width: 100%;
+    }
+
+    .details-container .details-card .details-text p {
+        font-size: 13px;
+    }
+
+    .picture-container {
+        height: 6rem;
+    }
+
+    .picture-container .image-container img {
+        border-radius: 200px 25px 200px 25px;
+    }
+
+    .shop-by-container {
+        height: auto;
+        margin-top: 15px;
+    }
+
+    .shop-by-container .shop-by-card {
+        width: 95%;
+        margin-bottom: 1rem;
+    }
+
+    .shop-by-container .shop-by-card .shop-by-image {
+        height: 280px;
+        border-radius: 25px;
+    }
+
+    .shop-by-container .shop-by-card .shop-by-text {
+        font-size: 1.1rem;
+        line-height: 40px;
+    }
+
+    .card-container {
+        height: auto;
+        padding: 1rem 0;
+    }
 }
 
