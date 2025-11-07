@@ -24,10 +24,19 @@ interface EmailConfig {
 }
 
 export class EmailService {
+  private static instance: EmailService | null = null;
   private transporter: nodemailer.Transporter;
 
+  // Prefer using getInstance() to reuse pooled connections
+  static getInstance(): EmailService {
+    if (!EmailService.instance) {
+      EmailService.instance = new EmailService();
+    }
+    return EmailService.instance;
+  }
+
   constructor() {
-    const config: EmailConfig = {
+    const baseOptions: any = {
       host: process.env.SMTP_HOST || "smtp.gmail.com",
       port: parseInt(process.env.SMTP_PORT || "587"),
       secure: process.env.SMTP_SECURE === "true",
@@ -37,24 +46,39 @@ export class EmailService {
       },
     };
 
-    this.transporter = nodemailer.createTransport(config);
+    // Only enable pooling outside of test to keep tests simple and deterministic
+    const transportOptions: any =
+      process.env.NODE_ENV === 'test'
+        ? baseOptions
+        : {
+            ...baseOptions,
+            pool: true,
+            maxConnections: parseInt(process.env.SMTP_MAX_CONNECTIONS || "3"),
+            maxMessages: parseInt(process.env.SMTP_MAX_MESSAGES || "100"),
+            rateDelta: parseInt(process.env.SMTP_RATE_DELTA || "1000"),
+            rateLimit: parseInt(process.env.SMTP_RATE_LIMIT || "5"),
+          };
 
-    // Verify connection on startup
-    this.transporter.verify((error) => {
-      if (error) {
-        console.error("❌ SMTP connection failed:", error.message);
-      } else {
-        console.log("✅ SMTP server is ready to send emails");
-      }
-    });
+    this.transporter = nodemailer.createTransport(transportOptions);
+
+    // Skip verify in test to avoid noisy logs and timing variability
+    if (process.env.NODE_ENV !== 'test') {
+      this.transporter.verify((error) => {
+        if (error) {
+          console.error("❌ SMTP connection failed:", error.message);
+        } else {
+          console.log("✅ SMTP server is ready to send emails");
+        }
+      });
+    }
   }
 
   // Helper method to get professional sender format
   private getProfessionalSender(): string {
-    // Use professional display name with the authenticated email
-    // Format: "Flora Marketplace <authenticated@email.com>"
-    const senderEmail = process.env.SMTP_USER!;
-    return `"Flora Marketplace" <${senderEmail}>`;
+    // Allow overriding display name and from-address via env without breaking tests
+    const fromName = process.env.FROM_NAME || 'Flora Marketplace';
+    const fromEmail = process.env.FROM_EMAIL || process.env.SMTP_USER!;
+    return `"${fromName}" <${fromEmail}>`;
   }
 
   async sendWelcomeEmail(user: User): Promise<void> {
@@ -125,8 +149,11 @@ export class EmailService {
 
     // Build CID for local product images (any relative path), else fallback to absolute URL
     const backendBase = process.env.BACKEND_PUBLIC_URL || 'http://localhost:3001';
+    // Default to embedding item images; set EMAIL_INLINE_ITEM_IMAGES=false to disable
+    const inlineItemImages = process.env.EMAIL_INLINE_ITEM_IMAGES !== 'false';
     const resolveImageRef = (u?: string | null, idx?: number): { src: string } => {
       if (!u) return { src: '' };
+      if (!inlineItemImages) return { src: '' }; // Skip embedding item images for faster sends
       // Absolute remote URL → use as-is
       if (/^https?:\/\//i.test(u)) return { src: u };
 

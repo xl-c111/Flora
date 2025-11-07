@@ -78,7 +78,7 @@ export class OrderService {
   private emailService: EmailService;
 
   constructor() {
-    this.emailService = new EmailService();
+    this.emailService = EmailService.getInstance();
   }
 
   // Create new order (guest or user)
@@ -428,16 +428,17 @@ export class OrderService {
       },
     });
 
-    // Create delivery tracking record
-    await this.createDeliveryTracking(order);
-
-    // Send confirmation email (don't block order on email errors)
+    // Send confirmation email ASAP (before ancillary tracking work)
+    // Don't block order on email errors
     try {
       await this.emailService.sendOrderConfirmation(order as any);
       console.log(`📧 Order confirmation queued for order ${order.orderNumber} ->`, order.guestEmail || order.user?.email);
     } catch (err: any) {
       console.error('❌ Failed to send order confirmation on createOrder:', err?.message || err);
     }
+
+    // Create delivery tracking record (non-critical for email)
+    await this.createDeliveryTracking(order);
 
     return order;
   }
