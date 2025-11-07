@@ -15,6 +15,7 @@ const Header: React.FC<HeaderProps> = ({ isLanding = false }) => {
   const { getItemCount } = useCart();
   const { user, login, logout, loading: authLoading } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -59,6 +60,18 @@ const Header: React.FC<HeaderProps> = ({ isLanding = false }) => {
     onScroll();
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileMenuOpen]);
   // Tall header only on landing by default; compact elsewhere.
   // Also add a smaller style once the user scrolls.
   const headerClass = [
@@ -196,6 +209,28 @@ const Header: React.FC<HeaderProps> = ({ isLanding = false }) => {
             </svg>
             <span className="cart-counter">{getItemCount()}</span>
           </Link>
+
+          {/* Hamburger Menu Button - Mobile Only */}
+          <button
+            className="hamburger-button"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
         </div>
       </div>
 
@@ -315,6 +350,73 @@ const Header: React.FC<HeaderProps> = ({ isLanding = false }) => {
           </ul>
         </div>
       </div>
+
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div className="mobile-menu-overlay" onClick={() => setIsMobileMenuOpen(false)}>
+          <div className="mobile-menu" onClick={(e) => e.stopPropagation()}>
+            <div className="mobile-menu-header">
+              <h2>Menu</h2>
+              <button
+                className="mobile-menu-close"
+                onClick={() => setIsMobileMenuOpen(false)}
+                aria-label="Close menu"
+              >
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+
+            <nav className="mobile-menu-nav">
+              <div className="mobile-menu-section">
+                <h3>Shop</h3>
+                <Link to="/products" onClick={() => setIsMobileMenuOpen(false)}>
+                  Shop All Flowers
+                </Link>
+                <Link to="/products?filter=colour" onClick={() => setIsMobileMenuOpen(false)}>
+                  Shop By Colour
+                </Link>
+                <Link to="/products?filter=occasion" onClick={() => setIsMobileMenuOpen(false)}>
+                  Shop By Occasion
+                </Link>
+                <Link to="/bundles" onClick={() => setIsMobileMenuOpen(false)}>
+                  Bundle Up and Save
+                </Link>
+              </div>
+
+              <div className="mobile-menu-section">
+                <h3>Categories</h3>
+                <Link to="/products?category=romantic" onClick={() => setIsMobileMenuOpen(false)}>
+                  Romantic / Love
+                </Link>
+                <Link to="/products?category=cheerful" onClick={() => setIsMobileMenuOpen(false)}>
+                  Cheerful / Everyday Joy
+                </Link>
+                <Link to="/products?category=elegant" onClick={() => setIsMobileMenuOpen(false)}>
+                  Elegant / Sophisticated
+                </Link>
+                <Link to="/products?category=seasonal" onClick={() => setIsMobileMenuOpen(false)}>
+                  Seasonal / Nature Inspired
+                </Link>
+                <Link to="/products?category=special" onClick={() => setIsMobileMenuOpen(false)}>
+                  Special Occasion
+                </Link>
+              </div>
+            </nav>
+          </div>
+        </div>
+      )}
     </header>
   );
 };
