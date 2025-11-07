@@ -431,8 +431,13 @@ export class OrderService {
     // Create delivery tracking record
     await this.createDeliveryTracking(order);
 
-    // Send confirmation email
-    await this.emailService.sendOrderConfirmation(order as any);
+    // Send confirmation email (don't block order on email errors)
+    try {
+      await this.emailService.sendOrderConfirmation(order as any);
+      console.log(`📧 Order confirmation queued for order ${order.orderNumber} ->`, order.guestEmail || order.user?.email);
+    } catch (err: any) {
+      console.error('❌ Failed to send order confirmation on createOrder:', err?.message || err);
+    }
 
     return order;
   }
