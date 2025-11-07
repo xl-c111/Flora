@@ -128,7 +128,8 @@ export const useCheckout = (): UseCheckoutReturn => {
         purchaseType: 'ONE_TIME', // First order is always one-time, subscriptions are for future
         // If user is logged in, use their ID; otherwise guest checkout
         userId: user?.sub,  // Auth0 user ID
-        guestEmail: formData.guestEmail || user?.email || 'guest@example.com',
+        // Only send a real email. Avoid placeholder addresses.
+        guestEmail: formData.guestEmail || (user?.email ?? undefined),
         guestPhone: formData.recipientPhone || '+1234567890',
         items: allItems,
         shippingAddress: {

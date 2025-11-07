@@ -59,7 +59,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
   selectedDeliveryType,
   onDeliveryTypeChange,
 }) => {
-  const { login } = useAuth();
+  const { login, user, loading } = useAuth();
   const { state: cartState, setGiftMessage } = useCart();
   const [isEditingMessage, setIsEditingMessage] = useState(false);
   const [savedMessage, setSavedMessage] = useState({ to: "", from: "", message: "" });
@@ -90,6 +90,17 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
   });
 
   const [errors, setErrors] = useState<Partial<Record<keyof CheckoutFormData, string>>>({});
+
+  // Prefill email from authenticated user when available
+  useEffect(() => {
+    if (user?.email) {
+      setFormData((prev) => (
+        prev.guestEmail && prev.guestEmail.length > 0
+          ? prev
+          : { ...prev, guestEmail: user.email as string }
+      ));
+    }
+  }, [user?.email]);
 
   // Load gift message from cart on mount and when cart changes
   useEffect(() => {
@@ -268,12 +279,16 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
       <section className="checkout-section email-section">
         <div className="section-header-with-link">
           <h2 className="section-title">Email</h2>
-          <button type="button" onClick={login} className="sign-in-link">
-            Sign In
-          </button>
+          {!user && (
+            <button type="button" onClick={login} className="sign-in-link">
+              Sign In
+            </button>
+          )}
         </div>
 
-        <div className="email-banner">Enter your email below.</div>
+        <div className="email-banner">
+          {user?.email ? `Signed in as ${user.email}` : 'Enter your email below.'}
+        </div>
 
         <div className="form-section">
           <div className="form-field">
@@ -284,6 +299,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
               placeholder="Email:"
               value={formData.guestEmail}
               onChange={handleInputChange}
+              readOnly={!!user?.email}
             />
             {errors.guestEmail && <span className="field-error">{errors.guestEmail}</span>}
           </div>
