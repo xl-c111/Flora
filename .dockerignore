@@ -1,0 +1,24 @@
+# Global ignores to shrink build context and speed up caching
+.git
+.gitignore
+node_modules
+**/node_modules
+**/dist
+**/.turbo
+**/.next
+**/.cache
+**/.eslintcache
+**/*.log
+Dockerfile*
+docker-compose*.yml
+*.md
+**/.DS_Store
+
+# Frontend artifacts not needed for backend image
+apps/frontend/node_modules
+apps/frontend/dist
+apps/frontend/.vite
+
+# Local env files (compose mounts the backend .env)
+*.env
+*.env.*

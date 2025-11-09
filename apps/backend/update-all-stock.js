@@ -3,21 +3,30 @@ const prisma = new PrismaClient();
 
 async function updateAllStock() {
   try {
-    // Update all products to have stock
+    const targetCount = parseInt(process.env.RESTOCK_COUNT || '100', 10);
+    const threshold = parseInt(process.env.RESTOCK_THRESHOLD || '10', 10);
+    const restockAll = String(process.env.RESTOCK_ALL || '').toLowerCase() === 'true';
+
+    // Build where clause (only low stock or out-of-stock unless RESTOCK_ALL=true)
+    const where = restockAll
+      ? {}
+      : {
+          OR: [
+            { stockCount: { lt: threshold } },
+            { inStock: false },
+          ],
+        };
+
+    // Update products to have stock
     const result = await prisma.product.updateMany({
-      where: {
-        OR: [
-          { stockCount: { lt: 10 } },
-          { inStock: false }
-        ]
-      },
+      where,
       data: {
         inStock: true,
-        stockCount: 100,
+        stockCount: targetCount,
       },
     });
     
-    console.log(`✅ Updated ${result.count} products to have stock of 100`);
+    console.log(`✅ Updated ${result.count} products to stockCount=${targetCount}${restockAll ? ' (all products)' : ` (threshold < ${threshold} or inStock=false)`}`);
     
     // Show all products with their stock
     const products = await prisma.product.findMany({
