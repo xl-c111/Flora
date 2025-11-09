@@ -152,12 +152,15 @@ describe('EmailService Tests', () => {
 
       await emailService.sendOrderConfirmation(mockOrder as any);
 
-      expect(mockTransporter.sendMail).toHaveBeenCalledWith({
-        from: '"Flora Marketplace" <test@flora.com>',
-        to: 'user@example.com',
-        subject: 'Order Confirmation #FLR202501010001',
-        html: expect.stringContaining('Dear John'),
-      });
+      expect(mockTransporter.sendMail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          from: '"Flora Marketplace" <test@flora.com>',
+          to: 'user@example.com',
+          subject: 'Order Confirmation #FLR202501010001',
+          attachments: expect.any(Array),
+          html: expect.stringContaining('John'),
+        })
+      );
 
       const sentEmail = mockTransporter.sendMail.mock.calls[0][0];
       expect(sentEmail.html).toContain('#FLR202501010001');
@@ -188,12 +191,15 @@ describe('EmailService Tests', () => {
 
       await emailService.sendOrderConfirmation(mockOrder as any);
 
-      expect(mockTransporter.sendMail).toHaveBeenCalledWith({
-        from: '"Flora Marketplace" <test@flora.com>',
-        to: 'guest@example.com',
-        subject: 'Order Confirmation #FLR202501010001',
-        html: expect.stringContaining('Dear Customer'),
-      });
+      expect(mockTransporter.sendMail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          from: '"Flora Marketplace" <test@flora.com>',
+          to: 'guest@example.com',
+          subject: 'Order Confirmation #FLR202501010001',
+          attachments: expect.any(Array),
+          html: expect.stringContaining('Customer'),
+        })
+      );
 
       const sentEmail = mockTransporter.sendMail.mock.calls[0][0];
       expect(sentEmail.html).toContain('Jane Smith');

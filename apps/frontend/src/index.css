@@ -4,41 +4,22 @@
 
 /* Flora Marketplace Styles */
 :root {
-  --primary-color: #10b981;
-  --primary-light: #34d399;
-  --primary-dark: #047857;
-  --secondary-color: #f59e0b;
-  /* --text-primary: red; */
-  --text-secondary: red;
-  --background: #030303;
-  --background-light: #f9fafb;
-  --border: #e5e7eb;
-  --border-light: #f3f4f6;
-  --shadow: rgba(0, 0, 0, 0.1);
-
     --background-colour: #F6F5F4;
     --text-colour: #595E4E;
     --banner-colour-1: #C8D7C4;
     --banner-colour-2: #C8D7C480; /*banner colour with 50% opacity*/
     --border-colour: var(--text-colour);
     --background-menu-colour: #E5E9E0BF; /*75% transparency to #E5E9E0*/
-    --radius-tile: 10px;
     --radius-image: 50px;
     --radius-button: 10px;
-
-    --button-colour: #C8D7C4;
-    --button-text-colour: #595E4E;
-    --button-text-hover-colour: #C8D7C4;
-    --button-hover-colour: #595E4E;
 
     --button-colour1: #C8D7C4;
     --button-colour2: #E0E8E0;
     --button-colour3: #595E4E;
-    
+
     --primary-font-web-copy: "EB Garamond",Georgia, serif;
     --primary-font-body-copy: "Outfit", Arial, sans-serif;
 }
-/* @import "tailwindcss"; */
 
 /* Modern CSS Reset */
 *,
@@ -130,17 +111,6 @@ a {
     display: flex;
 }
 
-.top-nav-bar button{
-    text-decoration: underline;
-    color: var(--text-colour);
-    font-family: var(--primary-font-web-copy);
-    font-size: 20px;
-    font-weight: bold;
-    display: flex;
-    border: none;
-    cursor: pointer;
-} */
-
 a img{
     width:30px;
     height:30px;
@@ -186,4 +156,82 @@ p {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-colour);
+}
+
+/* Responsive Typography */
+@media (max-width: 1024px) {
+  h1 {
+    font-size: 96px;
+  }
+
+  h2 {
+    font-size: 48px;
+  }
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 64px;
+  }
+
+  h2 {
+    font-size: 36px;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 48px;
+  }
+
+  h2 {
+    font-size: 28px;
+  }
+
+  h3 {
+    font-size: 18px;
+  }
+
+  a {
+    font-size: 18px;
+  }
+}
+
+/* Common Animations */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

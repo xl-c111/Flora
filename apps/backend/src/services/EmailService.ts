@@ -1,4 +1,6 @@
 import nodemailer from "nodemailer";
+import fs from 'fs';
+import path from 'path';
 import { User, Order, Subscription } from "@prisma/client";
 
 // Type for order with optional user info
@@ -22,10 +24,19 @@ interface EmailConfig {
 }
 
 export class EmailService {
+  private static instance: EmailService | null = null;
   private transporter: nodemailer.Transporter;
 
+  // Prefer using getInstance() to reuse pooled connections
+  static getInstance(): EmailService {
+    if (!EmailService.instance) {
+      EmailService.instance = new EmailService();
+    }
+    return EmailService.instance;
+  }
+
   constructor() {
-    const config: EmailConfig = {
+    const baseOptions: any = {
       host: process.env.SMTP_HOST || "smtp.gmail.com",
       port: parseInt(process.env.SMTP_PORT || "587"),
       secure: process.env.SMTP_SECURE === "true",
@@ -35,24 +46,39 @@ export class EmailService {
       },
     };
 
-    this.transporter = nodemailer.createTransport(config);
+    // Only enable pooling outside of test to keep tests simple and deterministic
+    const transportOptions: any =
+      process.env.NODE_ENV === 'test'
+        ? baseOptions
+        : {
+            ...baseOptions,
+            pool: true,
+            maxConnections: parseInt(process.env.SMTP_MAX_CONNECTIONS || "3"),
+            maxMessages: parseInt(process.env.SMTP_MAX_MESSAGES || "100"),
+            rateDelta: parseInt(process.env.SMTP_RATE_DELTA || "1000"),
+            rateLimit: parseInt(process.env.SMTP_RATE_LIMIT || "5"),
+          };
 
-    // Verify connection on startup
-    this.transporter.verify((error) => {
-      if (error) {
-        console.error("❌ SMTP connection failed:", error.message);
-      } else {
-        console.log("✅ SMTP server is ready to send emails");
-      }
-    });
+    this.transporter = nodemailer.createTransport(transportOptions);
+
+    // Skip verify in test to avoid noisy logs and timing variability
+    if (process.env.NODE_ENV !== 'test') {
+      this.transporter.verify((error) => {
+        if (error) {
+          console.error("❌ SMTP connection failed:", error.message);
+        } else {
+          console.log("✅ SMTP server is ready to send emails");
+        }
+      });
+    }
   }
 
   // Helper method to get professional sender format
   private getProfessionalSender(): string {
-    // Use professional display name with the authenticated email
-    // Format: "Flora Marketplace <authenticated@email.com>"
-    const senderEmail = process.env.SMTP_USER!;
-    return `"Flora Marketplace" <${senderEmail}>`;
+    // Allow overriding display name and from-address via env without breaking tests
+    const fromName = process.env.FROM_NAME || 'Flora Marketplace';
+    const fromEmail = process.env.FROM_EMAIL || process.env.SMTP_USER!;
+    return `"${fromName}" <${fromEmail}>`;
   }
 
   async sendWelcomeEmail(user: User): Promise<void> {
@@ -100,41 +126,159 @@ export class EmailService {
     const customerName = order.user?.firstName || 'Customer';
     const totalAmount = (order.totalCents / 100).toFixed(2);
     const deliveryAddress = `${order.shippingFirstName} ${order.shippingLastName}\n${order.shippingStreet1}${order.shippingStreet2 ? '\n' + order.shippingStreet2 : ''}\n${order.shippingCity}, ${order.shippingState} ${order.shippingZipCode}`;
+    const items: any[] | undefined = (order as any).items;
+
+    // Prepare attachments (logo first)
+    const logoCid = 'flora-logo';
+    const candidateLogoPaths = [
+      path.join(process.cwd(), 'apps', 'backend', 'assets', 'flora-logo.png'),
+      path.join(__dirname, '..', '..', 'assets', 'flora-logo.png'),
+      path.join(process.cwd(), 'assets', 'flora-logo.png'),
+    ];
+
+    let logoAttachmentPath: string | null = null;
+    for (const p of candidateLogoPaths) {
+      try { if (fs.existsSync(p)) { logoAttachmentPath = p; break; } } catch {}
+    }
+
+    const attachments: Array<{ filename: string; path: string; cid: string; contentType?: string }> = [
+      logoAttachmentPath
+        ? { filename: 'flora-logo.png', path: logoAttachmentPath, cid: logoCid }
+        : { filename: 'flora-logo.png', path: 'https://i.imgur.com/yWZVxUd.png', cid: logoCid },
+    ];
+
+    // Build CID for local product images (any relative path), else fallback to absolute URL
+    const backendBase = process.env.BACKEND_PUBLIC_URL || 'http://localhost:3001';
+    // Default to embedding item images; set EMAIL_INLINE_ITEM_IMAGES=false to disable
+    const inlineItemImages = process.env.EMAIL_INLINE_ITEM_IMAGES !== 'false';
+    const resolveImageRef = (u?: string | null, idx?: number): { src: string } => {
+      if (!u) return { src: '' };
+      if (!inlineItemImages) return { src: '' }; // Skip embedding item images for faster sends
+      // Absolute remote URL → use as-is
+      if (/^https?:\/\//i.test(u)) return { src: u };
+
+      // Relative path → attempt to attach exact file (preserve subfolders and case)
+      const rel = u.startsWith('/') ? u.slice(1) : u; // strip leading '/'
+      const localPathCandidates = [
+        // Running from repo root
+        path.join(process.cwd(), rel),
+        path.join(process.cwd(), 'apps', 'backend', rel),
+        // Running from dist or src
+        path.join(__dirname, '..', '..', rel),
+      ];
+
+      for (const p of localPathCandidates) {
+        try {
+          if (fs.existsSync(p)) {
+            const fileName = path.basename(p);
+            const cid = `item-${idx}-image`;
+            attachments.push({ filename: fileName, path: p, cid });
+            return { src: `cid:${cid}` };
+          }
+        } catch {}
+      }
+
+      // Fallback to absolute URL (won't load in many email clients if localhost)
+      const absolute = u.startsWith('/') ? `${backendBase}${u}` : `${backendBase}/${u}`;
+      return { src: absolute };
+    };
+
+    const itemsHtml = items && items.length
+      ? `
+        <div style="margin-top:4px; text-align:left;">
+          <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;">
+            ${items.map((it, i) => {
+              const unit = (it.priceCents / 100).toFixed(2);
+              const line = ((it.priceCents * it.quantity) / 100).toFixed(2);
+              const ref = resolveImageRef(it.product?.imageUrl || null, i);
+              const name = it.product?.name || 'Product';
+              return `
+              <tr>
+                <td style="padding:10px 0;">
+                  <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;">
+                    <tr>
+                      <td width="72" valign="top" style="padding-right:12px;">
+                        ${ref.src ? `<img src="${ref.src}" alt="${name}" width="64" height="64" style="display:block; width:64px; height:64px; object-fit:cover; border-radius:10px;" />` : ''}
+                      </td>
+                      <td valign="top" style="color:#595E4E; font-size:14px;">
+                        <div style="font-family: Georgia, 'Times New Roman', Times, serif; font-weight:600;">${name}</div>
+                        <div style="margin-top:4px; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;">
+                          Qty ${it.quantity} × $${unit}
+                        </div>
+                      </td>
+                      <td valign="top" align="right" style="color:#595E4E; font-size:14px; white-space:nowrap;">
+                        <strong>$${line}</strong>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>`;
+            }).join('')}
+          </table>
+        </div>
+      ` : '';
 
     if (!customerEmail) {
       console.warn('No email found for order confirmation:', order.id);
       return;
     }
 
+    // attachments prepared above (logo + item images if any)
+
+    // Build and send email
+
     const mailOptions = {
       from: this.getProfessionalSender(),
       to: customerEmail,
       subject: `Order Confirmation #${order.orderNumber}`,
+      attachments,
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <img src=''
-          <h1 style="color: #595E4E;">Order Confirmation</h1>
-          <p>Dear ${customerName},</p>
-          <p>Thank you for your order! We've received your purchase and are preparing it for delivery.</p>
+        <div style="margin:0;padding:24px;background-color:#f5f5f0;">
+          <div style="font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; max-width: 640px; margin: 0 auto; background:#ffffff; border-radius:16px; overflow:hidden; box-shadow:0 2px 6px rgba(0,0,0,0.06);">
+            <!-- Brand Header -->
+            <div style="padding:32px; text-align:center; background:#ffffff;">
+              <img src="cid:${logoCid}" alt="FLORA" width="160" style="display:inline-block; border:0; outline:none; text-decoration:none; height:auto; max-width:160px;" />
+            </div>
 
-          <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <h3 style="color: #595E4E; margin-top: 0;">Order Details</h3>
-            <p><strong>Order Number:</strong> #${order.orderNumber}</p>
-            <p><strong>Order Date:</strong> ${order.createdAt.toLocaleDateString()}</p>
-            <p><strong>Total Amount:</strong> $${totalAmount}</p>
-            <p><strong>Delivery Address:</strong><br/>
-            ${deliveryAddress}</p>
-            ${
-              order.requestedDeliveryDate
-                ? `<p><strong>Requested Delivery Date:</strong> ${new Date(order.requestedDeliveryDate).toLocaleDateString()}</p>`
-                : ""
-            }
-            ${order.deliveryNotes ? `<p><strong>Delivery Notes:</strong> ${order.deliveryNotes}</p>` : ""}
+            <!-- Confirmation Banner -->
+            <div style="background:#C8D7C4; padding:28px; text-align:center;">
+              <h1 style="margin:0 0 12px 0; font-size:48px; line-height:1.2; color:#595E4E; letter-spacing:2px; font-family: Georgia, 'Times New Roman', Times, serif;">ORDER CONFIRMATION</h1>
+              <div style="display:inline-block; background:rgba(255,255,255,0.7); padding:10px 16px; border-radius:8px; border:2px solid #595E4E;">
+                <span style="color:#595E4E; font-size:14px; font-weight:500;">Order Number:</span>
+                <span style="color:#595E4E; font-size:16px; font-weight:700; letter-spacing:1px; margin-left:6px;">#${order.orderNumber}</span>
+              </div>
+              <p style="margin:16px auto 0 auto; color:#595E4E; font-size:14px; max-width:520px;">${customerName}, thank you for your order! We\'ve received it and will notify you as soon as it ships.</p>
+            </div>
+
+            <!-- Content -->
+            <div style="padding:28px;">
+              <h2 style="margin:0 0 12px 0; font-size:28px; color:#595E4E; font-family: Georgia, 'Times New Roman', Times, serif; font-weight:600;">Order Summary</h2>
+              <p style="margin:0 0 16px 0; color:#595E4E; font-size:14px;">${order.createdAt.toLocaleDateString()} · Total <strong>$${totalAmount}</strong></p>
+              ${itemsHtml}
+
+              <div style="background:#f0f0eb; border-radius:12px; padding:16px 18px;">
+                <h3 style="margin:0 0 12px 0; font-size:18px; color:#595E4E; font-family: Georgia, 'Times New Roman', Times, serif;">Order Details</h3>
+                <p style="margin:0 0 6px 0; color:#595E4E; font-size:14px;"><strong>Order Number:</strong> #${order.orderNumber}</p>
+                <p style="margin:0 0 6px 0; color:#595E4E; font-size:14px;"><strong>Order Date:</strong> ${order.createdAt.toLocaleDateString()}</p>
+                <p style="margin:0 0 6px 0; color:#595E4E; font-size:14px;"><strong>Total Amount:</strong> $${totalAmount}</p>
+                <p style="margin:10px 0 0 0; color:#595E4E; font-size:14px;"><strong>Delivery Address:</strong><br/>${deliveryAddress.replace(/\n/g, '<br/>')}</p>
+                ${
+                  order.requestedDeliveryDate
+                    ? `<p style="margin:10px 0 0 0; color:#595E4E; font-size:14px;"><strong>Requested Delivery Date:</strong> ${new Date(order.requestedDeliveryDate).toLocaleDateString()}</p>`
+                    : ""
+                }
+                ${order.deliveryNotes ? `<p style="margin:10px 0 0 0; color:#595E4E; font-size:14px;"><strong>Delivery Notes:</strong> ${order.deliveryNotes}</p>` : ""}
+              </div>
+
+              <p style="margin:18px 0 0 0; color:#595E4E; font-size:13px;">Questions about your order? Just reply to this email.</p>
+              <p style="margin:6px 0 0 0; color:#595E4E; font-size:13px;">Thank you for choosing <span style="font-weight:700;">FLORA</span>.</p>
+            </div>
+
+            <!-- Footer -->
+            <div style="padding:16px 24px; text-align:center; background:#f9faf9;">
+              <p style="margin:0; color:#8b8f82; font-size:12px;">© ${new Date().getFullYear()} FLORA. All rights reserved.</p>
+            </div>
           </div>
-
-          <p>We'll send you another email when your order ships with tracking information.</p>
-          <p>Thank you for choosing Flora!</p>
-          <p>The Flora Team</p>
         </div>
       `,
     };

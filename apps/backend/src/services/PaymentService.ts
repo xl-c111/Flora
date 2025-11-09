@@ -12,7 +12,7 @@ export class PaymentService {
   private emailService: EmailService;
 
   constructor() {
-    this.emailService = new EmailService();
+    this.emailService = EmailService.getInstance();
   }
 
   async createPaymentIntent(data: {
@@ -310,6 +310,18 @@ export class PaymentService {
         const order = await prisma.order.findUnique({
           where: { id: orderId },
           include: {
+            items: {
+              include: {
+                product: {
+                  select: {
+                    id: true,
+                    name: true,
+                    priceCents: true,
+                    imageUrl: true,
+                  },
+                },
+              },
+            },
             user: {
               select: {
                 id: true,

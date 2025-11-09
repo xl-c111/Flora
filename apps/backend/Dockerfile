@@ -1,32 +1,31 @@
 # Backend Dockerfile
-FROM node:20-alpine
+# syntax=docker/dockerfile:1.4
+FROM node:20-alpine AS base
 
 WORKDIR /app
 
 # Install pnpm and OpenSSL (required for Prisma)
-RUN npm install -g pnpm && \
-    apk add --no-cache openssl
+RUN npm install -g pnpm && apk add --no-cache openssl
 
-# Copy workspace configuration
+# Leverage build cache by installing only backend deps first
+# Copy workspace files and backend manifests only
 COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
+COPY apps/backend/package.json apps/backend/
+COPY apps/backend/tsconfig.json apps/backend/
+COPY apps/backend/prisma apps/backend/prisma
 
-# Copy all apps
+# Install only backend workspace deps using cache mounts
+RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store/v3 \
+    pnpm install --filter ./apps/backend... --frozen-lockfile
+
+# Now copy the rest of the workspace (source changes won’t invalidate deps)
 COPY apps ./apps
 
-# Install dependencies
-RUN pnpm install
-
-# Set working directory to backend
 WORKDIR /app/apps/backend
 
-# Generate Prisma client
-RUN pnpm prisma generate
+# Generate Prisma client and build
+RUN pnpm prisma generate && pnpm run build
 
-# Build TypeScript (compile src/ to dist/)
-RUN pnpm run build
-
-# Expose port
 EXPOSE 3001
 
-# Start command - runs migrations, seeds DB, then starts server
 CMD ["pnpm", "start:prod"]

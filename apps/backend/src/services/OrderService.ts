@@ -78,7 +78,7 @@ export class OrderService {
   private emailService: EmailService;
 
   constructor() {
-    this.emailService = new EmailService();
+    this.emailService = EmailService.getInstance();
   }
 
   // Create new order (guest or user)
@@ -428,11 +428,17 @@ export class OrderService {
       },
     });
 
-    // Create delivery tracking record
-    await this.createDeliveryTracking(order);
+    // Send confirmation email ASAP (before ancillary tracking work)
+    // Don't block order on email errors
+    try {
+      await this.emailService.sendOrderConfirmation(order as any);
+      console.log(`📧 Order confirmation queued for order ${order.orderNumber} ->`, order.guestEmail || order.user?.email);
+    } catch (err: any) {
+      console.error('❌ Failed to send order confirmation on createOrder:', err?.message || err);
+    }
 
-    // Send confirmation email
-    await this.emailService.sendOrderConfirmation(order as any);
+    // Create delivery tracking record (non-critical for email)
+    await this.createDeliveryTracking(order);
 
     return order;
   }
@@ -504,15 +510,21 @@ export class OrderService {
     for (const item of items) {
       const product = await prisma.product.findUnique({
         where: { id: item.productId },
-        select: { id: true, inStock: true, stockCount: true, isActive: true },
+        select: { id: true, name: true, inStock: true, stockCount: true, isActive: true },
       });
 
+      const label = product?.name || item.productId;
+
       if (!product || !product.isActive) {
-        throw new Error(`Product ${item.productId} is not available`);
+        throw new Error(`Product ${label} is not available`);
       }
 
-      if (!product.inStock || product.stockCount < item.quantity) {
-        throw new Error(`Product ${item.productId} is out of stock`);
+      if (!product.inStock) {
+        throw new Error(`Product ${label} is out of stock`);
+      }
+
+      if (product.stockCount < item.quantity) {
+        throw new Error(`Product ${label} has only ${product.stockCount} left`);
       }
     }
   }

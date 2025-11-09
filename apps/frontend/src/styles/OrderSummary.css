@@ -410,8 +410,14 @@
 
 /* Responsive */
 @media (max-width: 1024px) {
+  .order-summary-items-wrapper {
+    max-height: none;
+  }
+
   .order-summary-items {
     max-height: none;
+    height: auto;
+    overflow-y: visible;
   }
 }
 
@@ -470,6 +476,15 @@
 }
 
 @media (max-width: 768px) {
+  .order-summary-items-wrapper {
+    max-height: none;
+  }
+
+  .order-summary-items {
+    height: auto;
+    overflow-y: visible;
+  }
+
   .order-item {
     gap: 0.75rem;
   }

@@ -1,28 +1,29 @@
 # Frontend Dockerfile
-FROM node:20-alpine
+# syntax=docker/dockerfile:1.4
+FROM node:20-alpine as base
 
 WORKDIR /app
 
 # Install pnpm
 RUN npm install -g pnpm
 
-# Copy workspace configuration
+# Copy only manifests first for better cache
 COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
+COPY apps/frontend/package.json apps/frontend/
+COPY apps/frontend/tsconfig.json apps/frontend/
 
-# Copy only frontend app (not backend to avoid Prisma issues)
+# Install only frontend deps with cache mount
+RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store/v3 \
+    pnpm install --filter ./apps/frontend... --frozen-lockfile
+
+# Copy the rest of the source after deps are cached
 COPY apps/frontend ./apps/frontend
 
-# Install dependencies
-RUN pnpm install --filter frontend
-
-# Set working directory to frontend
 WORKDIR /app/apps/frontend
 
-# Build production bundle (compile TypeScript + Vite build)
+# Build production bundle
 RUN pnpm run build
 
-# Expose port
 EXPOSE 5173
 
-# Start command - serve production build
 CMD ["pnpm", "preview", "--host", "0.0.0.0", "--port", "5173"]

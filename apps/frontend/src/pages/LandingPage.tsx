@@ -3,8 +3,17 @@ import { useSearchParams } from 'react-router-dom';
 import type { Product, ProductResponse, ProductFilters } from '../types';
 import { apiService } from '../services/api';
 import ProductGrid from '../components/ProductGrid';
-import './ProductsPage.css';
-import './LandingPage.css';
+import '../styles/ProductsPage.css';
+import '../styles/LandingPage.css';
+import flowerIcon from '../assets/flower-icon.svg';
+import calendarIcon from '../assets/calendar-icon.svg';
+import colourIcon from '../assets/colour-icon.svg';
+import deliveryIcon from '../assets/delivery-icon.svg';
+import landingImage from '../assets/landing-image.png';
+import filler1 from '../assets/Filler1.jpg';
+import filler2 from '../assets/Filler2.jpg';
+import filler3 from '../assets/Filler3.jpg';
+import filler4 from '../assets/Filler4.jpg';
 
 const LandingPage: React.FC = () => {
   // Get URL query parameters (e.g., ?filter=colour or ?category=romantic)
@@ -103,7 +112,7 @@ const LandingPage: React.FC = () => {
       <div className="details-container">
         <div id="flower" className="details-card">
           <div className="details-icon">
-            <img src="/src/assets/flower-icon.svg"></img>
+            <img src={flowerIcon} alt="flower" />
           </div>
           <div className="details-text">
             <h4>Spontatous Subscription</h4>
@@ -113,7 +122,7 @@ const LandingPage: React.FC = () => {
 
         <div id="calendar" className="details-card">
           <div className="details-icon">
-            <img src="/src/assets/calendar-icon.svg"></img>
+            <img src={calendarIcon} alt="calendar" />
           </div>
           <div className="details-text">
             <h4>Reoccurring Subscription</h4>
@@ -123,7 +132,7 @@ const LandingPage: React.FC = () => {
       
         <div id="colour" className="details-card">
           <div className="details-icon">
-            <img src="/src/assets/colour-icon.svg"></img>
+            <img src={colourIcon} alt="colour" />
           </div>
           <div className="details-text">
             <h4>Mood Picker</h4>
@@ -133,7 +142,7 @@ const LandingPage: React.FC = () => {
 
         <div id="details" className="details-card">
           <div className="details-icon">
-            <img src="/src/assets/delivery-icon.svg"></img>
+            <img src={deliveryIcon} alt="delivery" />
           </div>
           <div className="details-text">
             <h4>Same Day Delivery</h4>
@@ -144,7 +153,7 @@ const LandingPage: React.FC = () => {
 
       <div className="picture-container">
         <div className="image-container">
-          <img src="./src/assets/landing-image.png"></img>
+          <img src={landingImage} alt="landing" />
         </div>
       </div>
 
@@ -152,7 +161,7 @@ const LandingPage: React.FC = () => {
         <div className="shop-by-card">
           <a href="/products">
             <div className="shop-by-image">
-              <img src="/src/assets/Filler1.jpg"></img>
+              <img src={filler1} alt="shop all" />
             </div>
             <div className="shop-by-text">
                 <p>Shop By All</p>
@@ -163,7 +172,7 @@ const LandingPage: React.FC = () => {
         <div className="shop-by-card">
           <a href="/products?filter=colour">
           <div className="shop-by-image">
-            <img src="/src/assets/Filler2.jpg"></img>
+            <img src={filler2} alt="shop by colour" />
           </div>
           <div className="shop-by-text">
               <p>Shop By Colour</p>
@@ -174,7 +183,7 @@ const LandingPage: React.FC = () => {
         <div className="shop-by-card">
           <a href="/products?filter=occasion">
           <div className="shop-by-image">
-            <img src="/src/assets/Filler3.jpg"></img>
+            <img src={filler3} alt="shop by occasion" />
           </div>
           <div className="shop-by-text">
               <p>Shop By Occasion</p>
@@ -185,7 +194,7 @@ const LandingPage: React.FC = () => {
         <div className="shop-by-card">
           <a href="/products">
           <div className="shop-by-image">
-            <img src="/src/assets/Filler4.jpg"></img>
+            <img src={filler4} alt="bundle up and save" />
           </div>
           <div className="shop-by-text">
               <p>Bundle Up and Save</p>

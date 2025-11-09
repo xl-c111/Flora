@@ -4,7 +4,7 @@ import type { Product, FilterOptions, ProductResponse, ProductFilters } from '..
 import { apiService } from '../services/api';
 import FilterSidebar from '../components/FilterSidebar';
 import ProductGrid from '../components/ProductGrid';
-import './ProductsPage.css';
+import '../styles/ProductsPage.css';
 
 const ProductsPage: React.FC = () => {
   // Get URL query parameters (e.g., ?filter=colour or ?category=romantic)
