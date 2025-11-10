@@ -225,7 +225,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
           dispatch({ type: 'LOAD_CART', payload: normalizedCart });
         }
       } catch (error) {
-        console.error('Error loading cart from localStorage:', error);
       }
     }
 
@@ -235,7 +234,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
         const parsedMessage = JSON.parse(savedGiftMessage);
         dispatch({ type: 'SET_GIFT_MESSAGE', payload: parsedMessage });
       } catch (error) {
-        console.error('Error loading gift message from localStorage:', error);
       }
     }
 

@@ -3,7 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 import SearchBar from './SearchBar';
-import '../styles/Header.css';
+import './Header.css';
 import logoSvg from '../assets/flora-logo.svg';
 import logoTextSvg from '../assets/flora-text-cursive.svg';
 

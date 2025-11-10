@@ -41,14 +41,14 @@
 .order-history-loading p,
 .order-history-not-logged-in p,
 .order-history-error p {
-  color: #8a8a7a;
+  color: var(--text-secondary);
   font-size: 1rem;
   margin: 0.5rem 0 1.5rem 0;
 }
 
 .order-history-not-logged-in h2,
 .order-history-error h2 {
-  color: #5a5a4a;
+  color: var(--text-tertiary);
   font-size: 2rem;
   margin: 0 0 1rem 0;
 }
@@ -58,9 +58,9 @@
   display: inline-block;
   padding: 0.875rem 2rem;
   background: #6b7a5e;
-  color: white;
+  color: var(--background-white);
   text-decoration: none;
-  border-radius: 6px;
+  border-radius: var(--radius-small);
   font-weight: 500;
   font-size: 1rem;
   transition: all 0.3s;
@@ -78,11 +78,11 @@
 
 /* Header Section */
 .order-history-header {
-  background: white;
-  border-radius: 16px;
+  background: var(--background-white);
+  border-radius: var(--radius-card);
   padding: 2rem;
   margin-bottom: 2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .header-title-row {
@@ -93,7 +93,7 @@
 }
 
 .order-history-header h1 {
-  color: #5a5a4a;
+  color: var(--text-tertiary);
   font-size: 2rem;
   font-weight: 600;
   margin: 0;
@@ -101,10 +101,10 @@
 
 .status-info-btn {
   background: #6b7a5e;
-  color: white;
+  color: var(--background-white);
   border: none;
   padding: 0.625rem 1.25rem;
-  border-radius: 6px;
+  border-radius: var(--radius-small);
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
@@ -118,7 +118,7 @@
 }
 
 .order-count {
-  color: #8a8a7a;
+  color: var(--text-secondary);
   font-size: 1rem;
   margin: 0 0 1rem 0;
 }
@@ -132,7 +132,7 @@
 }
 
 .status-info-panel h3 {
-  color: #5a5a4a;
+  color: var(--text-tertiary);
   font-size: 1.25rem;
   font-weight: 600;
   margin: 0 0 1.25rem 0;
@@ -159,11 +159,11 @@
 
 /* No Orders State */
 .no-orders {
-  background: white;
-  border-radius: 16px;
+  background: var(--background-white);
+  border-radius: var(--radius-card);
   padding: 4rem 2rem;
   text-align: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .no-orders-icon {
@@ -172,14 +172,14 @@
 }
 
 .no-orders h2 {
-  color: #5a5a4a;
+  color: var(--text-tertiary);
   font-size: 1.75rem;
   font-weight: 600;
   margin: 0 0 0.5rem 0;
 }
 
 .no-orders p {
-  color: #8a8a7a;
+  color: var(--text-secondary);
   font-size: 1.125rem;
   margin: 0 0 2rem 0;
 }
@@ -194,10 +194,10 @@
 
 /* Order Card */
 .order-card {
-  background: white;
-  border-radius: 16px;
+  background: var(--background-white);
+  border-radius: var(--radius-card);
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
   transition: all 0.3s;
 }
 
@@ -211,7 +211,7 @@
   justify-content: space-between;
   align-items: flex-start;
   padding: 1.5rem 2rem;
-  background: #faf8f5;
+  background: var(--background-light);
   border-bottom: 1px solid #e5e5e0;
 }
 
@@ -220,14 +220,14 @@
 }
 
 .order-number {
-  color: #5a5a4a;
+  color: var(--text-tertiary);
   font-size: 1.25rem;
   font-weight: 600;
   margin: 0 0 0.25rem 0;
 }
 
 .order-date {
-  color: #8a8a7a;
+  color: var(--text-secondary);
   font-size: 0.95rem;
   margin: 0;
 }
@@ -249,28 +249,28 @@
 }
 
 .status-pending {
-  background: #fff4e6;
-  color: #c97a00;
+  background: var(--button-colour2);
+  color: var(--text-colour);
 }
 
 .status-preparing {
-  background: #e6f4ff;
-  color: #0066cc;
+  background: var(--banner-colour-1);
+  color: var(--text-colour);
 }
 
 .status-shipped {
-  background: #f0e6ff;
-  color: #7a00cc;
+  background: var(--button-colour1);
+  color: var(--text-colour);
 }
 
 .status-delivered {
-  background: #e6f7ed;
-  color: #00a854;
+  background: var(--accent-green);
+  color: var(--background-white);
 }
 
 .status-cancelled {
-  background: #ffe6e6;
-  color: #d14343;
+  background: #f5e6e6;
+  color: var(--accent-error-light);
 }
 
 /* Order Card Body */
@@ -318,7 +318,7 @@
 }
 
 .item-name {
-  color: #5a5a4a;
+  color: var(--text-tertiary);
   font-size: 1rem;
   font-weight: 500;
   margin: 0 0 0.25rem 0;
@@ -328,13 +328,13 @@
 }
 
 .item-quantity {
-  color: #8a8a7a;
+  color: var(--text-secondary);
   font-size: 0.875rem;
   margin: 0;
 }
 
 .more-items {
-  color: #8a8a7a;
+  color: var(--text-secondary);
   font-size: 0.875rem;
   font-style: italic;
   margin: 0;
@@ -359,13 +359,13 @@
 }
 
 .order-summary .label {
-  color: #8a8a7a;
+  color: var(--text-secondary);
   font-size: 0.95rem;
   white-space: nowrap;
 }
 
 .order-summary .value {
-  color: #5a5a4a;
+  color: var(--text-tertiary);
   font-size: 0.95rem;
   font-weight: 500;
   text-align: right;
@@ -380,7 +380,7 @@
 .total-amount {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #6b7a5e;
+  color: var(--accent-green);
 }
 
 /* Order Card Footer */
@@ -394,13 +394,13 @@
 
 .view-details-btn {
   display: inline-block;
-  /* padding: 0.75rem 1.5rem; */
+  padding: 0.625rem 1.75rem;
   background: #6b7a5e;
-  color: white;
+  color: var(--background-white);
   text-decoration: none;
-  border-radius: 6px;
+  border-radius: var(--radius-small);
   font-weight: 500;
-  font-size: 0.95rem;
+  font-size: 1rem;
   transition: all 0.3s;
 }
 
@@ -415,31 +415,34 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
   padding: 2rem 0;
 }
 
 .page-btn {
-  padding: 0.75rem 1.5rem;
-  background: white;
-  color: #5a5a4a;
-  border: 2px solid #e5e5e0;
-  border-radius: 6px;
-  font-weight: 500;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1.5px solid var(--button-colour2);
+  background: var(--background-white);
+  color: var(--text-colour);
+  padding: 0.35rem 0.65rem;
+  border-radius: var(--radius-button);
+  font-family: "Outfit", sans-serif;
   font-size: 0.95rem;
+  line-height: 1.1;
   cursor: pointer;
-  transition: all 0.3s;
-  font-family: inherit;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease,
+    transform 0.1s ease;
 }
 
 .page-btn:hover:not(:disabled) {
-  background: #6b7a5e;
-  color: white;
-  border-color: #6b7a5e;
+  background: var(--button-colour1);
+  border-color: var(--button-colour3);
+  color: var(--button-colour3);
 }
 
 .page-btn:disabled {
-  opacity: 0.4;
+  opacity: 0.45;
   cursor: not-allowed;
 }
 
@@ -450,35 +453,41 @@
 }
 
 .page-number {
-  width: 40px;
-  height: 40px;
-  background: white;
-  color: #5a5a4a;
-  border: 2px solid #e5e5e0;
-  border-radius: 6px;
-  font-weight: 500;
+  appearance: none;
+  -webkit-appearance: none;
+  min-width: 32px;
+  height: auto;
+  background: var(--background-white);
+  color: var(--text-colour);
+  border: 1.5px solid var(--button-colour2);
+  border-radius: var(--radius-button);
+  font-weight: normal;
   font-size: 0.95rem;
+  line-height: 1.1;
+  padding: 0.35rem 0.65rem;
   cursor: pointer;
-  transition: all 0.3s;
-  font-family: inherit;
-  display: flex;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  font-family: "Outfit", sans-serif;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
 .page-number:hover {
-  background: #f5f5f0;
-  border-color: #6b7a5e;
+  background: var(--button-colour1);
+  border-color: var(--button-colour3);
+  color: var(--button-colour3);
 }
 
 .page-number.active {
-  background: #6b7a5e;
-  color: white;
-  border-color: #6b7a5e;
+  background: var(--button-colour2);
+  border-color: var(--button-colour3);
+  color: var(--button-colour3);
+  font-weight: 600;
 }
 
 .page-ellipsis {
-  color: #8a8a7a;
+  color: var(--text-secondary);
   padding: 0 0.5rem;
 }
 
@@ -497,7 +506,7 @@
   }
 
   .order-card-header {
-    flex-direction: column;
+    flex-direction: column !important;
     gap: 1rem;
     padding: 1.25rem 1.5rem;
   }
@@ -513,7 +522,7 @@
   }
 
   .order-card-body {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
     padding: 1.5rem;
   }
 
@@ -527,7 +536,7 @@
   }
 
   .view-details-btn {
-    width: 100%;
+    width: 100% !important;
     text-align: center;
   }
 

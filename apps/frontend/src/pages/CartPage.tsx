@@ -4,7 +4,7 @@ import { useCart } from '../contexts/CartContext';
 import { getImageUrl, apiService } from '../services/api';
 import { SUBSCRIPTION_OPTIONS } from '../config/subscriptionConfig';
 import { format } from 'date-fns';
-import '../styles/CartPage.css';
+import './CartPage.css';
 
 const CartPage: React.FC = () => {
   const navigate = useNavigate();
@@ -60,7 +60,6 @@ const CartPage: React.FC = () => {
         setGenerateError('Failed to generate message. Please try again.');
       }
     } catch (error: any) {
-      console.error('Error generating AI message:', error);
       setGenerateError(error.response?.data?.error || 'Failed to generate message. Please try again.');
     } finally {
       setIsGenerating(false);

@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import orderService from '../services/orderService';
 import type { Order } from '../services/orderService';
 import { getImageUrl } from '../services/api';
-import '../styles/OrderHistory.css';
+import './OrderHistory.css';
 
 interface OrdersResponse {
   success: boolean;
@@ -40,26 +40,21 @@ const OrderHistory = () => {
         setLoading(true);
         setError(null);
 
-        console.log('🔍 DEBUG: Fetching orders for user:', user.sub, user.email);
         const token = await getAccessToken();
         if (!token) {
           throw new Error('No access token available');
         }
 
-        console.log('🔑 DEBUG: Got access token, length:', token.length);
         const response: OrdersResponse = await orderService.getUserOrders(
           token,
           currentPage,
           ITEMS_PER_PAGE
         );
 
-        console.log('📊 DEBUG: Order history response:', response);
         setOrders(response.data || []);
         setTotal(response.meta?.totalItems || 0);
         setTotalPages(response.meta?.totalPages || 1);
       } catch (err: any) {
-        console.error('❌ Error fetching orders:', err);
-        console.error('❌ Error response:', err.response?.data);
         setError(err.message || 'Failed to load order history');
       } finally {
         setLoading(false);

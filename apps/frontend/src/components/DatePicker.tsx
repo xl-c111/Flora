@@ -2,7 +2,7 @@ import React from 'react';
 import { DayPicker } from 'react-day-picker';
 import { format, addDays } from 'date-fns';
 import 'react-day-picker/src/style.css';
-import '../styles/DatePicker.css';
+import './DatePicker.css';
 
 interface DatePickerProps {
   selectedDate?: Date;

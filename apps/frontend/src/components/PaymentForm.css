@@ -5,10 +5,10 @@
 }
 
 .payment-element-container {
-  background-color: #C8D7C4;
+  background-color: var(--banner-colour-1);
   padding: 2rem;
   border-radius: 10px;
-  border: 2px solid #595E4E;
+  border: 2px solid var(--text-colour);
   margin-bottom: 2rem;
   font-family: "Outfit", sans-serif;
 }
@@ -18,7 +18,7 @@
 .payment-error {
   background-color: #fee2e2;
   border: 2px solid #fca5a5;
-  color: #dc2626;
+  color: var(--accent-error);
   padding: 1rem 1.25rem;
   border-radius: 10px;
   margin-bottom: 1rem;
@@ -38,21 +38,21 @@
   padding: 1rem 2rem;
   font-size: 1rem;
   font-weight: 500;
-  color: white;
-  background-color: #595E4E;
+  color: var(--background-white);
+  background-color: var(--text-colour);
   border: none;
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s;
   margin-top: 0;
   font-family: "Outfit", sans-serif;
-  border: 2px solid #595E4E;
+  border: 2px solid var(--text-colour);
 }
 
 .submit-payment-button:hover:not(:disabled) {
-  background-color: #e0e8e0;
-  color: #595E4E;
-  border: 2px solid #595E4E;
+  background-color: var(--button-colour2);
+  color: var(--text-colour);
+  border: 2px solid var(--text-colour);
 }
 
 .submit-payment-button:disabled {
@@ -71,7 +71,7 @@
   display: inline-block;
   width: 16px;
   height: 16px;
-  border: 2px solid #595E4E;
+  border: 2px solid var(--text-colour);
   border-top-color: transparent;
   border-radius: 50%;
   animation: spin 0.6s linear infinite;

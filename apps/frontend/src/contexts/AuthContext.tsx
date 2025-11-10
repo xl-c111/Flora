@@ -58,18 +58,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       // 3. We haven't already synced this session
       if (user && !isLoading && !hasSyncedRef.current) {
         try {
-          console.log('🔄 Auto-syncing user to database:', user.sub);
           const token = await getAccessToken();
-          console.log('🔑 Got access token:', token ? `${token.substring(0, 20)}...` : 'NO TOKEN');
           if (token) {
             await userService.syncUser(token);
             hasSyncedRef.current = true;
-            console.log('✅ User synced successfully');
           } else {
-            console.error('❌ No access token available');
           }
         } catch (error) {
-          console.error('❌ Failed to sync user:', error);
           // Don't block login on sync failure - user can still use the app
         }
       }
@@ -85,7 +80,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     loading: isLoading,
     login: () => {
       const returnTo = window.location.pathname;
-      console.log('🔐 Login initiated from:', returnTo);
       // Save to sessionStorage as backup
       sessionStorage.setItem('auth_return_to', returnTo);
       loginWithRedirect({
