@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { getImageUrl } from '../services/api';
 import apiService from '../services/api';
-import '../styles/SubscriptionsPage.css';
+import './SubscriptionsPage.css';
 
 interface SubscriptionItem {
   id: string;
@@ -49,13 +49,10 @@ const SubscriptionsPage = () => {
         const token = await getAccessToken();
         if (!token) throw new Error('No access token found');
 
-        console.log('🔑 Fetching subscriptions with token');
         const response = await apiService.getSubscriptions(token);
-        console.log('📋 Subscriptions response:', response);
 
         setSubscriptions(response.data || []);
       } catch (err: any) {
-        console.error('❌ Subscriptions error:', err);
         setError(`Failed to load subscriptions: ${err.message}`);
       } finally {
         setLoading(false);

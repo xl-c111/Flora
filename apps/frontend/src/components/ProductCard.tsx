@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import type { Product } from '../types';
 import { useCart } from '../contexts/CartContext';
 import { getImageUrl } from '../services/api';
-import '../styles/ProductCard.css';
+import './ProductCard.css';
 
 /**
  * ProductCard Component
@@ -188,7 +188,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           onClick={(e) => {
             e.preventDefault();
             // TODO: Implement favorite functionality
-            console.log('Add to favorites:', product.id);
           }}
           title="Add to favorites"
         >

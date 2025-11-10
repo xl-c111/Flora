@@ -1,19 +1,21 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import "./App.css";
 import { useAuth } from "./contexts/AuthContext";
 import { useAuth0 } from "@auth0/auth0-react";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import LandingPage from "./pages/LandingPage";
-import ProductsPage from "./pages/ProductsPage";
-import ProductDetail from "./pages/ProductDetail";
-import SubscriptionsPage from "./pages/SubscriptionsPage";
-import UserProfile from "./pages/UserProfile";
-import OrderHistory from "./pages/OrderHistory";
-import CartPage from "./pages/CartPage";
-import CheckoutPage from "./pages/CheckoutPage";
-import OrderConfirmationPage from "./pages/OrderConfirmationPage";
+
+// Lazy load pages for better performance
+const LandingPage = lazy(() => import("./pages/LandingPage"));
+const ProductsPage = lazy(() => import("./pages/ProductsPage"));
+const ProductDetail = lazy(() => import("./pages/ProductDetail"));
+const SubscriptionsPage = lazy(() => import("./pages/SubscriptionsPage"));
+const UserProfile = lazy(() => import("./pages/UserProfile"));
+const OrderHistory = lazy(() => import("./pages/OrderHistory"));
+const CartPage = lazy(() => import("./pages/CartPage"));
+const CheckoutPage = lazy(() => import("./pages/CheckoutPage"));
+const OrderConfirmationPage = lazy(() => import("./pages/OrderConfirmationPage"));
 function App() {
   const [loading, setLoading] = useState(true);
   const [useAPI, setUseAPI] = useState(false);
@@ -28,9 +30,7 @@ function App() {
     if (user) {
       getAccessToken().then((token) => {
         if (token) {
-          console.log("Auth0 token: ", token);
         } else {
-          console.log("No Auth0 token found");
         }
       });
     }
@@ -40,19 +40,15 @@ function App() {
     try {
       setLoading(true);
       const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
-      console.log("🔍 Checking API status:", `${apiUrl}/health`);
 
       const response = await fetch(`${apiUrl}/health`);
 
       if (response.ok) {
-        console.log("✅ API is available");
         setUseAPI(true);
       } else {
-        console.log("ℹ️ API not responding properly");
         setUseAPI(false);
       }
     } catch (err) {
-      console.log("ℹ️ API not available:", err);
       setUseAPI(false);
     } finally {
       setLoading(false);
@@ -82,7 +78,6 @@ function AppContent({ useAPI }: any) {
   // Check if we're on the order confirmation or checkout page
   const hideHeaderFooter =
     location.pathname.startsWith("/order-confirmation") || location.pathname.startsWith("/checkout");
-  const isLandingPage = location.pathname === "/";
 
   useEffect(() => {
     // Handle Auth0 redirect callback - wait until Auth0 finishes processing
@@ -90,7 +85,6 @@ function AppContent({ useAPI }: any) {
       const returnTo = sessionStorage.getItem("auth_return_to");
 
       if (returnTo) {
-        console.log("📍 Navigating to saved location:", returnTo);
         sessionStorage.removeItem("auth_return_to");
 
         // Small delay to ensure Auth0 has fully processed
@@ -104,22 +98,24 @@ function AppContent({ useAPI }: any) {
   return (
     <div className="app">
       {/* Hide header on order confirmation and checkout pages */}
-      {!hideHeaderFooter && <Header isLanding={isLandingPage} />}
+      {!hideHeaderFooter && <Header isLanding={false} />}
 
       {!useAPI && <div className="demo-badge">🚧 Demo Mode - API Not Available</div>}
       <main className="main">
         {/* Define app routes. AuthCallback is not needed with Auth0 React SDK */}
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/products" element={<ProductsPage />} />
-          <Route path="/products/:id" element={<ProductDetail />} />
-          <Route path="/subscriptions" element={<SubscriptionsPage />} />
-          <Route path="/profile" element={<UserProfile />} />
-          <Route path="/orders" element={<OrderHistory />} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/order-confirmation/:orderId" element={<OrderConfirmationPage />} />
-        </Routes>
+        <Suspense fallback={<div className="loading">🌸 Loading...</div>}>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/products" element={<ProductsPage />} />
+            <Route path="/products/:id" element={<ProductDetail />} />
+            <Route path="/subscriptions" element={<SubscriptionsPage />} />
+            <Route path="/profile" element={<UserProfile />} />
+            <Route path="/orders" element={<OrderHistory />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/order-confirmation/:orderId" element={<OrderConfirmationPage />} />
+          </Routes>
+        </Suspense>
       </main>
 
       {/* Hide footer on order confirmation and checkout pages */}

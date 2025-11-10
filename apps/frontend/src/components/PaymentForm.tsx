@@ -4,7 +4,7 @@ import {
   useStripe,
   useElements,
 } from '@stripe/react-stripe-js';
-import '../styles/PaymentForm.css';
+import './PaymentForm.css';
 
 interface PaymentFormProps {
   orderId: string;

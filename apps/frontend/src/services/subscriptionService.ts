@@ -76,7 +76,6 @@ class SubscriptionService {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      console.error('Subscription creation failed:', errorData);
       throw new Error(errorData.error || errorData.message || `Failed to create subscription: ${response.status}`);
     }
 

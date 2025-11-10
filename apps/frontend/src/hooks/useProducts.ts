@@ -16,7 +16,6 @@ export const useProducts = () => {
         setError(null);
       } catch (err) {
         setError('Failed to fetch products');
-        console.error('Error fetching products:', err);
       } finally {
         setLoading(false);
       }
@@ -33,7 +32,6 @@ export const useProducts = () => {
       setError(null);
     } catch (err) {
       setError('Failed to fetch products');
-      console.error('Error fetching products:', err);
     } finally {
       setLoading(false);
     }
@@ -61,7 +59,6 @@ export const useProduct = (id: string | undefined) => {
         setError(null);
       } catch (err) {
         setError('Failed to fetch product');
-        console.error('Error fetching product:', err);
       } finally {
         setLoading(false);
       }
@@ -92,7 +89,6 @@ export const useProductsByCategory = (categoryId: string | undefined) => {
         setError(null);
       } catch (err) {
         setError('Failed to fetch products');
-        console.error('Error fetching products:', err);
       } finally {
         setLoading(false);
       }

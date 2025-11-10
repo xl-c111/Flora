@@ -6,7 +6,7 @@ import { SUBSCRIPTION_OPTIONS, calculateSubscriptionPrice, formatSubscriptionSav
 import { apiService, getImageUrl } from '../services/api';
 import type { Product } from '../types';
 import DatePicker from '../components/DatePicker';
-import '../styles/ProductDetail.css';
+import './ProductDetail.css';
 
 
 
@@ -55,7 +55,6 @@ const ProductDetail: React.FC = () => {
     setProduct(productData);
     setError(null);
       } catch (err: any) {
-      console.error('Error fetching product:', err);
     setError('Failed to load product details');
       } finally {
       setLoading(false);
@@ -78,7 +77,6 @@ const ProductDetail: React.FC = () => {
       setSimilarProducts(data.products);
         }
       } catch (error) {
-      console.error('Error fetching similar products:', error);
       } finally {
       }
     };
