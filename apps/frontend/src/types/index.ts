@@ -1,3 +1,6 @@
+// Re-export all types from api.ts
+export * from './api';
+
 // Product Types
 export interface Product {
   id: string;

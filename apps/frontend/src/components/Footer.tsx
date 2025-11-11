@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../styles/Footer.css';
+import './Footer.css';
 import flag1 from '../assets/flag-1.svg';
 import flag2 from '../assets/flag-2.svg';
 import logoSvg from '../assets/flora-logo.svg';

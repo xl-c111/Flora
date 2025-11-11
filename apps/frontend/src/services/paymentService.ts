@@ -30,7 +30,6 @@ class PaymentService {
       });
       return response.data.data;
     } catch (error) {
-      console.error('Error creating payment intent:', error);
       throw error;
     }
   }
@@ -48,7 +47,6 @@ class PaymentService {
       );
       return response.data.data;
     } catch (error) {
-      console.error('Error confirming payment:', error);
       throw error;
     }
   }
@@ -61,7 +59,6 @@ class PaymentService {
       });
       return response.data.data;
     } catch (error) {
-      console.error('Error fetching payment:', error);
       throw error;
     }
   }

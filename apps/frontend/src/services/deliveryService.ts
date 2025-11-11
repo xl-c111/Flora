@@ -43,7 +43,6 @@ export const deliveryService = {
 
       return data.data;
     } catch (error) {
-      console.error('Error fetching delivery info:', error);
       // Fallback to default values if API fails
       return {
         serviceArea: {
@@ -84,7 +83,6 @@ export const deliveryService = {
 
       return data.data;
     } catch (error) {
-      console.error('Error validating postcode:', error);
       // Fallback - assume delivery is available
       return {
         postcode,

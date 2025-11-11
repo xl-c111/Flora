@@ -38,6 +38,8 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
   onClearFilters,
   activeFilterCount = 0,
 }) => {
+  const [isExpanded, setIsExpanded] = React.useState(false);
+
   const sortedPriceRanges = React.useMemo(
     () =>
       [...filterOptions.priceRanges].sort((a, b) => {
@@ -82,6 +84,16 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
   return (
     <div className="filter-sidebar">
+      {/* Toggle Button for Mobile */}
+      <button
+        className={`toggle-filters-btn ${isExpanded ? 'active' : ''}`}
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <span>{isExpanded ? '▲' : '▼'}</span>
+        <span>{isExpanded ? 'Hide Filters' : 'Show Filters'}</span>
+        {activeFilterCount > 0 && <span>({activeFilterCount})</span>}
+      </button>
+
       {/* Sidebar Header */}
       <header className="filter-header">
         {activeFilterCount > 0 && (
@@ -102,7 +114,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
       </header>
 
       {/* Filter Options */}
-      <div className="filter-options">
+      <div className={`filter-options ${isExpanded ? 'expanded' : ''}`}>
         {/* Price Range Filter */}
         <div className="filter-group">
           {/* <label

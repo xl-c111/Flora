@@ -120,7 +120,6 @@ class OrderService {
       });
       return response.data.data;
     } catch (error) {
-      console.error('Error creating order:', error);
       throw error;
     }
   }
@@ -133,7 +132,6 @@ class OrderService {
       });
       return response.data.data;
     } catch (error) {
-      console.error('Error fetching order:', error);
       throw error;
     }
   }
@@ -152,7 +150,6 @@ class OrderService {
       );
       return response.data.data;
     } catch (error) {
-      console.error('Error confirming order:', error);
       throw error;
     }
   }
@@ -172,7 +169,6 @@ class OrderService {
       });
       return response.data;
     } catch (error) {
-      console.error('Error fetching user orders:', error);
       throw error;
     }
   }

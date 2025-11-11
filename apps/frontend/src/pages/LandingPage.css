@@ -1,5 +1,5 @@
 .details-container{
-    font-family: var(--primary-font-body-copy);
+    font-family: "Outfit", sans-serif;
     width: 90%;
     height: 11rem;
     margin:auto;
@@ -14,6 +14,7 @@
 
                 .details-icon{
                     height: 80%;
+                    flex-shrink: 0;
 
                     img{
                         height:100%;
@@ -22,6 +23,7 @@
           }
           .details-text{
             width: 220px;
+            flex: 1;
                 p{
                     font-size: 14px;
                 }
@@ -29,8 +31,7 @@
 }
 
 .picture-container{
-    font-family: var(--primary-font-body-copy);
-    width:auto;
+    font-family: "Outfit", sans-serif;
     height: 10rem;
 
         .image-container{
@@ -52,13 +53,11 @@
 }
 
 .shop-by-container{
-    font-family: var(--primary-font-body-copy);
+    font-family: "Outfit", sans-serif;
     width: 90%;
     height: 400px;
     display:flex;
-    margin-top: 20px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 20px auto 0;
 
     .shop-by-card{
         width: 220px;
@@ -70,12 +69,12 @@
         }
         .shop-by-image{
             width: 220px;
-            height: 300px;
+            aspect-ratio: 220 / 300;
 
             img{
                 width: 100%;
                 height: 100%;
-                object-fit: fill;
+                object-fit: cover;
                 border-radius: 30px;
                 box-shadow: 0 8px 25px rgba(0, 0, 0, .25);
             }
@@ -84,7 +83,7 @@
         .shop-by-text{
             text-align:center;
             line-height: 50px;
-            font-family: var(--primary-font-web-copy);
+            font-family: "EB Garamond", sans-serif;
             color: var(--text-colour);
             font-weight: 600;
         }
@@ -92,11 +91,8 @@
 }
 
 .card-container{
-    font-family: var(--primary-font-body-copy);
-    width: auto;
+    font-family: "Outfit", sans-serif;
     height: 600px;
-    align-items: center;
-    justify-content: center;
 
         .product-card-grid-container{
             max-width:1200px;
@@ -178,8 +174,10 @@
 
     .shop-by-container .shop-by-card .shop-by-image {
         width: 100%;
-        height: 320px;
+        aspect-ratio: 220 / 300;
+        height: auto;
     }
+
 
     .card-container {
         height: auto;
@@ -190,6 +188,8 @@
 @media (max-width: 480px) {
     .details-container {
         gap: 8px;
+        width: 100%;
+        padding: 0 1rem;
     }
 
     .details-container .details-card {
@@ -198,7 +198,7 @@
         align-items: center;
         text-align: center;
         height: auto;
-        padding: 0.5rem;
+        padding: 1rem 0.5rem;
         min-height: auto;
     }
 
@@ -209,10 +209,17 @@
 
     .details-container .details-card .details-text {
         width: 100%;
+        max-width: 100%;
+    }
+
+    .details-container .details-card .details-text h4 {
+        margin: 0.5rem 0;
     }
 
     .details-container .details-card .details-text p {
         font-size: 13px;
+        margin: 0;
+        padding: 0;
     }
 
     .picture-container {
@@ -229,13 +236,24 @@
     }
 
     .shop-by-container .shop-by-card {
-        width: 95%;
+        width: 85%;
+        max-width: 280px;
         margin-bottom: 1rem;
     }
 
     .shop-by-container .shop-by-card .shop-by-image {
-        height: 280px;
+        width: 100%;
+        aspect-ratio: 220 / 300;
+        height: auto;
         border-radius: 25px;
+        overflow: hidden;
+    }
+
+    .shop-by-container .shop-by-card .shop-by-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
     }
 
     .shop-by-container .shop-by-card .shop-by-text {
@@ -248,4 +266,3 @@
         padding: 1rem 0;
     }
 }
-

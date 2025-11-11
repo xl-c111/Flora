@@ -1,5 +1,5 @@
 .eb-garamond-regular {
-  font-family: "EB Garamond", serif;
+  font-family: "EB Garamond", sans-serif;
   font-optical-sizing: auto;
   font-weight: 300;
   font-style: normal;
@@ -41,13 +41,13 @@
 }
 
 .error-container h2 {
-  color: #dc2626;
+  color: var(--accent-error);
   margin-bottom: 1rem;
 }
 
 .back-btn {
   background-color: #10b981;
-  color: white;
+  color: var(--background-white);
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
@@ -66,19 +66,19 @@
   margin-bottom: 2rem;
   font-size: 0.875rem;
   font-family: "Outfit", sans-serif;
-  color: #595E4E;
+  color: var(--text-colour);
 }
 
 .breadcrumb-link {
   background: none;
   border: none;
-  color: #C8D7C4;
+  color: var(--banner-colour-1);
   cursor: pointer;
   text-decoration: underline;
 }
 
 .breadcrumb-link:hover {
-  color: #595E4E;
+  color: var(--text-colour);
 }
 
 .breadcrumb-separator {
@@ -101,7 +101,6 @@
 
 /* Product Image Section */
 .product-image-section {
-  justify-content: center;
   position: sticky;
   top: 25%;
   width: 400px;
@@ -116,7 +115,6 @@
 }
 
 .image-placeholder {
-  
   width: 100%;
   max-width: 500px;
   aspect-ratio: 1;
@@ -157,7 +155,7 @@
   font-size: 2.25rem;
   font-weight: 600;
   font-family: "EB Garamond", sans-serif;
-  color: #595E4E;
+  color: var(--text-colour);
   margin: 0;
   line-height: 1.3;
   flex: 1;
@@ -166,14 +164,14 @@
 .product-price {
   font-size: 2.25rem;
   font-family: "EB Garamond", sans-serif;
-  color: #595E4E;
+  color: var(--text-colour);
   white-space: nowrap;
 }
 
 .likes-count {
   font-size: 0.9375rem;
   font-family: "Outfit", sans-serif;
-  color: #595E4E;
+  color: var(--text-colour);
   font-weight: 400;
 }
 
@@ -188,7 +186,7 @@
   font-size: 2rem;
   font-weight: 700;
   font-family: "EB Garamond", sans-serif;
-  color: #595E4E;
+  color: var(--text-colour);
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -229,7 +227,7 @@
 }
 
 .product-description {
-  color: #595E4E;
+  color: var(--text-colour);
   margin: 0 0 1.25rem 0;
   font-family: "Outfit", sans-serif;
 }
@@ -266,7 +264,7 @@
   font-size: 1.5rem;
   font-family: "EB Garamond", sans-serif;
   font-weight: 500;
-  color: #595E4E;
+  color: var(--text-colour);
 }
 
 .date-selector-placeholder {
@@ -293,8 +291,8 @@
 
 .purchase-type-btn {
   padding: 0.875rem 0.5rem;
-  background-color: #C8D7C4;
-  color: #595E4E;
+  background-color: var(--banner-colour-1);
+  color: var(--text-colour);
   border: 2px solid#595E4E;
   border-radius: 10px;
   font-family: "Outfit", sans-serif;
@@ -307,13 +305,13 @@
 
 .purchase-type-btn:hover {
   background-color: #E0E8E0;
-  color: #595E4E;
-  border: 2px solid #595E4E;
+  color: var(--text-colour);
+  border: 2px solid var(--text-colour);
 }
 
 .purchase-type-btn.active {
-  background-color: #595E4E;
-  color: #C8D7C4;
+  background-color: var(--text-colour);
+  color: var(--banner-colour-1);
   font-weight: 600;
 }
 
@@ -330,35 +328,30 @@
   align-items: center;
   justify-content: space-between;
   padding: 1rem 1.25rem;
-  background-color: #C8D7C4;
-  border: 2px solid #595E4E;
+  background-color: var(--banner-colour-1);
+  border: 2px solid var(--text-colour);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .frequency-option-card:hover {
-  border-color: #595E4E;
+  border-color: var(--text-colour);
   background-color: #E0E8E0;
-  color: #595E4E;
+  color: var(--text-colour);
 }
 
 .frequency-option-card.active {
-  border-color: #C8D7C4;
-  background-color: #595E4E;
-  border: 2px solid #595E4E
+  border-color: var(--banner-colour-1);
+  background-color: var(--text-colour);
+  border: 2px solid var(--text-colour)
 }
 
-.frequency-option-card.active .frequency-option-label {
-  color: #C8D7C4;
-}
 
-.frequency-option-card.active .frequency-option-description {
-  color: #C8D7C4;
-}
-
+.frequency-option-card.active .frequency-option-label,
+.frequency-option-card.active .frequency-option-description,
 .frequency-option-card.active .frequency-option-price {
-  color: #C8D7C4;
+  color: var(--banner-colour-1);
 }
 
 .frequency-option-card.active .frequency-option-savings {
@@ -436,8 +429,8 @@
 /* Add to Cart Button */
 .add-to-cart-btn {
   font-family: "Outfit", sans-serif;
-  background-color: #595E4E;
-  color: #C8D7C4;
+  background-color: var(--text-colour);
+  color: var(--banner-colour-1);
   border: none;
   padding: 1.125rem 2rem;
   border-radius: 10px;
@@ -447,13 +440,13 @@
   transition: all 0.2s ease;
   width: 100%;
   margin-top: 1.5rem;
-  border: 2px solid #595E4E;
+  border: 2px solid var(--text-colour);
 }
 
 .add-to-cart-btn:hover:not(:disabled) {
-  background-color: #e0e8e0;
-  color: #595E4E;
-  border: 2px solid #595E4E;
+  background-color: var(--button-colour2);
+  color: var(--text-colour);
+  border: 2px solid var(--text-colour);
 }
 
 .add-to-cart-btn:disabled {
@@ -485,17 +478,17 @@
   font-size: 1.75rem;
   font-weight: 500;
   font-family: "EB Garamond", sans-serif;
-  color: #595E4E;
+  color: var(--text-colour);
   text-align: left;
   transition: color 0.2s ease;
 }
 
 .accordion-header:hover {
-  color: #595E4E;
+  color: var(--text-colour);
 }
 
 .accordion-header.active {
-  color: #595E4E;
+  color: var(--text-colour);
 }
 
 .accordion-icon {
@@ -515,14 +508,14 @@
   font-size: 1.25rem;
   font-weight: 500;
   font-family: "Outfit", sans-serif;
-  color: #595E4E;
+  color: var(--text-colour);
 }
 
 .accordion-content p {
   margin: 0 0 1rem 0;
   font-size: 0.9375rem;
   line-height: 1.7;
-  color: #595E4E;
+  color: var(--text-colour);
   font-family: "Outfit", sans-serif;
 }
 
@@ -578,14 +571,13 @@
     margin-right: 0;
   }
 
-  .product-title {
-    font-family: "EB Garamond", sans-serif;
-    font-size: 1.875rem;
-  }
+.product-title {
+  font-size: 1.875rem;
+}
 
-  .current-price {
-    font-size: 1.75rem;
-  }
+.current-price {
+  font-size: 1.75rem;
+}
 }
 
 @media (max-width: 768px) {
@@ -698,7 +690,7 @@
 }
 
 .auth-prompt-modal {
-  background: white;
+  background: var(--background-white);
   border-radius: 12px;
   padding: 2rem;
   max-width: 400px;
@@ -709,7 +701,7 @@
 
 .auth-prompt-content h3 {
   margin: 0 0 1rem 0;
-  color: #dc2626;
+  color: var(--accent-error);
   font-size: 1.5rem;
   text-align: center;
 }
@@ -729,7 +721,7 @@
 
 .auth-prompt-login-btn {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
+  color: var(--background-white);
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
@@ -778,7 +770,7 @@
   font-size: 2rem;
   font-weight: 700;
   font-family: "EB Garamond", sans-serif;
-  color: #595E4E;
+  color: var(--text-colour);
   margin: 0 0 2rem 0;
   text-align: center;
 }
@@ -792,7 +784,7 @@
 }
 
 .similar-product-card {
-  background: white;
+  background: var(--background-white);
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   overflow: hidden;
@@ -838,7 +830,7 @@
   font-size: 1.25rem;
   font-weight: 600;
   font-family: "EB Garamond", sans-serif;
-  color: #595E4E;
+  color: var(--text-colour);
   margin: 0 0 0.5rem 0;
   cursor: pointer;
   transition: color 0.2s ease;
@@ -849,7 +841,7 @@
   font-size: 1.125rem;
   font-weight: 600;
   font-family: "EB Garamond", sans-serif;
-  color: #595E4E;
+  color: var(--text-colour);
   margin: 0 0 1rem 0;
 }
 
@@ -861,7 +853,7 @@
 .similar-product-view-btn {
   flex: 1;
   font-family: "Outfit", sans-serif;
-  background: white;
+  background: var(--background-white);
   color: var(--text-colour3);
   border: 2px solid var(--button-colour2);
   padding: 0.75rem 1rem;
@@ -873,7 +865,7 @@
 
 .similar-product-view-btn:hover {
   background-color: var(--button-colour1);
-  color: #595E4E;
+  color: var(--text-colour);
   border: 2px solid var(--text-colour)
 }
 
@@ -887,7 +879,7 @@
   flex: 1;
   font-family: "Outfit", sans-serif;
   background: var(--button-colour2);
-  color: #595E4E;
+  color: var(--text-colour);
   border: none;
   padding: 0.75rem 1rem;
   border-radius: 8px;
@@ -899,7 +891,7 @@
 
 .similar-product-quick-add-btn:hover {
   background-color: var(--button-colour1);
-  color: #595E4E;
+  color: var(--text-colour);
   border: 2px solid var(--text-colour)
 }
 
