@@ -3,8 +3,8 @@ import { useSearchParams } from 'react-router-dom';
 import type { Product, ProductResponse, ProductFilters } from '../types';
 import { apiService } from '../services/api';
 import ProductGrid from '../components/ProductGrid';
-import '../styles/ProductsPage.css';
-import '../styles/LandingPage.css';
+import './ProductsPage.css';
+import './LandingPage.css';
 import flowerIcon from '../assets/flower-icon.svg';
 import calendarIcon from '../assets/calendar-icon.svg';
 import colourIcon from '../assets/colour-icon.svg';
@@ -91,7 +91,6 @@ const LandingPage: React.FC = () => {
       // Update our component state with the response data
       setProducts(response.products);
     } catch (err) {
-      console.error('Error fetching products:', err);
       setError('Failed to load products. Please try again.');
     } finally {
       setIsLoading(false);

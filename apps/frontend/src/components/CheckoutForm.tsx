@@ -6,7 +6,7 @@ import PaymentForm from "./PaymentForm";
 import { useAuth } from "../contexts/AuthContext";
 import { useCart } from "../contexts/CartContext";
 import deliveryService, { type DeliveryInfo } from "../services/deliveryService";
-import "../styles/CheckoutForm.css";
+import './CheckoutForm.css';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "");
 

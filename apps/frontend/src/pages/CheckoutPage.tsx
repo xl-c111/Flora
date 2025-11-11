@@ -7,7 +7,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useCheckout } from '../hooks/useCheckout';
 import deliveryService, { type DeliveryInfo } from '../services/deliveryService';
 import type { CheckoutFormData } from '../components/CheckoutForm';
-import '../styles/CheckoutPage.css';
+import './CheckoutPage.css';
 import logoSvg from '../assets/flora-logo.svg';
 import logoTextSvg from '../assets/flora-text-cursive.svg';
 
@@ -32,7 +32,6 @@ const CheckoutPage: React.FC = () => {
         const info = await deliveryService.getDeliveryInfo();
         setDeliveryInfo(info);
       } catch (error) {
-        console.error('Failed to fetch delivery info:', error);
       }
     };
 
@@ -53,8 +52,8 @@ const CheckoutPage: React.FC = () => {
     }
   };
 
-  const handlePaymentError = (error: string) => {
-    console.error('Payment error:', error);
+  const handlePaymentError = (_error: string) => {
+    // Error handling removed for production
   };
 
   if (state.items.length === 0) {

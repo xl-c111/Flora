@@ -12,7 +12,6 @@
   position: relative;
   flex: 1;
   margin-bottom: 1.5rem;
-  max-height: calc(100vh - 400px);
 }
 
 .order-summary-items {
@@ -40,7 +39,7 @@
   border-radius: 12px;
   overflow: visible; /* Changed from hidden to visible so badge can extend outside */
   border: 1px solid #d4d4c8;
-  background-color: #ffffff;
+  background-color: var(--background-white);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -76,7 +75,7 @@
   top: -12px;
   right: -12px;
   background-color: #2d2d2d;
-  color: white;
+  color: var(--background-white);
   min-width: 34px;
   height: 34px;
   padding: 0 6px;
@@ -139,7 +138,7 @@
 
 .item-type.subscription .badge {
   background: #6b6b5c;
-  color: white;
+  color: var(--background-white);
   padding: 0.125rem 0.5rem;
   border-radius: 12px;
   font-size: 0.75rem;
@@ -184,7 +183,7 @@
   background-color: #6b6b5c;
   border: none;
   border-radius: 50px;
-  color: white;
+  color: var(--background-white);
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
@@ -230,7 +229,7 @@
   font-size: 0.9375rem;
   border: 2px solid #333;
   border-radius: 8px;
-  background-color: #ffffff;
+  background-color: var(--background-white);
   color: #2d2d2d;
   transition: all 0.2s;
 }
@@ -260,7 +259,7 @@
 
 .apply-button:hover:not(:disabled) {
   background-color: #6b6b5c;
-  color: white;
+  color: var(--background-white);
 }
 
 .apply-button:disabled {
@@ -279,21 +278,23 @@
   justify-content: space-between;
   align-items: center;
   font-size: 1rem;
-  color: #333;
+  color: var(--text-dark);
   margin-bottom: 1.5rem;
+  font-weight: 500;
 }
 
 .subtotal-row {
-  color: #333;
+  color: var(--text-dark);
   font-size: 1rem;
 }
 
 .subtotal-row span:first-child {
-  color: #333;
+  color: var(--text-dark);
+  font-weight: 500;
 }
 
 .subtotal-row span:last-child {
-  color: #333;
+  color: var(--text-dark);
   font-size: 1.5rem;
   font-weight: 600;
 }
@@ -314,7 +315,7 @@
 
 .total-label {
   font-size: 2.5rem;
-  color: #333;
+  color: var(--text-dark);
   font-weight: 700;
   font-family: serif;
   line-height: 1;
@@ -328,14 +329,14 @@
 
 .currency {
   font-size: 1rem;
-  color: #333;
+  color: var(--text-dark);
   font-weight: 400;
   text-transform: uppercase;
 }
 
 .amount {
   font-size: 2.5rem;
-  color: #333;
+  color: var(--text-dark);
   font-weight: 700;
   line-height: 1;
 }
@@ -404,7 +405,7 @@
 }
 
 .breakdown-cost {
-  color: #333;
+  color: var(--text-dark);
   font-weight: 600;
 }
 
@@ -433,7 +434,7 @@
   width: 28px;
   height: 28px;
   border: 1px solid #6b6b5c;
-  background: white;
+  background: var(--background-white);
   color: #6b6b5c;
   border-radius: 4px;
   cursor: pointer;
@@ -446,7 +447,7 @@
 
 .quantity-btn:hover:not(:disabled) {
   background: #6b6b5c;
-  color: white;
+  color: var(--background-white);
 }
 
 .quantity-btn:disabled {
@@ -476,6 +477,16 @@
 }
 
 @media (max-width: 768px) {
+  /* Keep the quantity badge inside the image on small screens
+     to avoid horizontal overflow */
+  .item-quantity-badge {
+    top: 0;
+    right: 0;
+    min-width: 28px;
+    height: 28px;
+    border-width: 2px;
+  }
+
   .order-summary-items-wrapper {
     max-height: none;
   }
@@ -504,5 +515,102 @@
 
   .apply-button {
     width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .order-summary {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .total-row {
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    width: 100%;
+    max-width: 100%;
+    overflow: visible;
+  }
+
+  .subtotal-row span:last-child {
+    font-size: 1.25rem;
+  }
+
+  .shipping-row {
+    width: 100%;
+    max-width: 100%;
+    gap: 0.5rem;
+  }
+
+  .shipping-label-wrapper {
+    flex: 1;
+    min-width: 0;
+    gap: 0.25rem;
+  }
+
+  .shipping-label-wrapper > span {
+    flex-shrink: 1;
+    min-width: 0;
+  }
+
+  .shipping-tbd {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .breakdown-toggle {
+    font-size: 0.7rem;
+    padding: 0.125rem 0.25rem;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .total-label {
+    font-size: 1.75rem;
+  }
+
+  .amount {
+    font-size: 1.75rem;
+  }
+
+  .currency {
+    font-size: 0.875rem;
+  }
+
+  .tax-note {
+    font-size: 0.875rem;
+  }
+
+  .order-item {
+    gap: 0.5rem;
+  }
+
+  .order-item-image {
+    width: 50px;
+    height: 50px;
+  }
+
+  .order-item-details h3 {
+    font-size: 0.875rem;
+  }
+
+  .item-category,
+  .item-frequency,
+  .item-delivery-date {
+    font-size: 0.75rem;
+  }
+
+  .order-item-price {
+    font-size: 0.875rem;
+  }
+
+  .discount-input {
+    font-size: 0.875rem;
+    padding: 0.75rem;
+  }
+
+  .apply-button {
+    font-size: 0.875rem;
+    padding: 0.75rem 1rem;
   }
 }

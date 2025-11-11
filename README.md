@@ -4,27 +4,6 @@ Flora is a full‑stack ecommerce experience dedicated to bouquets and floral su
 
 ---
 
-## Table of Contents
-- [Flora – Modern Floral Marketplace](#flora--modern-floral-marketplace)
-  - [Table of Contents](#table-of-contents)
-  - [Key Features](#key-features)
-  - [Tech Stack](#tech-stack)
-  - [Repository Layout](#repository-layout)
-  - [Prerequisites](#prerequisites)
-  - [Quick Start](#quick-start)
-    - [Option A – pnpm (local runtimes)](#option-a--pnpm-local-runtimes)
-    - [Option B – Docker Compose](#option-b--docker-compose)
-  - [Environment Configuration](#environment-configuration)
-  - [Demo Data \& Test Accounts](#demo-data--test-accounts)
-  - [Core Scripts](#core-scripts)
-  - [Testing \& Quality Gates](#testing--quality-gates)
-  - [Troubleshooting](#troubleshooting)
-  - [Documentation](#documentation)
-  - [Future Development](#future-development)
-  - [Maintainers \& License](#maintainers--license)
-
----
-
 ## Key Features
 - **Bouquet commerce** fuels one-time orders, scheduled subscriptions, and spontaneous surprise deliveries.
 - **Discovery tools** surface rich filtering by price, season, mood, and occasion alongside search suggestions and curated seasonal collections.
@@ -144,6 +123,7 @@ If you prefer different demo accounts, update `prisma/seed.ts` or change the ema
 | `pnpm --filter backend dev` | Run API with live reload |
 | `pnpm --filter backend db:setup` | Apply migrations and seed data |
 | `pnpm --filter backend db:seed` | Reseed without recreating schema |
+| `pnpm --filter backend db:restock` | Restock low-inventory products (default: stockCount < 10 → 100 units) |
 | `pnpm --filter frontend dev` | Run Vite dev server |
 | `pnpm docker:dev:bg` | Start full stack via Docker |
 | `pnpm docker:restart-backend` / `docker:restart-frontend` | Restart individual services |
@@ -152,7 +132,6 @@ If you prefer different demo accounts, update `prisma/seed.ts` or change the ema
 
 > Use the mock variant only when Prisma engines cannot be generated (e.g., sandbox or no network access). For local development and CI, prefer the real client test command above.
 
----
 
 ## Testing & Quality Gates
 

@@ -1,7 +1,7 @@
 /* Flora Marketplace Styles */
 
 .eb-garamond-regular {
-  font-family: "EB Garamond", serif;
+  font-family: "EB Garamond", sans-serif;
   font-optical-sizing: auto;
   font-weight: 300;
   font-style: normal;
@@ -34,12 +34,19 @@
   box-sizing: border-box;
 }
 
+html {
+  overflow-x: hidden;
+  width: 100%;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
     sans-serif;
   color: var(--text-colour);
   background: var(--background-colour);
   line-height: 1.6;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 .app {

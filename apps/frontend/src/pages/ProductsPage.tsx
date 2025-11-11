@@ -4,7 +4,7 @@ import type { Product, FilterOptions, ProductResponse, ProductFilters } from '..
 import { apiService } from '../services/api';
 import FilterSidebar from '../components/FilterSidebar';
 import ProductGrid from '../components/ProductGrid';
-import '../styles/ProductsPage.css';
+import './ProductsPage.css';
 
 const ProductsPage: React.FC = () => {
   // Get URL query parameters (e.g., ?filter=colour or ?category=romantic)
@@ -103,7 +103,6 @@ const ProductsPage: React.FC = () => {
       setPagination(response.pagination);
       setFilterOptions(response.filters);
     } catch (err) {
-      console.error('Error fetching products:', err);
       setError('Failed to load products. Please try again.');
     } finally {
       setIsLoading(false);

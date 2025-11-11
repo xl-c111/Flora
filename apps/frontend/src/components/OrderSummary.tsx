@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { CartItem } from '../contexts/CartContext';
 import { getImageUrl } from '../services/api';
-import '../styles/OrderSummary.css';
+import './OrderSummary.css';
 
 interface OrderSummaryProps {
   items: CartItem[];

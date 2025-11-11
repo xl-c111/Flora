@@ -5,7 +5,7 @@ import { useAuth } from "../contexts/AuthContext";
 import orderService from "../services/orderService";
 import type { Order } from "../services/orderService";
 import { getImageUrl } from "../services/api";
-import "../styles/OrderConfirmationPage.css";
+import './OrderConfirmationPage.css';
 import logoSvg from '../assets/flora-logo.svg';
 import logoTextSvg from '../assets/flora-text-cursive.svg';
 
@@ -34,7 +34,6 @@ const OrderConfirmationPage: React.FC = () => {
       setOrder(orderData);
       setError(null);
     } catch (err: any) {
-      console.error("Error fetching order:", err);
       setError(err.response?.data?.error || "Failed to load order details");
     } finally {
       setLoading(false);

@@ -41,14 +41,14 @@
 .subscriptions-loading p,
 .subscriptions-not-logged-in p,
 .subscriptions-error p {
-  color: #8a8a7a;
+  color: var(--text-secondary);
   font-size: 1rem;
   margin: 0.5rem 0 1.5rem 0;
 }
 
 .subscriptions-not-logged-in h2,
 .subscriptions-error h2 {
-  color: #5a5a4a;
+  color: var(--text-tertiary);
   font-size: 2rem;
   margin: 0 0 1rem 0;
 }
@@ -58,9 +58,9 @@
   display: inline-block;
   padding: 0.875rem 2rem;
   background: #6b7a5e;
-  color: white;
+  color: var(--background-white);
   text-decoration: none;
-  border-radius: 6px;
+  border-radius: var(--radius-small);
   font-weight: 500;
   font-size: 1rem;
   transition: all 0.3s;
@@ -78,33 +78,33 @@
 
 /* Header Section */
 .subscriptions-header {
-  background: white;
-  border-radius: 16px;
+  background: var(--background-white);
+  border-radius: var(--radius-card);
   padding: 2rem;
   margin-bottom: 2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .subscriptions-header h1 {
-  color: #5a5a4a;
+  color: var(--text-tertiary);
   font-size: 2rem;
   font-weight: 600;
   margin: 0 0 0.5rem 0;
 }
 
 .subscription-count {
-  color: #8a8a7a;
+  color: var(--text-secondary);
   font-size: 1rem;
   margin: 0;
 }
 
 /* No Subscriptions State */
 .no-subscriptions {
-  background: white;
-  border-radius: 16px;
+  background: var(--background-white);
+  border-radius: var(--radius-card);
   padding: 4rem 2rem;
   text-align: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .no-subscriptions-icon {
@@ -113,14 +113,14 @@
 }
 
 .no-subscriptions h2 {
-  color: #5a5a4a;
+  color: var(--text-tertiary);
   font-size: 1.75rem;
   font-weight: 600;
   margin: 0 0 0.5rem 0;
 }
 
 .no-subscriptions p {
-  color: #8a8a7a;
+  color: var(--text-secondary);
   font-size: 1.125rem;
   margin: 0 0 2rem 0;
 }
@@ -135,10 +135,10 @@
 
 /* Subscription Card */
 .subscription-card {
-  background: white;
-  border-radius: 16px;
+  background: var(--background-white);
+  border-radius: var(--radius-card);
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
   transition: all 0.3s;
 }
 
@@ -152,7 +152,7 @@
   justify-content: space-between;
   align-items: flex-start;
   padding: 1.5rem 2rem;
-  background: #faf8f5;
+  background: var(--background-light);
   border-bottom: 1px solid #e5e5e0;
 }
 
@@ -167,7 +167,7 @@
 .type-badge {
   display: inline-block;
   background: #6b7a5e;
-  color: white;
+  color: var(--background-white);
   padding: 0.35rem 0.85rem;
   border-radius: 4px;
   font-size: 0.75rem;
@@ -178,7 +178,7 @@
 }
 
 .subscription-frequency {
-  color: #6b7a5e;
+  color: var(--accent-green);
   font-size: 0.95rem;
   font-weight: 600;
   margin: 0 0 0.25rem 0;
@@ -186,14 +186,14 @@
 }
 
 .subscription-type {
-  color: #5a5a4a;
+  color: var(--text-tertiary);
   font-size: 1.25rem;
   font-weight: 600;
   margin: 0 0 0.25rem 0;
 }
 
 .subscription-created {
-  color: #8a8a7a;
+  color: var(--text-secondary);
   font-size: 0.875rem;
   margin: 0;
   font-family: "Outfit", sans-serif;
@@ -217,18 +217,18 @@
 }
 
 .status-active {
-  background: #e6f7ed;
-  color: #00a854;
+  background: var(--accent-green);
+  color: var(--background-white);
 }
 
 .status-paused {
-  background: #fff4e6;
-  color: #c97a00;
+  background: var(--button-colour2);
+  color: var(--text-colour);
 }
 
 .status-cancelled {
-  background: #ffe6e6;
-  color: #d14343;
+  background: #f5e6e6;
+  color: var(--accent-error-light);
 }
 
 .status-pending {
@@ -283,7 +283,7 @@
 }
 
 .item-name {
-  color: #5a5a4a;
+  color: var(--text-tertiary);
   font-size: 1rem;
   font-weight: 500;
   margin: 0 0 0.25rem 0;
@@ -294,14 +294,14 @@
 }
 
 .item-quantity {
-  color: #8a8a7a;
+  color: var(--text-secondary);
   font-size: 0.875rem;
   margin: 0 0 0.25rem 0;
   font-family: "EB Garamond", sans-serif;
 }
 
 .item-price {
-  color: #6b7a5e;
+  color: var(--accent-green);
   font-size: 0.875rem;
   font-weight: 600;
   margin: 0;
@@ -324,20 +324,20 @@
 }
 
 .detail-row .label {
-  color: #8a8a7a;
+  color: var(--text-secondary);
   font-size: 0.95rem;
   white-space: nowrap;
 }
 
 .detail-row .value {
-  color: #5a5a4a;
+  color: var(--text-tertiary);
   font-size: 0.95rem;
   font-weight: 500;
   text-align: right;
 }
 
 .detail-row .next-delivery {
-  color: #6b7a5e;
+  color: var(--accent-green);
   font-weight: 700;
 }
 
@@ -357,7 +357,7 @@
 
 .action-btn {
   padding: 0.625rem 1.25rem;
-  border-radius: 6px;
+  border-radius: var(--radius-small);
   font-weight: 500;
   font-size: 0.9rem;
   border: none;
@@ -373,43 +373,43 @@
 }
 
 .pause-btn {
-  background: #fff4e6;
-  color: #c97a00;
+  background: var(--banner-colour-1);
+  color: var(--text-colour);
 }
 
 .pause-btn:hover:not(:disabled) {
-  background: #ffe4c4;
+  background: #b8c9b4;
 }
 
 .skip-btn {
-  background: #e6f4ff;
-  color: #0066cc;
+  background: var(--button-colour2);
+  color: var(--text-colour);
 }
 
 .skip-btn:hover:not(:disabled) {
-  background: #cce7ff;
+  background: var(--banner-colour-1);
 }
 
 .resume-btn {
-  background: #e6f7ed;
-  color: #00a854;
+  background: var(--accent-green);
+  color: var(--background-white);
 }
 
 .resume-btn:hover:not(:disabled) {
-  background: #ccf0dd;
+  background: var(--accent-green-hover);
 }
 
 .cancel-btn {
-  background: #ffe6e6;
-  color: #d14343;
+  background: #f5e6e6;
+  color: var(--accent-error-light);
 }
 
 .cancel-btn:hover:not(:disabled) {
-  background: #ffcccc;
+  background: #ead6d6;
 }
 
 .coming-soon-text {
-  color: #8a8a7a;
+  color: var(--text-secondary);
   font-size: 0.875rem;
   font-style: italic;
   margin-left: auto;
@@ -461,12 +461,12 @@
   }
 
   .subscription-actions {
-    flex-direction: column;
+    flex-direction: column !important;
     width: 100%;
   }
 
   .action-btn {
-    width: 100%;
+    width: 100% !important;
   }
 
   .coming-soon-text {
