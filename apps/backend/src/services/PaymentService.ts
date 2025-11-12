@@ -154,6 +154,7 @@ export class PaymentService {
     // TODO: Replace with actual Stripe price IDs once products are created
     const priceMapping = {
       'RECURRING_WEEKLY': process.env.STRIPE_WEEKLY_PRICE_ID || 'price_weekly_placeholder',
+      'RECURRING_BIWEEKLY': process.env.STRIPE_BIWEEKLY_PRICE_ID || 'price_biweekly_placeholder',
       'RECURRING_MONTHLY': process.env.STRIPE_MONTHLY_PRICE_ID || 'price_monthly_placeholder',
       'SPONTANEOUS': process.env.STRIPE_SPONTANEOUS_PRICE_ID || 'price_spontaneous_placeholder',
     };

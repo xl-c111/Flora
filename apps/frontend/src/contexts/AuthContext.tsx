@@ -24,11 +24,35 @@ export const useAuth = () => {
   return context;
 };
 
+// Check if authentication is disabled (for demo deployments)
+const isAuthDisabled = import.meta.env.VITE_DISABLE_AUTH === 'true';
+
+// Mock user for demo mode (when Auth0 is disabled)
+const demoUser: Auth0User = {
+  sub: 'demo-user-001',
+  name: 'Demo User',
+  email: 'demo@flora.com',
+  picture: 'https://via.placeholder.com/150',
+};
+
 // AuthProvider wraps the app and provides Auth0 authentication state/actions
 // to other components
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  // Demo mode: Skip Auth0 entirely
+  if (isAuthDisabled) {
+    const value: AuthContextType = {
+      user: demoUser,
+      loading: false,
+      login: () => console.log('Demo mode: login skipped'),
+      logout: () => console.log('Demo mode: logout skipped'),
+      getAccessToken: async () => 'demo-token',
+    };
+    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  }
+
+  // Production mode: Use Auth0
   // useAuth0 gives us all Auth0 authentication state and actions
   const { user, isLoading, loginWithRedirect, logout, getAccessTokenSilently } =
     useAuth0();
@@ -86,7 +110,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         appState: { returnTo }
       });
     },
-    logout: () => logout(),
+    logout: () => logout({ logoutParams: { returnTo: window.location.origin } }),
     getAccessToken,
   };
 
