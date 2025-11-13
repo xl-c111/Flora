@@ -258,7 +258,7 @@ export class OrderService {
     });
   }
 
-  // Get user orders (exclude PENDING - those are abandoned/incomplete orders)
+  // Get user orders
   async getUserOrders(
     userId: string,
     page = 1,
@@ -270,12 +270,9 @@ export class OrderService {
   }> {
     const offset = (page - 1) * limit;
 
-    // Only show confirmed orders (exclude PENDING which are abandoned orders)
+    // Show all orders for this user
     const whereClause = {
       userId,
-      status: {
-        not: OrderStatus.PENDING, // Exclude draft/abandoned orders
-      },
     };
 
     const [orders, total] = await Promise.all([
@@ -383,64 +380,145 @@ export class OrderService {
 
   // Confirm order (after payment)
   async confirmOrder(orderId: string, paymentIntentId: string): Promise<OrderWithDetails> {
-    const order = await prisma.order.update({
+    const orderInclude = {
+      items: {
+        include: {
+          product: {
+            select: {
+              id: true,
+              name: true,
+              priceCents: true,
+              imageUrl: true,
+            },
+          },
+        },
+      },
+      user: {
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+      payments: {
+        select: {
+          id: true,
+          amountCents: true,
+          status: true,
+          paidAt: true,
+          stripePaymentIntentId: true,
+        },
+      },
+    };
+
+    // Check if order exists first
+    const existingOrder = await prisma.order.findUnique({
       where: { id: orderId },
-      data: {
-        status: OrderStatus.CONFIRMED,
+      select: {
+        id: true,
+        status: true,
+        totalCents: true,
         payments: {
-          create: {
-            amountCents: 0, // Will be updated by payment service
+          select: {
+            stripePaymentIntentId: true,
+          }
+        }
+      },
+    });
+
+    if (!existingOrder) {
+      throw new Error("Order not found");
+    }
+
+    // Check if payment with this intent ID already exists globally
+    const existingPayment = await prisma.payment.findUnique({
+      where: { stripePaymentIntentId: paymentIntentId },
+      select: {
+        orderId: true,
+      },
+    });
+
+    // Check if payment is already linked to this order
+    const paymentAlreadyLinked = existingOrder.payments?.some(
+      (payment: { stripePaymentIntentId: string | null }) => payment.stripePaymentIntentId === paymentIntentId
+    );
+
+    // If payment exists and is linked to a different order, throw error
+    if (existingPayment && existingPayment.orderId !== orderId) {
+      throw new Error("Payment intent already used for a different order");
+    }
+
+    // If already confirmed with this payment, just fetch and return
+    const alreadyConfirmedStatuses: OrderStatus[] = [
+      OrderStatus.CONFIRMED,
+      OrderStatus.PREPARING,
+      OrderStatus.OUT_FOR_DELIVERY,
+      OrderStatus.DELIVERED,
+    ];
+
+    if (paymentAlreadyLinked && alreadyConfirmedStatuses.includes(existingOrder.status)) {
+      const order = await prisma.order.findUnique({
+        where: { id: orderId },
+        include: orderInclude,
+      });
+
+      if (!order) {
+        throw new Error("Order not found");
+      }
+
+      // Ensure delivery tracking exists asynchronously (don't block response)
+      this.ensureDeliveryTrackingExists(order as OrderWithDetails).catch((err) => {
+        console.error("Failed to create delivery tracking:", err);
+      });
+
+      return order as OrderWithDetails;
+    }
+
+    // Update order status and create/link payment
+    const order = await prisma.$transaction(async (tx) => {
+      // Update order status
+      const updatedOrder = await tx.order.update({
+        where: { id: orderId },
+        data: { status: OrderStatus.CONFIRMED },
+        include: orderInclude,
+      });
+
+      // Create payment only if it doesn't exist (check again inside transaction to handle race conditions)
+      if (!paymentAlreadyLinked && !existingPayment) {
+        await tx.payment.create({
+          data: {
+            orderId: orderId,
+            amountCents: existingOrder.totalCents,
             stripePaymentIntentId: paymentIntentId,
             status: "succeeded",
             paidAt: new Date(),
           },
-        },
-      },
-      include: {
-        items: {
-          include: {
-            product: {
-              select: {
-                id: true,
-                name: true,
-                priceCents: true,
-                imageUrl: true,
-              },
-            },
-          },
-        },
-        user: {
-          select: {
-            id: true,
-            email: true,
-            firstName: true,
-            lastName: true,
-          },
-        },
-        payments: {
-          select: {
-            id: true,
-            amountCents: true,
-            status: true,
-            paidAt: true,
-          },
-        },
-      },
+        });
+      }
+
+      return updatedOrder;
     });
 
-    // Send confirmation email ASAP (before ancillary tracking work)
-    // Don't block order on email errors
-    try {
-      await this.emailService.sendOrderConfirmation(order as any);
-      console.log(`📧 Order confirmation queued for order ${order.orderNumber} ->`, order.guestEmail || order.user?.email);
-    } catch (err: any) {
-      console.error('❌ Failed to send order confirmation on createOrder:', err?.message || err);
-    }
+    // Send confirmation email without blocking response
+    this.emailService
+      .sendOrderConfirmation(order as any)
+      .then(() => {
+        console.log(
+          `📧 Order confirmation queued for order ${order.orderNumber} ->`,
+          order.guestEmail || order.user?.email
+        );
+      })
+      .catch((err: any) => {
+        console.error("❌ Failed to send order confirmation:", err?.message || err);
+      });
 
-    // Create delivery tracking record (non-critical for email)
-    await this.createDeliveryTracking(order);
+    // Ensure delivery tracking record exists asynchronously (don't block response)
+    this.ensureDeliveryTrackingExists(order as OrderWithDetails).catch((err) => {
+      console.error("Failed to create delivery tracking:", err);
+    });
 
-    return order;
+    return order as OrderWithDetails;
   }
 
   // Update order status
@@ -637,6 +715,16 @@ export class OrderService {
         },
       },
     });
+  }
+
+  private async ensureDeliveryTrackingExists(order: OrderWithDetails): Promise<void> {
+    const existingTracking = await prisma.deliveryTracking.findUnique({
+      where: { orderId: order.id },
+    });
+
+    if (!existingTracking) {
+      await this.createDeliveryTracking(order);
+    }
   }
 
   private async updateDeliveryTracking(orderId: string, status: OrderStatus): Promise<void> {
