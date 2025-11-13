@@ -59,6 +59,23 @@
   font-style: italic;
 }
 
+.footer-brand .logo-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.footer-brand .logo-image img:first-child {
+  width: 55px;
+  height: auto;
+}
+
+.footer-brand .logo-image img:last-child {
+  width: 120px;
+  height: auto;
+}
+
 /* Navigation Links */
 .footer-links {
   display: flex;
@@ -226,4 +243,3 @@
     height: 20px;
   }
 }
-

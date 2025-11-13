@@ -18,8 +18,8 @@
 
 .banner-image{
     width: 100%;
-    height: 140px;
-    background: url('../assets/banner-image.png');
+    height: 170px;
+    background: url('../assets/banner-image-optimized.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -27,7 +27,7 @@
 }
 
 .logo-image img {
-  height: 100px;
+  height: 125px;
   width: auto;
   display: block;
 }
@@ -391,13 +391,13 @@
 
 /* Compact header variant (non-landing) */
 .flora-header.compact .banner-image {
-  height: 75px;
+  height: 95px;
 }
 .flora-header.compact .logo-image {
   padding: 10px 0;
 }
 .flora-header.compact .logo-image img {
-  height: 50px;
+  height: 65px;
 }
 .flora-header.compact .top-nav {
   padding: 0.8rem 2rem 0.65rem;
@@ -416,13 +416,13 @@
 
 /* Compact-on-scroll (applies to landing and others) */
 .flora-header.scrolled .banner-image {
-  height: 65px;
+  height: 85px;
 }
 .flora-header.scrolled .logo-image {
   padding: 8px 0;
 }
 .flora-header.scrolled .logo-image img {
-  height: 44px;
+  height: 58px;
 }
 .flora-header.scrolled .top-nav {
   padding: 0.65rem 2rem 0.5rem;

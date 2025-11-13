@@ -13,16 +13,6 @@ type OrderWithUser = Order & {
   } | null;
 };
 
-interface EmailConfig {
-  host: string;
-  port: number;
-  secure: boolean;
-  auth: {
-    user: string;
-    pass: string;
-  };
-}
-
 export class EmailService {
   private static instance: EmailService | null = null;
   private transporter: nodemailer.Transporter;
@@ -485,22 +475,4 @@ export class EmailService {
     return preferences.length > 0 ? preferences.join(' ') + '.' : null;
   }
 
-  // Helper method to determine appropriate greeting based on user context
-  private getGreeting(user?: User, guestEmail?: string | null): string {
-    if (user && user.firstName) {
-      return `Dear ${user.firstName}`;
-    } else if (user) {
-      return `Dear Valued Customer`;
-    } else if (guestEmail) {
-      return `Dear Customer`;
-    }
-    return `Hello`;
-  }
-
-  // Check if user has opted out of marketing emails (placeholder for future implementation)
-  private async shouldSendMarketingEmail(user: User): Promise<boolean> {
-    // In the future, check user preferences for marketing emails
-    // For now, default to true
-    return true;
-  }
 }

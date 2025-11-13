@@ -28,8 +28,8 @@ const Footer: React.FC = () => {
         <div className="footer-brand">
           <div className="logo-image">
             <Link to="/">
-              <img src={logoSvg} alt="flora logo" width="75" />
-              <img src={logoTextSvg} alt="flora text" width="150" />
+              <img src={logoSvg} alt="flora logo" width="55" />
+              <img src={logoTextSvg} alt="flora text" width="120" />
             </Link>
           </div>
         </div>

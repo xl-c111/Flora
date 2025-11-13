@@ -26,6 +26,9 @@ import aiRoutes from "./routes/ai";
 const app: Application = express();
 const port = Number(process.env.PORT) || 3001;
 
+// Behind CloudFront/ALB we trust the first proxy to get real client IPs
+app.set("trust proxy", 1);
+
 // Middleware
 app.use(corsMiddleware);
 
