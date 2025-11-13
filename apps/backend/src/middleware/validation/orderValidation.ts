@@ -18,7 +18,7 @@ export const orderSchema = z
   .object({
     purchaseType: purchaseTypeEnum,
 
-    // Either userId OR guest info must be provided (validated below)
+    // Either userId OR guest info must be provided
     userId: z.string().optional(),
     guestEmail: z.string().email("Invalid email format").optional(),
     guestPhone: z.string().optional(),
@@ -54,38 +54,23 @@ export const orderSchema = z
     deliveryNotes: z.string().optional(),
     requestedDeliveryDate: z.string().datetime().optional().or(z.date().optional()),
   })
-  .superRefine((data, ctx) => {
-    const isSpontaneous =
-      data.subscriptionType?.startsWith("SPONTANEOUS") ?? false;
-    const requiresAuthenticatedUser =
-      data.purchaseType === "SUBSCRIPTION" || isSpontaneous;
-
-    if (requiresAuthenticatedUser && !data.userId) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["userId"],
-        message: "Login is required for subscription or spontaneous purchases",
-      });
-    }
-
-    if (!requiresAuthenticatedUser && !data.userId) {
-      if (!(data.guestEmail && data.guestPhone)) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["guestEmail"],
-          message: "Guest email and phone are required for guest checkout",
-        });
+  .refine((data) => data.userId || (data.guestEmail && data.guestPhone), {
+    message: "Either userId or (guestEmail + guestPhone) must be provided",
+    path: ["userId"],
+  })
+  .refine(
+    (data) => {
+      // If subscription purchase, require subscription type
+      if (data.purchaseType === "SUBSCRIPTION") {
+        return data.subscriptionType !== undefined;
       }
+      return true;
+    },
+    {
+      message: "Subscription type is required for subscription purchases",
+      path: ["subscriptionType"],
     }
-
-    if (data.purchaseType === "SUBSCRIPTION" && !data.subscriptionType) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["subscriptionType"],
-        message: "Subscription type is required for subscription purchases",
-      });
-    }
-  });
+  );
 
 export const validateOrder = (req: Request, res: Response, next: NextFunction) => {
   const result = orderSchema.safeParse(req.body);

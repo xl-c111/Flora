@@ -13,6 +13,16 @@ type OrderWithUser = Order & {
   } | null;
 };
 
+interface EmailConfig {
+  host: string;
+  port: number;
+  secure: boolean;
+  auth: {
+    user: string;
+    pass: string;
+  };
+}
+
 export class EmailService {
   private static instance: EmailService | null = null;
   private transporter: nodemailer.Transporter;
@@ -118,29 +128,33 @@ export class EmailService {
     const deliveryAddress = `${order.shippingFirstName} ${order.shippingLastName}\n${order.shippingStreet1}${order.shippingStreet2 ? '\n' + order.shippingStreet2 : ''}\n${order.shippingCity}, ${order.shippingState} ${order.shippingZipCode}`;
     const items: any[] | undefined = (order as any).items;
 
-    const attachments: Array<{ filename: string; path: string; cid: string; contentType?: string }> = [];
+    // Prepare attachments (logo first)
+    const logoCid = 'flora-logo';
+    const candidateLogoPaths = [
+      path.join(process.cwd(), 'apps', 'backend', 'assets', 'flora-logo.png'),
+      path.join(__dirname, '..', '..', 'assets', 'flora-logo.png'),
+      path.join(process.cwd(), 'assets', 'flora-logo.png'),
+    ];
+
+    let logoAttachmentPath: string | null = null;
+    for (const p of candidateLogoPaths) {
+      try { if (fs.existsSync(p)) { logoAttachmentPath = p; break; } } catch {}
+    }
+
+    const attachments: Array<{ filename: string; path: string; cid: string; contentType?: string }> = [
+      logoAttachmentPath
+        ? { filename: 'flora-logo.png', path: logoAttachmentPath, cid: logoCid }
+        : { filename: 'flora-logo.png', path: 'https://i.imgur.com/yWZVxUd.png', cid: logoCid },
+    ];
 
     // Build CID for local product images (any relative path), else fallback to absolute URL
-    const assetBase =
-      process.env.EMAIL_IMAGE_BASE_URL ||
-      process.env.BACKEND_PUBLIC_URL ||
-      process.env.FRONTEND_URL ||
-      'http://localhost:3001';
+    const backendBase = process.env.BACKEND_PUBLIC_URL || 'http://localhost:3001';
     // Default to embedding item images; set EMAIL_INLINE_ITEM_IMAGES=false to disable
     const inlineItemImages = process.env.EMAIL_INLINE_ITEM_IMAGES !== 'false';
-    const buildHostedUrl = (u?: string | null): string => {
-      if (!u) return '';
-      if (/^https?:\/\//i.test(u)) return u;
-      const base = assetBase?.replace(/\/$/, '');
-      if (!base) return '';
-      const trimmed = u.startsWith('/') ? u.slice(1) : u;
-      return `${base}/${trimmed}`;
-    };
     const resolveImageRef = (u?: string | null, idx?: number): { src: string } => {
       if (!u) return { src: '' };
-      if (!inlineItemImages) {
-        return { src: buildHostedUrl(u) };
-      }
+      if (!inlineItemImages) return { src: '' }; // Skip embedding item images for faster sends
+      // Absolute remote URL → use as-is
       if (/^https?:\/\//i.test(u)) return { src: u };
 
       // Relative path → attempt to attach exact file (preserve subfolders and case)
@@ -165,12 +179,9 @@ export class EmailService {
       }
 
       // Fallback to absolute URL (won't load in many email clients if localhost)
-      return { src: buildHostedUrl(u) };
+      const absolute = u.startsWith('/') ? `${backendBase}${u}` : `${backendBase}/${u}`;
+      return { src: absolute };
     };
-    const logoUrl =
-      process.env.EMAIL_LOGO_URL ||
-      buildHostedUrl('/flora-logo.png') ||
-      'https://dzmu16crq41il.cloudfront.net/flora-logo.png';
 
     const itemsHtml = items && items.length
       ? `
@@ -226,7 +237,7 @@ export class EmailService {
           <div style="font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; max-width: 640px; margin: 0 auto; background:#ffffff; border-radius:16px; overflow:hidden; box-shadow:0 2px 6px rgba(0,0,0,0.06);">
             <!-- Brand Header -->
             <div style="padding:32px; text-align:center; background:#ffffff;">
-              <img src="${logoUrl}" alt="FLORA" width="160" style="display:inline-block; border:0; outline:none; text-decoration:none; height:auto; max-width:160px;" />
+              <img src="cid:${logoCid}" alt="FLORA" width="160" style="display:inline-block; border:0; outline:none; text-decoration:none; height:auto; max-width:160px;" />
             </div>
 
             <!-- Confirmation Banner -->
@@ -475,4 +486,22 @@ export class EmailService {
     return preferences.length > 0 ? preferences.join(' ') + '.' : null;
   }
 
+  // Helper method to determine appropriate greeting based on user context
+  private getGreeting(user?: User, guestEmail?: string | null): string {
+    if (user && user.firstName) {
+      return `Dear ${user.firstName}`;
+    } else if (user) {
+      return `Dear Valued Customer`;
+    } else if (guestEmail) {
+      return `Dear Customer`;
+    }
+    return `Hello`;
+  }
+
+  // Check if user has opted out of marketing emails (placeholder for future implementation)
+  private async shouldSendMarketingEmail(user: User): Promise<boolean> {
+    // In the future, check user preferences for marketing emails
+    // For now, default to true
+    return true;
+  }
 }

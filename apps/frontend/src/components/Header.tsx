@@ -325,8 +325,8 @@ const Header: React.FC<HeaderProps> = ({ isLanding = false }) => {
         <div className="banner-image">
           <div className="logo-image">
             <Link to="/">
-              <img src={logoSvg} alt="flora logo" width="110px" />
-              <img src={logoTextSvg} alt="flora text" width="220px" />
+              <img src={logoSvg} alt="flora logo" width="75px" />
+              <img src={logoTextSvg} alt="flora text" width="150px" />
             </Link>
           </div>
         </div>

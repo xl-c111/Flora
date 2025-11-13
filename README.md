@@ -4,21 +4,6 @@ Flora is a full‑stack ecommerce experience dedicated to bouquets and floral su
 
 ---
 
-## Live Demo
-
-Experience the production deployment on AWS (CloudFront + S3 + EC2):
-
-- 🌐 **Frontend**: [Browse Flora on AWS](https://dzmu16crq41il.cloudfront.net)
-- ✅ **API Health**: [Check API status](https://dzmu16crq41il.cloudfront.net/api/health)
-
-Use the live site to browse the catalog, run through checkout, and validate deployments without spinning up local services.
-
-<div align="center">
-  <img src="./apps/frontend/src/assets/live-demo.png" alt="Flora Live Demo" width="900" />
-</div>
-
----
-
 ## Key Features
 - **Bouquet commerce** fuels one-time orders, scheduled subscriptions, and spontaneous surprise deliveries.
 - **Discovery tools** surface rich filtering by price, season, mood, and occasion alongside search suggestions and curated seasonal collections.
@@ -52,44 +37,16 @@ Use the live site to browse the catalog, run through checkout, and validate depl
 ---
 
 ## Repository Layout
-
-<details>
-  <summary><strong>Click to expand full structure</strong></summary>
-
 ```
 .
 ├── apps
-│   ├── frontend/
-│   │   ├── public/                    # static assets served by Vite (logos, images)
-│   │   └── src/
-│   │       ├── assets/                # shared imagery, icons, hero banners
-│   │       ├── components/            # reusable React components (Header, Footer, etc.)
-│   │       ├── contexts/              # React context providers (Auth, Cart)
-│   │       ├── hooks/                 # custom hooks (checkout, delivery info)
-│   │       ├── pages/                 # route-level pages (Landing, Products, Checkout)
-│   │       ├── services/              # API helpers (orderService, deliveryService, Auth0)
-│   │       ├── styles/                # global CSS
-│   │       └── main.tsx               # Vite entry point + Auth0 provider
-│   └── backend/
-│       ├── prisma/                    # schema.prisma + migrations + seed
-│       ├── src/
-│       │   ├── config/                # database + env config
-│       │   ├── controllers/           # Express controllers (products, orders, auth)
-│       │   ├── middleware/            # auth, validation, error handling
-│       │   ├── routes/                # Express routers
-│       │   ├── services/              # domain logic (EmailService, ProductService, etc.)
-│       │   ├── utils/                 # helpers (logging, formatters)
-│       │   └── index.ts               # Express bootstrap + PM2 entry
-│       └── scripts/                   # maintenance scripts (e.g., order cleanup)
-├── docs/                              # runbooks (testing, subscriptions, deployment)
-├── scripts/                           # deployment helpers (deploy-frontend.sh, deploy-backend.sh)
-├── terraform/                         # infrastructure as code (VPC, EC2, RDS, S3, CloudFront)
-├── docker-compose*.yml                # local/prod docker orchestration
-├── package.json / pnpm-workspace.yaml # workspace scripts and project metadata
+│   ├── frontend/            # React storefront (Vite + TS)
+│   └── backend/             # Express API (Prisma + Stripe)
+├── docs/                    # Supplemental guides (AI, subscriptions, testing, Stripe)
+├── docker-compose*.yml      # Local & production orchestration
+├── package.json             # Workspace scripts
 └── README.md
 ```
-
-</details>
 
 ---
 
@@ -123,10 +80,6 @@ pnpm --filter frontend dev
 - API health check: http://localhost:3001/api/health  
 - Storefront: http://localhost:5173
 
----
-
-
-
 ### Option B – Docker Compose
 ```bash
 pnpm docker:dev:build   # build/rebuild containers
@@ -134,8 +87,6 @@ pnpm docker:dev:bg      # start containers in background
 pnpm docker:setup       # run migrations + seed inside backend container
 ```
 Logs: `pnpm docker:logs --tail 20`
-
-> Need to ship changes to AWS? See `docs/DEPLOYMENT_REFERENCE.md` for the exact `deploy-frontend.sh` / `deploy-backend.sh` scripts and step-by-step redeploy instructions.
 
 ---
 

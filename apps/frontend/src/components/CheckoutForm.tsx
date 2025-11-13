@@ -47,7 +47,6 @@ interface CheckoutFormProps {
   deliveryInfo: DeliveryInfo | null;
   selectedDeliveryType: "STANDARD" | "EXPRESS" | "PICKUP";
   onDeliveryTypeChange: (type: "STANDARD" | "EXPRESS" | "PICKUP") => void;
-  isProcessing?: boolean;
 }
 
 const CheckoutForm: React.FC<CheckoutFormProps> = ({
@@ -59,7 +58,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
   deliveryInfo,
   selectedDeliveryType,
   onDeliveryTypeChange,
-  isProcessing = false,
 }) => {
   const { login, user } = useAuth();
   const { state: cartState, setGiftMessage } = useCart();
@@ -719,13 +717,8 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
 
       {/* Continue button if no client secret yet */}
       {!clientSecret && (
-        <button
-          type="button"
-          onClick={handleProceedToPayment}
-          className="continue-button"
-          disabled={isProcessing}
-        >
-          {isProcessing ? 'Processing...' : 'Continue to Payment'}
+        <button type="button" onClick={handleProceedToPayment} className="continue-button">
+          Continue to Payment
         </button>
       )}
     </div>
