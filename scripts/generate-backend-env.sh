@@ -90,6 +90,7 @@ JWT_SECRET=${JWT_SECRET}
 FRONTEND_URL=https://dzmu16crq41il.cloudfront.net
 BACKEND_PUBLIC_URL=https://dzmu16crq41il.cloudfront.net
 EMAIL_IMAGE_BASE_URL=https://dzmu16crq41il.cloudfront.net
+EMAIL_LOGO_URL=https://dzmu16crq41il.cloudfront.net/flora-logo.png
 EMAIL_INLINE_ITEM_IMAGES=false
 EOF
 
