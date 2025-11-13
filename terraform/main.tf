@@ -103,7 +103,7 @@ module "cdn" {
   # Backend API server information from compute module
   # Use EC2 public DNS name (CloudFront accepts DNS names, not IPs)
   backend_domain_name = "ec2-15-134-175-113.ap-southeast-2.compute.amazonaws.com"
-  backend_port        = 80
+  backend_port        = 3001
 
   # Use PriceClass_100 for cost savings (North America and Europe only)
   price_class = "PriceClass_100"

@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { OrderService, CreateOrderData } from "../services/OrderService";
 import { ApiResponse } from "../types/api";
-import { OrderStatus, PurchaseType } from "@prisma/client";
+import { OrderStatus, PurchaseType, SubscriptionType } from "@prisma/client";
 import { AuthRequest } from "../middleware/auth";
 
 export class OrderController {
@@ -15,6 +15,20 @@ export class OrderController {
   createOrder = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
       const userId = req.user?.id; // Optional for guest checkout
+      const purchaseType = req.body.purchaseType as PurchaseType;
+      const subscriptionType = req.body.subscriptionType as SubscriptionType | undefined;
+      const isSpontaneousSubscription =
+        subscriptionType?.startsWith("SPONTANEOUS") ?? false;
+      const requiresAuthenticatedUser =
+        purchaseType === PurchaseType.SUBSCRIPTION || isSpontaneousSubscription;
+
+      if (requiresAuthenticatedUser && !userId) {
+        res.status(401).json({
+          success: false,
+          error: "Login required for subscription or spontaneous purchases",
+        });
+        return;
+      }
 
       console.log('💳 Backend received billingAddress:', req.body.billingAddress);
       console.log('📦 Backend received shippingAddress:', req.body.shippingAddress);
@@ -64,6 +78,8 @@ export class OrderController {
     try {
       const { id } = req.params;
       const userId = req.user?.id;
+
+      console.log(`🔍 GET /orders/${id} - UserId: ${userId || 'NO USER'}`);
 
       const order = await this.orderService.getOrderById(id, userId);
       if (!order) {

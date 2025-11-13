@@ -29,11 +29,20 @@ const OrderConfirmationPage: React.FC = () => {
 
   const fetchOrder = async (id: string) => {
     try {
-      const token = await getAccessToken();
+      let token: string | undefined;
+      try {
+        token = await getAccessToken();
+        console.log('🔑 OrderConfirmation - Token obtained:', token ? `Yes (${token.substring(0, 20)}...)` : 'NO TOKEN');
+      } catch (tokenError) {
+        console.warn('⚠️ OrderConfirmation - Failed to get token (user may not be logged in):', tokenError);
+        token = undefined;
+      }
+
       const orderData = await orderService.getOrder(id, token);
       setOrder(orderData);
       setError(null);
     } catch (err: any) {
+      console.error('❌ OrderConfirmation - Error fetching order:', err);
       setError(err.response?.data?.error || "Failed to load order details");
     } finally {
       setLoading(false);
