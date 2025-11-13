@@ -17,7 +17,7 @@ This document centralizes the exact commands needed to redeploy both the fronten
 
 ## Frontend (S3 + CloudFront)
 
-Run these commands on your **local machine** whenever React code, CSS, or static assets change.
+Run these commands on your **local machine** whenever React code, CSS, or static assets change (GitHub Actions workflow `Deploy Flora` runs the same script automatically on pushes to `xiaoling-deployment`).
 
 ```bash
 pnpm --filter frontend build
@@ -41,7 +41,7 @@ aws cloudfront create-invalidation --distribution-id $DIST_ID --paths "/index.ht
 
 ## Backend (EC2 + PM2)
 
-Execute these steps **on the EC2 server** whenever backend code or environment variables change.
+Execute these steps **on the EC2 server** whenever backend code or environment variables change (the CI workflow runs the same commands via SSH).
 
 ```bash
 ssh -i ~/.ssh/flora-key.pem ubuntu@15.134.175.113
@@ -90,4 +90,11 @@ Run the script below from the repo root to bundle, upload, and invalidate CloudF
 ./scripts/deploy-frontend.sh
 ```
 
-(See `scripts/deploy-frontend.sh` for the exact commands and required AWS CLI env.)
+(See `scripts/deploy-frontend.sh` for the exact commands and required AWS CLI env. CI uses GitHub secrets `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `FRONTEND_BUCKET`, and `CLOUDFRONT_DIST_ID`.)
+
+CI/CD secrets required:
+- `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY`
+- `FRONTEND_BUCKET`
+- `CLOUDFRONT_DIST_ID`
+- `EC2_HOST`, `EC2_USER`, `EC2_SSH_KEY` (PEM contents)
+- `RDS_ENDPOINT` (passed to `deploy-backend.sh`)

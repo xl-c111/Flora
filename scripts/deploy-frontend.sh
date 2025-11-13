@@ -10,7 +10,12 @@ cd "$ROOT_DIR"
 echo "🌼 Building frontend bundle..."
 pnpm --filter frontend build
 
-BUCKET=$(cd terraform && terraform output -raw frontend_bucket_name)
+# Allow overriding via env (useful for CI)
+if [[ -n "${FRONTEND_BUCKET:-}" ]]; then
+  BUCKET="${FRONTEND_BUCKET}"
+else
+  BUCKET=$(cd terraform && terraform output -raw frontend_bucket_name)
+fi
 DIST_DIR="apps/frontend/dist"
 
 echo "☁️ Syncing hashed assets to S3 bucket: $BUCKET"
@@ -24,7 +29,11 @@ aws s3 cp "$DIST_DIR/index.html" "s3://$BUCKET/index.html" \
   --cache-control "public,max-age=60"
 
 if [[ $# -gt 0 ]]; then
-  DIST_ID=$(cd terraform && terraform output -raw cloudfront_distribution_id)
+  if [[ -n "${CLOUDFRONT_DIST_ID:-}" ]]; then
+    DIST_ID="${CLOUDFRONT_DIST_ID}"
+  else
+    DIST_ID=$(cd terraform && terraform output -raw cloudfront_distribution_id)
+  fi
   echo "🚀 Invalidating CloudFront distribution $DIST_ID (index.html)"
   aws cloudfront create-invalidation \
     --distribution-id "$DIST_ID" \

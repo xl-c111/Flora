@@ -135,7 +135,7 @@ pnpm docker:setup       # run migrations + seed inside backend container
 ```
 Logs: `pnpm docker:logs --tail 20`
 
-> Need to ship changes to AWS? See `docs/DEPLOYMENT_REFERENCE.md` for the exact `deploy-frontend.sh` / `deploy-backend.sh` scripts and step-by-step redeploy instructions.
+> Need to ship changes to AWS? See `terraform/docs/DEPLOYMENT_REFERENCE.md` for the exact `deploy-frontend.sh` / `deploy-backend.sh` scripts and step-by-step redeploy instructions.
 
 ---
 

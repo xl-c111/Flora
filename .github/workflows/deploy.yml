@@ -1,0 +1,57 @@
+name: Deploy Flora
+
+on:
+  push:
+    branches:
+      - xiaoling-deployment
+
+env:
+  AWS_REGION: ap-southeast-2
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Enable corepack / pnpm
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
+
+      - name: Make deploy script executable
+        run: chmod +x scripts/deploy-frontend.sh
+
+      - name: Deploy frontend to S3/CloudFront
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          FRONTEND_BUCKET: ${{ secrets.FRONTEND_BUCKET }}
+          CLOUDFRONT_DIST_ID: ${{ secrets.CLOUDFRONT_DIST_ID }}
+        run: ./scripts/deploy-frontend.sh invalidate
+
+  backend:
+    runs-on: ubuntu-latest
+    needs: frontend
+    steps:
+      - name: Checkout repo (for reference)
+        uses: actions/checkout@v4
+
+      - name: Deploy backend via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/Flora
+            git fetch origin
+            git checkout xiaoling-deployment
+            git pull --rebase origin xiaoling-deployment
+            ./scripts/deploy-backend.sh prod ap-southeast-2 ${{ secrets.RDS_ENDPOINT }}
