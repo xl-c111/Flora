@@ -23,62 +23,17 @@ const OrderConfirmationPage: React.FC = () => {
     clearCart();
 
     if (orderId) {
-      // Get payment_intent from URL query params (Stripe adds this on redirect)
-      const urlParams = new URLSearchParams(window.location.search);
-      const paymentIntentId = urlParams.get('payment_intent');
-
-      if (paymentIntentId) {
-        // First confirm the order, then fetch updated details
-        confirmAndFetchOrder(orderId, paymentIntentId);
-      } else {
-        // No payment intent - just fetch order (might be viewing an old order)
-        fetchOrder(orderId);
-      }
+      fetchOrder(orderId);
     }
   }, [orderId, clearCart]);
 
-  const confirmAndFetchOrder = async (id: string, paymentIntentId: string) => {
-    try {
-      let token: string | undefined;
-      try {
-        token = await getAccessToken();
-        console.log('🔑 OrderConfirmation - Token obtained:', token ? `Yes (${token.substring(0, 20)}...)` : 'NO TOKEN');
-      } catch (tokenError) {
-        console.warn('⚠️ OrderConfirmation - Failed to get token (user may not be logged in):', tokenError);
-        token = undefined;
-      }
-
-      // Confirm the order with payment intent
-      console.log('✅ Confirming order with payment intent:', paymentIntentId);
-      const confirmedOrder = await orderService.confirmOrder(id, paymentIntentId, token);
-      console.log('✅ Order confirmed successfully:', confirmedOrder.orderNumber);
-
-      setOrder(confirmedOrder);
-      setError(null);
-    } catch (err: any) {
-      console.error('❌ OrderConfirmation - Error confirming order:', err);
-      setError(err.response?.data?.error || "Failed to confirm order");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const fetchOrder = async (id: string) => {
     try {
-      let token: string | undefined;
-      try {
-        token = await getAccessToken();
-        console.log('🔑 OrderConfirmation - Token obtained:', token ? `Yes (${token.substring(0, 20)}...)` : 'NO TOKEN');
-      } catch (tokenError) {
-        console.warn('⚠️ OrderConfirmation - Failed to get token (user may not be logged in):', tokenError);
-        token = undefined;
-      }
-
+      const token = await getAccessToken();
       const orderData = await orderService.getOrder(id, token);
       setOrder(orderData);
       setError(null);
     } catch (err: any) {
-      console.error('❌ OrderConfirmation - Error fetching order:', err);
       setError(err.response?.data?.error || "Failed to load order details");
     } finally {
       setLoading(false);

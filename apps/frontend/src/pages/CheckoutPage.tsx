@@ -150,7 +150,6 @@ const CheckoutPage: React.FC = () => {
             deliveryInfo={deliveryInfo}
             selectedDeliveryType={selectedDeliveryType}
             onDeliveryTypeChange={setSelectedDeliveryType}
-            isProcessing={isProcessing}
           />
         </div>
 
