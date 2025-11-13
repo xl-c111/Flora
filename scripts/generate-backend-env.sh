@@ -75,11 +75,22 @@ STRIPE_SPONTANEOUS_PRICE_ID=${STRIPE_SPONTANEOUS_PRICE_ID}
 
 GMAIL_USER=${GMAIL_USER}
 GMAIL_PASSWORD=${GMAIL_PASSWORD}
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=${GMAIL_USER}
+SMTP_PASS=${GMAIL_PASSWORD}
+# FROM_EMAIL removed - will use SMTP_USER (Gmail account) as sender address to avoid Gmail SMTP rejection
+FROM_NAME=Flora Marketplace
+CONTACT_EMAIL=${GMAIL_USER}
 
 GEMINI_API_KEY=${GEMINI_API_KEY}
 JWT_SECRET=${JWT_SECRET}
 
 FRONTEND_URL=https://dzmu16crq41il.cloudfront.net
+BACKEND_PUBLIC_URL=https://dzmu16crq41il.cloudfront.net
+EMAIL_IMAGE_BASE_URL=https://dzmu16crq41il.cloudfront.net
+EMAIL_INLINE_ITEM_IMAGES=false
 EOF
 
 echo "Wrote ${ENV_FILE} with fresh secrets from SSM."

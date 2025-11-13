@@ -148,7 +148,11 @@ export class EmailService {
     ];
 
     // Build CID for local product images (any relative path), else fallback to absolute URL
-    const backendBase = process.env.BACKEND_PUBLIC_URL || 'http://localhost:3001';
+    const backendBase =
+      process.env.EMAIL_IMAGE_BASE_URL ||
+      process.env.BACKEND_PUBLIC_URL ||
+      process.env.FRONTEND_URL ||
+      'http://localhost:3001';
     // Default to embedding item images; set EMAIL_INLINE_ITEM_IMAGES=false to disable
     const inlineItemImages = process.env.EMAIL_INLINE_ITEM_IMAGES !== 'false';
     const resolveImageRef = (u?: string | null, idx?: number): { src: string } => {

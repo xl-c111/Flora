@@ -313,6 +313,7 @@ model Order {
   subscription    Subscription? @relation(fields: [subscriptionId], references: [id])
   items           OrderItem[]
   payments        Payment[]
+  tracking        DeliveryTracking?
 
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
@@ -541,6 +542,7 @@ model DeliveryTracking {
 
   // Tracking events
   events          TrackingEvent[]
+  order           Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
@@ -593,4 +595,3 @@ model CartItem {
 
   @@map("cart_items")
 }
-
