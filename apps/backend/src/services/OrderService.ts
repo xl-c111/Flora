@@ -380,6 +380,8 @@ export class OrderService {
 
   // Confirm order (after payment)
   async confirmOrder(orderId: string, paymentIntentId: string): Promise<OrderWithDetails> {
+    console.log(`🔍 OrderService.confirmOrder - OrderID: ${orderId}, PaymentIntentID: ${paymentIntentId}`);
+
     const orderInclude = {
       items: {
         include: {
@@ -413,6 +415,7 @@ export class OrderService {
     };
 
     // Check if order exists first
+    console.log(`📦 Checking if order exists: ${orderId}`);
     const existingOrder = await prisma.order.findUnique({
       where: { id: orderId },
       select: {
@@ -428,10 +431,14 @@ export class OrderService {
     });
 
     if (!existingOrder) {
+      console.error(`❌ Order not found: ${orderId}`);
       throw new Error("Order not found");
     }
 
+    console.log(`✅ Order found: ${orderId}, Status: ${existingOrder.status}`);
+
     // Check if payment with this intent ID already exists globally
+    console.log(`💳 Checking if payment intent already exists: ${paymentIntentId}`);
     const existingPayment = await prisma.payment.findUnique({
       where: { stripePaymentIntentId: paymentIntentId },
       select: {
@@ -439,13 +446,22 @@ export class OrderService {
       },
     });
 
+    if (existingPayment) {
+      console.log(`💳 Payment exists, linked to order: ${existingPayment.orderId}`);
+    } else {
+      console.log(`💳 Payment does not exist yet`);
+    }
+
     // Check if payment is already linked to this order
     const paymentAlreadyLinked = existingOrder.payments?.some(
       (payment: { stripePaymentIntentId: string | null }) => payment.stripePaymentIntentId === paymentIntentId
     );
 
+    console.log(`🔗 Payment already linked to this order: ${paymentAlreadyLinked}`);
+
     // If payment exists and is linked to a different order, throw error
     if (existingPayment && existingPayment.orderId !== orderId) {
+      console.error(`❌ Payment intent ${paymentIntentId} already used for order ${existingPayment.orderId}`);
       throw new Error("Payment intent already used for a different order");
     }
 

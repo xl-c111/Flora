@@ -161,6 +161,8 @@ export class OrderController {
       const { id } = req.params;
       const { paymentIntentId } = req.body;
 
+      console.log(`🔍 Confirm order request - OrderID: ${id}, PaymentIntentID: ${paymentIntentId}`);
+
       if (!paymentIntentId) {
         res.status(400).json({
           success: false,
@@ -178,10 +180,16 @@ export class OrderController {
       };
       res.json(response);
     } catch (error) {
-      console.error("Confirm order error:", error);
+      console.error("❌ Confirm order error:", error);
+
+      // Return the actual error message to help debug
+      const errorMessage = error instanceof Error ? error.message : "Failed to confirm order";
+      console.error(`Error details: ${errorMessage}`);
+
       res.status(500).json({
         success: false,
-        error: "Failed to confirm order",
+        error: errorMessage,
+        details: error instanceof Error ? error.stack : undefined,
       });
     }
   };
