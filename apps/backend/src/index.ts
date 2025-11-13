@@ -24,7 +24,7 @@ import aiRoutes from "./routes/ai";
 
 // Initialize Express app
 const app: Application = express();
-const port = process.env.PORT || 3001;
+const port = Number(process.env.PORT) || 3001;
 
 // Middleware
 app.use(corsMiddleware);
@@ -81,8 +81,8 @@ app.use("*", notFoundHandler);
 app.use(errorHandler);
 
 // Start server
-app.listen(port, async () => {
-  console.log(`🚀 Flora API server running on http://localhost:${port}`);
+app.listen(port, '0.0.0.0', async () => {
+  console.log(`🚀 Flora API server running on http://0.0.0.0:${port}`);
   console.log(`📚 API Documentation: http://localhost:${port}/`);
 
   // Pre-warm AI cache for faster responses on demo day
