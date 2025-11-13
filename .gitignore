@@ -43,6 +43,12 @@ prisma/dev.db-journal
 # Misc
 coverage/
 
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+
 # Ignore lock files if you want to use only one package manager
 # yarn.lock
 # package-lock.json
