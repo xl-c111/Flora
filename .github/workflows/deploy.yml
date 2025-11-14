@@ -39,6 +39,19 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
+      - name: Create production .env for frontend
+        working-directory: apps/frontend
+        run: |
+          cat > .env <<EOF
+          VITE_AUTH0_DOMAIN=${{ secrets.VITE_AUTH0_DOMAIN }}
+          VITE_AUTH0_CLIENT_ID=${{ secrets.VITE_AUTH0_CLIENT_ID }}
+          VITE_AUTH0_AUDIENCE=${{ secrets.VITE_AUTH0_AUDIENCE }}
+          VITE_API_URL=https://dzmu16crq41il.cloudfront.net/api
+          VITE_STRIPE_PUBLISHABLE_KEY=${{ secrets.VITE_STRIPE_PUBLISHABLE_KEY }}
+          VITE_APP_NAME=Flora
+          VITE_APP_URL=https://dzmu16crq41il.cloudfront.net
+          EOF
+
       - name: Make deploy script executable
         run: chmod +x scripts/deploy-frontend.sh
 
