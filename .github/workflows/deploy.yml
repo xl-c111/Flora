@@ -3,7 +3,7 @@ name: Deploy Flora
 on:
   push:
     branches:
-      - xiaoling-deployment
+      - main
 
 env:
   AWS_REGION: ap-southeast-2
@@ -52,6 +52,6 @@ jobs:
           script: |
             cd /home/ubuntu/Flora
             git fetch origin
-            git checkout xiaoling-deployment
-            git pull --rebase origin xiaoling-deployment
+            git checkout main
+            git pull --rebase origin main
             ./scripts/deploy-backend.sh prod ap-southeast-2 ${{ secrets.RDS_ENDPOINT }}
