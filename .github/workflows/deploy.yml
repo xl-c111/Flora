@@ -177,6 +177,12 @@ jobs:
             pnpm --filter backend db:generate
 
             echo ""
+            echo "🔄 Running database migrations..."
+            cd apps/backend
+            pnpm prisma migrate deploy
+            cd ../..
+
+            echo ""
             echo "🏗️  Building backend..."
             pnpm --filter backend build
 
