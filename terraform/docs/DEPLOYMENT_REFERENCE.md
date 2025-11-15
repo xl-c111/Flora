@@ -1,6 +1,75 @@
 # Deployment Reference
 
-This document centralizes the exact commands needed to redeploy both the frontend (S3 + CloudFront) and backend (EC2 + PM2) portions of Flora.
+Quick reference for deploying Flora's frontend and backend to AWS.
+
+---
+
+## Quick Deploy Commands
+
+### Frontend (S3 + CloudFront)
+
+Deploy frontend from your **local machine**:
+
+```bash
+./scripts/deploy-frontend.sh invalidate
+```
+
+**What it does:**
+- ✅ Builds frontend bundle (`pnpm --filter frontend build`)
+- ✅ Auto-detects S3 bucket and CloudFront distribution
+- ✅ Syncs files to S3
+- ✅ Invalidates CloudFront cache
+
+**Time:** ~2-3 minutes
+
+---
+
+### Backend (EC2 + PM2)
+
+Deploy backend from your **local machine**:
+
+```bash
+./scripts/deploy-backend.sh
+```
+
+**What it does:**
+- ✅ Auto-detects EC2 IP address
+- ✅ Auto-detects SSH key
+- ✅ SSHs into EC2 automatically
+- ✅ Pulls latest code from main
+- ✅ Regenerates `.env` from AWS SSM Parameter Store
+- ✅ Rebuilds Prisma client and backend
+- ✅ Restarts PM2 process
+- ✅ Shows deployment status and logs
+
+**Time:** ~1-2 minutes
+
+**No SSH knowledge needed!** The script handles everything.
+
+---
+
+### Update Environment Variables
+
+Update backend environment variables and trigger deployment:
+
+```bash
+./scripts/update-env-simple.sh <param-name> <value>
+```
+
+**Examples:**
+```bash
+./scripts/update-env-simple.sh gemini_api_key "new-key"
+./scripts/update-env-simple.sh auth0_domain "tenant.auth0.com"
+./scripts/update-env-simple.sh stripe_secret_key "sk_live_..."
+```
+
+**What it does:**
+- ✅ Updates AWS SSM Parameter Store
+- ✅ Creates git branch `update-env-vars`
+- ✅ Creates GitHub PR automatically
+- ✅ After you merge: triggers deployment via GitHub Actions
+
+**Time:** 5-10 minutes (after merging PR)
 
 ---
 
@@ -10,91 +79,232 @@ This document centralizes the exact commands needed to redeploy both the fronten
 |--------|--------------------|-------------------|
 | UI/UX (React/CSS/assets) | ✅ | ❌ |
 | API logic / services | ❌ | ✅ |
-| Prisma schema | ❌ | ✅ + `pnpm --filter backend prisma migrate deploy` |
-| Environment variables | depends | depends |
+| Prisma schema | ❌ | ✅ + run migrations |
+| Backend env variables | ❌ | ✅ (via update script) |
+| Frontend env variables | ✅ (via GitHub Actions) | ❌ |
 
 ---
 
-## Frontend (S3 + CloudFront)
+## Automated Deployment (GitHub Actions)
 
-Run these commands on your **local machine** whenever React code, CSS, or static assets change (GitHub Actions workflow `Deploy Flora` runs the same script automatically on pushes to `xiaoling-deployment`).
+Every push to `main` automatically triggers:
+- ✅ Frontend build and deploy to S3/CloudFront
+- ✅ Backend deployment to EC2 via SSH
 
-```bash
-pnpm --filter frontend build
+**Workflow:** `.github/workflows/deploy.yml`
 
-BUCKET=$(cd terraform && terraform output -raw frontend_bucket_name)
-aws s3 sync apps/frontend/dist s3://$BUCKET/ --delete \
-  --cache-control "public,max-age=31536000,immutable" \
-  --exclude "index.html"
-
-aws s3 cp apps/frontend/dist/index.html s3://$BUCKET/index.html \
-  --cache-control "public,max-age=60"
-
-# Optional: refresh CloudFront cache immediately
-DIST_ID=$(cd terraform && terraform output -raw cloudfront_distribution_id)
-aws cloudfront create-invalidation --distribution-id $DIST_ID --paths "/index.html"
-```
-
-**Run when:** any frontend asset changes. If only `index.html` changes, you may upload just that file, but the commands above are safe defaults.
+**When it runs:**
+- On push to `main` branch
+- When you merge PRs (including env update PRs)
 
 ---
 
-## Backend (EC2 + PM2)
+## Database Migrations
 
-Execute these steps **on the EC2 server** whenever backend code or environment variables change (the CI workflow runs the same commands via SSH).
+If you have Prisma schema changes:
 
 ```bash
-ssh -i ~/.ssh/flora-key.pem ubuntu@15.134.175.113
-
+# SSH into EC2
+ssh -i ~/.ssh/your-key.pem ubuntu@<EC2-IP>
 cd /home/ubuntu/Flora
-git pull --rebase origin xiaoling-deployment
 
-./scripts/deploy-backend.sh \
-  prod \
-  ap-southeast-2 \
-  flora-db-production.cbm26q24g3sj.ap-southeast-2.rds.amazonaws.com
-```
-
-The helper script:
-1. Regenerates `apps/backend/.env` from SSM (SMTP/Auth0/Stripe/etc.).
-2. Runs `pnpm --filter backend db:generate` and `pnpm --filter backend build`.
-3. Restarts PM2 (`flora-backend`) with the updated environment.
-
-**Schema changes:** run `pnpm --filter backend prisma migrate deploy` on EC2 before executing the script.
-
----
-
-## Database Maintenance
-
-```bash
-# Apply pending migrations (safe in production)
+# Apply migrations
 pnpm --filter backend prisma migrate deploy
 
-# Reseed sample data (dev/staging only)
-pnpm --filter backend db:seed
+# Then redeploy backend
+./scripts/deploy-backend.sh
 ```
 
 ---
 
-## Email Assets & SMTP
+## Manual Deployment (Detailed)
 
-`deploy-backend.sh` populates `EMAIL_IMAGE_BASE_URL`, `EMAIL_LOGO_URL`, and the SMTP credentials into `.env`. If you change logos or rotate the Gmail App Password, rerun the backend script so the mailer picks up the updates.
-
----
-
-## Frontend Deploy Helper (Optional)
-
-Run the script below from the repo root to bundle, upload, and invalidate CloudFront in one step:
+### Frontend - Step by Step
 
 ```bash
-./scripts/deploy-frontend.sh
+# 1. Build frontend
+pnpm --filter frontend build
+
+# 2. Deploy (auto-detects S3 bucket and CloudFront)
+./scripts/deploy-frontend.sh invalidate
 ```
 
-(See `scripts/deploy-frontend.sh` for the exact commands and required AWS CLI env. CI uses GitHub secrets `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `FRONTEND_BUCKET`, and `CLOUDFRONT_DIST_ID`.)
+The script automatically:
+- Finds your S3 bucket (searches for "flora" + "frontend")
+- Finds your CloudFront distribution (searches for "flora")
+- Uploads with proper cache headers
+- Invalidates CloudFront cache
 
-CI/CD secrets required:
-- `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY`
-- `FRONTEND_BUCKET`
-- `CLOUDFRONT_DIST_ID`
-- `EC2_HOST`, `EC2_USER`, `EC2_SSH_KEY` (PEM contents)
-- `RDS_ENDPOINT` (passed to `deploy-backend.sh`)
+### Backend - Step by Step
+
+**From your local machine:**
+```bash
+./scripts/deploy-backend.sh
+```
+
+The script automatically:
+- Finds your RDS endpoint
+- Finds your EC2 IP from AWS
+- Finds your SSH key (checks common locations)
+- SSHs into EC2
+- Pulls latest code from GitHub
+- Regenerates `.env` from SSM Parameter Store
+- Rebuilds Prisma client
+- Rebuilds backend TypeScript
+- Restarts PM2 with new environment
+- Shows status and logs
+
+---
+
+## Environment Variable Management
+
+### Backend Variables (AWS SSM)
+
+All backend environment variables are stored in **AWS Systems Manager Parameter Store** at:
+```
+/flora/prod/<parameter-name>
+```
+
+**Update any backend env variable:**
+```bash
+./scripts/update-env-simple.sh <parameter-name> <value>
+```
+
+See [Environment Variables Guide](ENVIRONMENT_VARIABLES_GUIDE.md) for complete list.
+
+### Frontend Variables (GitHub Secrets)
+
+Frontend environment variables are stored in **GitHub Secrets** and injected during build.
+
+**Update frontend env variables:**
+1. Update GitHub Secret (Settings > Secrets > Actions)
+2. Trigger deployment by merging a PR to `main`
+
+**Available secrets:**
+- `VITE_AUTH0_DOMAIN`
+- `VITE_AUTH0_CLIENT_ID`
+- `VITE_AUTH0_AUDIENCE`
+- `VITE_STRIPE_PUBLISHABLE_KEY`
+
+---
+
+## Finding Your Infrastructure Details
+
+### EC2 IP Address
+```bash
+aws ec2 describe-instances \
+  --filters "Name=tag:Name,Values=flora-backend-production" \
+  --query 'Reservations[0].Instances[0].PublicIpAddress' \
+  --output text \
+  --region ap-southeast-2
+```
+
+### S3 Bucket Name
+```bash
+aws s3 ls | grep flora
+```
+
+### CloudFront Distribution ID
+```bash
+aws cloudfront list-distributions \
+  --query 'DistributionList.Items[*].[Id,Comment]' \
+  --output table
+```
+
+### RDS Endpoint
+```bash
+aws rds describe-db-instances \
+  --query 'DBInstances[0].Endpoint.Address' \
+  --output text \
+  --region ap-southeast-2
+```
+
+---
+
+## Troubleshooting
+
+### Frontend deployment fails
+
+**Issue:** S3 bucket not found
+```bash
+# Manually specify bucket
+export FRONTEND_BUCKET="your-bucket-name"
+./scripts/deploy-frontend.sh invalidate
+```
+
+**Issue:** CloudFront invalidation fails
+```bash
+# Manually specify distribution ID
+export CLOUDFRONT_DIST_ID="E1234567890ABC"
+./scripts/deploy-frontend.sh invalidate
+```
+
+### Backend deployment fails
+
+**Issue:** Cannot SSH to EC2
+```bash
+# Check EC2 is running
+aws ec2 describe-instances \
+  --filters "Name=tag:Name,Values=flora-backend-production" \
+  --query 'Reservations[0].Instances[0].State.Name' \
+  --region ap-southeast-2
+
+# Check security group allows SSH from your IP
+```
+
+**Issue:** RDS endpoint not found
+```bash
+# Manually specify RDS endpoint
+./scripts/deploy-backend.sh prod ap-southeast-2 your-rds-endpoint.amazonaws.com
+```
+
+### Environment variable updates not working
+
+**Issue:** SSM parameter update permission denied
+```bash
+# Verify AWS credentials
+aws sts get-caller-identity
+
+# Check SSM permissions
+aws ssm describe-parameters --region ap-southeast-2
+```
+
+**Issue:** GitHub PR not created
+```bash
+# Install GitHub CLI
+brew install gh
+gh auth login
+```
+
+---
+
+## CI/CD Pipeline
+
+### GitHub Actions Secrets Required
+
+| Secret | Purpose | Where Used |
+|--------|---------|------------|
+| `AWS_ACCESS_KEY_ID` | AWS credentials | Frontend & backend deploy |
+| `AWS_SECRET_ACCESS_KEY` | AWS credentials | Frontend & backend deploy |
+| `FRONTEND_BUCKET` | S3 bucket name | Frontend deploy |
+| `CLOUDFRONT_DIST_ID` | CloudFront distribution | Frontend deploy |
+| `EC2_HOST` | EC2 IP address | Backend deploy |
+| `EC2_USER` | SSH user (ubuntu) | Backend deploy |
+| `EC2_SSH_KEY` | Private key contents | Backend deploy |
+| `RDS_ENDPOINT` | RDS endpoint URL | Backend deploy |
+| `VITE_*` | Frontend env variables | Frontend build |
+
+### Workflow Files
+
+- `.github/workflows/deploy.yml` - Main deployment workflow (frontend + backend)
+- `.github/workflows/ci.yml` - CI testing and linting
+- `.github/workflows/security.yml` - Security scanning
+
+---
+
+## Additional Resources
+
+- [Full Environment Variables Guide](ENVIRONMENT_VARIABLES_GUIDE.md) - Complete env var management
+- [AWS Terraform Deployment](AWS_TERRAFORM_DEPLOYMENT.md) - Infrastructure setup
+- [Redeployment Scripts Reference](../../scripts/README-REDEPLOY.md) - Script documentation
+- [AWS Deployment Flow](AWS_DEPLOYMENT_FLOW.md) - Architecture overview
