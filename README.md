@@ -139,6 +139,36 @@ Logs: `pnpm docker:logs --tail 20`
 
 ---
 
+## Deployment
+
+Deploy to AWS with simple one-line commands. All scripts auto-detect your AWS infrastructure (no manual configuration needed):
+
+```bash
+# Deploy frontend to S3/CloudFront
+./scripts/deploy-frontend.sh invalidate
+
+# Deploy backend to EC2 (auto-detects IP, SSH key, RDS endpoint)
+./scripts/deploy-backend.sh
+
+# Update backend environment variables
+./scripts/update-env-simple.sh <param-name> <value>
+# Merge the auto-created PR to trigger deployment
+```
+
+**What's automated:**
+- ✅ Auto-detects EC2 IP address
+- ✅ Auto-detects SSH key from ~/.ssh/
+- ✅ Auto-detects S3 bucket and CloudFront distribution
+- ✅ Auto-detects RDS endpoint
+- ✅ Creates GitHub PRs automatically
+
+📚 **Detailed Guides:**
+- [Deployment Reference](terraform/docs/DEPLOYMENT_REFERENCE.md) – Step-by-step deployment guide
+- [Environment Variables Guide](terraform/docs/ENVIRONMENT_VARIABLES_GUIDE.md) – Managing secrets & configs
+- [Scripts Reference](scripts/README-REDEPLOY.md) – Deployment scripts documentation
+
+---
+
 ## Environment Configuration
 
 Copy each example file and populate the values listed inside:

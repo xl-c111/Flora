@@ -1,38 +1,236 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Usage:
-#   ./scripts/deploy-backend.sh [environment] [aws-region] [rds-endpoint]
-# Example:
-#   ./scripts/deploy-backend.sh prod ap-southeast-2 flora-db-production.cbm26q24g3sj.ap-southeast-2.rds.amazonaws.com
+# Flora Backend Deployment Script
+# Usage: ./scripts/deploy-backend.sh
 #
-# This script regenerates the backend .env with fresh SSM secrets, rebuilds
-# the Prisma client + backend bundle, and restarts the PM2 process.
+# This script deploys the backend from your local machine by:
+# 1. Auto-detecting EC2 instance and SSH key
+# 2. SSHing into EC2
+# 3. Pulling latest code
+# 4. Regenerating .env from AWS SSM
+# 5. Rebuilding and restarting the application
 
 ENVIRONMENT=${1:-prod}
 AWS_REGION=${2:-ap-southeast-2}
-RDS_ENDPOINT=${3:-}
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+echo -e "${BLUE}╔══════════════════════════════════════════════════════════╗${NC}"
+echo -e "${BLUE}║        Flora Backend Deployment (Local → EC2)           ║${NC}"
+echo -e "${BLUE}╚══════════════════════════════════════════════════════════╝${NC}"
+echo ""
+
+# Step 1: Auto-detect RDS endpoint
+echo -e "${YELLOW}[1/5]${NC} Auto-detecting RDS endpoint..."
+RDS_ENDPOINT=$(aws rds describe-db-instances \
+  --region "${AWS_REGION}" \
+  --query 'DBInstances[?contains(DBInstanceIdentifier, `flora`)].Endpoint.Address' \
+  --output text 2>/dev/null | head -1)
 
 if [[ -z "${RDS_ENDPOINT}" ]]; then
-  echo "error: missing RDS endpoint hostname (third argument)" >&2
+  echo -e "${RED}✗ Error: Could not find RDS instance${NC}"
   exit 1
 fi
+echo -e "${GREEN}✓${NC} RDS Endpoint: ${RDS_ENDPOINT}"
+echo ""
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Step 2: Auto-detect EC2 IP
+echo -e "${YELLOW}[2/5]${NC} Auto-detecting EC2 instance..."
+EC2_IP=$(aws ec2 describe-instances \
+  --filters "Name=tag:Name,Values=flora-backend-production" "Name=instance-state-name,Values=running" \
+  --query 'Reservations[0].Instances[0].PublicIpAddress' \
+  --output text \
+  --region "$AWS_REGION" 2>/dev/null)
 
-echo "🔐 Regenerating backend .env from SSM (${ENVIRONMENT}, ${AWS_REGION})..."
-"${ROOT_DIR}/scripts/generate-backend-env.sh" "${ENVIRONMENT}" "${AWS_REGION}" "${RDS_ENDPOINT}"
+if [[ "$EC2_IP" == "None" || -z "$EC2_IP" ]]; then
+  echo -e "${RED}✗ Error: Could not find running EC2 instance${NC}"
+  exit 1
+fi
+echo -e "${GREEN}✓${NC} EC2 Instance: $EC2_IP"
+echo ""
 
+# Step 3: Auto-detect SSH key
+echo -e "${YELLOW}[3/5]${NC} Finding SSH key..."
+
+SSH_KEY=""
+POSSIBLE_KEYS=(
+  "$HOME/.ssh/flora-backend.pem"
+  "$HOME/.ssh/flora.pem"
+  "$HOME/.ssh/flora-key.pem"
+  "$HOME/.ssh/id_rsa"
+  "$HOME/.ssh/id_ed25519"
+)
+
+for key in "${POSSIBLE_KEYS[@]}"; do
+  if [[ -f "$key" ]]; then
+    SSH_KEY="$key"
+    echo -e "${GREEN}✓${NC} Found SSH key: $SSH_KEY"
+    break
+  fi
+done
+
+if [[ -z "$SSH_KEY" ]]; then
+  echo -e "${YELLOW}⚠${NC} SSH key not found in common locations"
+  echo ""
+  echo "Available keys in ~/.ssh/:"
+  ls -1 ~/.ssh/*.pem 2>/dev/null || echo "  (no .pem files found)"
+  echo ""
+  read -p "Enter path to your SSH key: " SSH_KEY
+
+  if [[ ! -f "$SSH_KEY" ]]; then
+    echo -e "${RED}✗ Error: SSH key not found: $SSH_KEY${NC}"
+    exit 1
+  fi
+fi
+echo ""
+
+# Step 4: Connect and deploy
+echo -e "${YELLOW}[4/5]${NC} Connecting to EC2 and deploying..."
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
+
+ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no ubuntu@"$EC2_IP" bash << EOF
+set -e
+
+echo "📂 Navigating to project directory..."
+cd /home/ubuntu/Flora
+
+echo "📥 Pulling latest code from main..."
+git fetch origin
+git checkout main
+git pull origin main
+
+echo ""
+echo "🔐 Regenerating .env from AWS SSM Parameter Store..."
+
+# Function to get plain SSM parameter
+ssm_plain() {
+  local name=\$1
+  aws ssm get-parameter \
+    --name "/flora/${ENVIRONMENT}/\${name}" \
+    --query 'Parameter.Value' \
+    --output text \
+    --region "${AWS_REGION}"
+}
+
+# Function to get secure SSM parameter
+ssm_secure() {
+  local name=\$1
+  aws ssm get-parameter \
+    --name "/flora/${ENVIRONMENT}/\${name}" \
+    --with-decryption \
+    --query 'Parameter.Value' \
+    --output text \
+    --region "${AWS_REGION}"
+}
+
+# Fetch all parameters from SSM
+DB_USER=\$(ssm_plain "db_username")
+DB_PASSWORD=\$(ssm_secure "db_password")
+AUTH0_DOMAIN=\$(ssm_plain "auth0_domain")
+AUTH0_CLIENT_ID=\$(ssm_plain "auth0_client_id")
+AUTH0_CLIENT_SECRET=\$(ssm_secure "auth0_client_secret")
+AUTH0_AUDIENCE=\$(ssm_plain "auth0_audience")
+STRIPE_SECRET_KEY=\$(ssm_secure "stripe_secret_key")
+STRIPE_PUBLISHABLE_KEY=\$(ssm_plain "stripe_publishable_key")
+STRIPE_WEBHOOK_SECRET=\$(ssm_secure "stripe_webhook_secret")
+STRIPE_WEEKLY_PRICE_ID=\$(ssm_plain "stripe_weekly_price_id")
+STRIPE_BIWEEKLY_PRICE_ID=\$(ssm_plain "stripe_biweekly_price_id")
+STRIPE_MONTHLY_PRICE_ID=\$(ssm_plain "stripe_monthly_price_id")
+STRIPE_SPONTANEOUS_PRICE_ID=\$(ssm_plain "stripe_spontaneous_price_id")
+GMAIL_USER=\$(ssm_plain "gmail_user")
+GMAIL_PASSWORD=\$(ssm_secure "gmail_password")
+GEMINI_API_KEY=\$(ssm_secure "gemini_api_key")
+JWT_SECRET=\$(ssm_secure "jwt_secret")
+
+# Generate .env file
+cat > apps/backend/.env <<ENVFILE
+# Generated by scripts/deploy-backend.sh on \$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+NODE_ENV=production
+PORT=3001
+
+DATABASE_URL=postgresql://\${DB_USER}:\${DB_PASSWORD}@${RDS_ENDPOINT}:5432/flora_db
+
+AUTH0_DOMAIN=\${AUTH0_DOMAIN}
+AUTH0_CLIENT_ID=\${AUTH0_CLIENT_ID}
+AUTH0_CLIENT_SECRET=\${AUTH0_CLIENT_SECRET}
+AUTH0_AUDIENCE=\${AUTH0_AUDIENCE}
+
+STRIPE_SECRET_KEY=\${STRIPE_SECRET_KEY}
+STRIPE_PUBLISHABLE_KEY=\${STRIPE_PUBLISHABLE_KEY}
+STRIPE_WEBHOOK_SECRET=\${STRIPE_WEBHOOK_SECRET}
+STRIPE_WEEKLY_PRICE_ID=\${STRIPE_WEEKLY_PRICE_ID}
+STRIPE_BIWEEKLY_PRICE_ID=\${STRIPE_BIWEEKLY_PRICE_ID}
+STRIPE_MONTHLY_PRICE_ID=\${STRIPE_MONTHLY_PRICE_ID}
+STRIPE_SPONTANEOUS_PRICE_ID=\${STRIPE_SPONTANEOUS_PRICE_ID}
+
+GMAIL_USER=\${GMAIL_USER}
+GMAIL_PASSWORD=\${GMAIL_PASSWORD}
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=\${GMAIL_USER}
+SMTP_PASS=\${GMAIL_PASSWORD}
+FROM_EMAIL=\${GMAIL_USER}
+FROM_NAME=Flora Marketplace
+CONTACT_EMAIL=\${GMAIL_USER}
+
+GEMINI_API_KEY=\${GEMINI_API_KEY}
+JWT_SECRET=\${JWT_SECRET}
+
+FRONTEND_URL=https://dzmu16crq41il.cloudfront.net
+BACKEND_PUBLIC_URL=https://dzmu16crq41il.cloudfront.net
+EMAIL_IMAGE_BASE_URL=https://dzmu16crq41il.cloudfront.net
+EMAIL_LOGO_URL=https://dzmu16crq41il.cloudfront.net/flora-logo.png
+EMAIL_INLINE_ITEM_IMAGES=false
+ENVFILE
+
+echo "✅ Generated apps/backend/.env with fresh secrets from SSM"
+
+echo ""
 echo "🧱 Regenerating Prisma client..."
-cd "${ROOT_DIR}"
 pnpm --filter backend db:generate
 
+echo ""
 echo "🏗️  Building backend..."
 pnpm --filter backend build
 
+echo ""
 echo "🚀 Restarting PM2 process..."
-cd "${ROOT_DIR}/apps/backend"
+cd apps/backend
 pm2 restart flora-backend --update-env
 pm2 save
 
-echo "✅ Backend deployment complete."
+echo ""
+echo "📊 Current PM2 status:"
+pm2 status
+
+echo ""
+echo "📋 Recent logs:"
+pm2 logs flora-backend --lines 15 --nostream
+
+echo ""
+echo "✅ Backend deployment complete!"
+EOF
+
+# Step 5: Summary
+echo ""
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
+echo -e "${YELLOW}[5/5]${NC} Deployment summary"
+echo ""
+echo -e "${GREEN}✅ Deployment completed successfully!${NC}"
+echo ""
+echo "EC2 Instance: $EC2_IP"
+echo "RDS Endpoint: $RDS_ENDPOINT"
+echo "SSH Key: $SSH_KEY"
+echo ""
+echo "To view logs:"
+echo "  ssh -i $SSH_KEY ubuntu@$EC2_IP 'pm2 logs flora-backend'"
+echo ""
