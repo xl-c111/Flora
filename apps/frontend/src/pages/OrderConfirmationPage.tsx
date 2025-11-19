@@ -109,6 +109,12 @@ const OrderConfirmationPage: React.FC = () => {
     return countries[countryCode || "AU"] || countryCode || "Australia";
   };
 
+  const getDisplayableEmail = (email?: string | null) => {
+    if (!email) return undefined;
+    if (email.includes('@auth0.user')) return undefined;
+    return email;
+  };
+
   const getBuyerName = () => {
     if (!order) return "Valued Customer";
 
@@ -119,8 +125,9 @@ const OrderConfirmationPage: React.FC = () => {
       return userName;
     }
 
-    if (order.user?.email) {
-      return order.user.email;
+    const userEmail = getDisplayableEmail(order.user?.email || undefined);
+    if (userEmail) {
+      return userEmail;
     }
 
     const billingName = [order.billingFirstName, order.billingLastName]
@@ -131,8 +138,9 @@ const OrderConfirmationPage: React.FC = () => {
       return billingName;
     }
 
-    if (order.guestEmail) {
-      return order.guestEmail;
+    const guestEmail = getDisplayableEmail(order.guestEmail || undefined);
+    if (guestEmail) {
+      return guestEmail;
     }
 
     if (order.shippingFirstName || order.shippingLastName) {

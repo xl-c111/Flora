@@ -14,7 +14,7 @@ import logoTextSvg from '../assets/flora-text-cursive.svg';
 const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
   const { state, clearCart } = useCart();
-  const { login } = useAuth();
+  const { login, user, userProfile, getAccessToken } = useAuth();
   const [deliveryInfo, setDeliveryInfo] = useState<DeliveryInfo | null>(null);
   const [selectedDeliveryType, setSelectedDeliveryType] = useState<'STANDARD' | 'EXPRESS' | 'PICKUP'>('STANDARD');
   const {
@@ -38,7 +38,23 @@ const CheckoutPage: React.FC = () => {
     fetchDeliveryInfo();
   }, []);
 
+  const hasSubscriptionItems = state.items.some(item => item.isSubscription);
+  const isUserLoggedIn = !!(user || userProfile);
+
   const handleFormSubmit = async (formData: CheckoutFormData) => {
+    if (hasSubscriptionItems && !isUserLoggedIn) {
+      login('/checkout');
+      return;
+    }
+
+    if (hasSubscriptionItems) {
+      const token = await getAccessToken();
+      if (!token) {
+        login('/checkout');
+        return;
+      }
+    }
+
     await createOrderAndPaymentIntent(
       { ...formData, deliveryType: selectedDeliveryType },
       state.items

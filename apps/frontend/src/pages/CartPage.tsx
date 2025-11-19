@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
+import { useAuth } from '../contexts/AuthContext';
 import { getImageUrl, apiService } from '../services/api';
 import { SUBSCRIPTION_OPTIONS } from '../config/subscriptionConfig';
 import { format } from 'date-fns';
@@ -14,6 +15,9 @@ const CartPage: React.FC = () => {
     removeItem,
     setGiftMessage
   } = useCart();
+  const { login, user, userProfile } = useAuth();
+  const hasSubscriptionItems = cartState.items.some(item => item.isSubscription);
+  const isUserLoggedIn = !!(user || userProfile);
 
   // Use cart state instead of local state
   const giftMessage = cartState.giftMessage || { to: '', from: '', message: '' };
@@ -27,7 +31,11 @@ const CartPage: React.FC = () => {
   };
 
   const handleCheckout = () => {
-    // Save message to cart items if needed
+    if (hasSubscriptionItems && !isUserLoggedIn) {
+      login('/checkout');
+      return;
+    }
+
     window.location.href = '/checkout';
   };
 

@@ -36,6 +36,31 @@
   margin-left: 8px;
 }
 
+/*----- Smooth scroll transitions -----*/
+.banner-image {
+  transition: height 0.2s ease-in-out;
+}
+
+.logo-image {
+  transition: padding 0.2s ease-in-out;
+}
+
+.logo-image img {
+  transition: height 0.2s ease-in-out;
+}
+
+.top-nav {
+  transition: padding 0.2s ease-in-out;
+}
+
+.banner-menu {
+  transition: height 0.2s ease-in-out, margin 0.2s ease-in-out;
+}
+
+.menu-link {
+  transition: font-size 0.2s ease-in-out, opacity 0.2s ease;
+}
+
 /*-----*/
 
 .flora-header {

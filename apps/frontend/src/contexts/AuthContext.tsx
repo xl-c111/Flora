@@ -1,13 +1,15 @@
 // AuthContext provides authentication state and actions using Auth0
-import React, { createContext, useContext, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useAuth0, User as Auth0User } from '@auth0/auth0-react';
 import userService from '../services/userService';
+import type { UserProfile } from '../services/userService';
 
 // Define the shape of our context
 interface AuthContextType {
   user: Auth0User | undefined;
+  userProfile: UserProfile | null;
   loading: boolean;
-  login: () => void;
+  login: (returnToPath?: string | React.MouseEvent | React.KeyboardEvent) => void;
   logout: () => void;
   getAccessToken: () => Promise<string | undefined>;
 }
@@ -37,13 +39,25 @@ const demoUser: Auth0User = {
 
 // AuthProvider wraps the app and provides Auth0 authentication state/actions
 // to other components
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Demo mode: Skip Auth0 entirely
   if (isAuthDisabled) {
     const value: AuthContextType = {
       user: demoUser,
+      userProfile: {
+        id: 'demo-user-001',
+        email: 'demo@flora.com',
+        firstName: 'Demo',
+        lastName: 'User',
+        phone: null,
+        role: 'USER',
+        favoriteOccasions: [],
+        favoriteColors: [],
+        favoriteMoods: [],
+        addresses: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
       loading: false,
       login: () => console.log('Demo mode: login skipped'),
       logout: () => console.log('Demo mode: logout skipped'),
@@ -54,11 +68,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Production mode: Use Auth0
   // useAuth0 gives us all Auth0 authentication state and actions
-  const { user, isLoading, loginWithRedirect, logout, getAccessTokenSilently } =
-    useAuth0();
+  const {
+    user,
+    isLoading,
+    loginWithRedirect,
+    logout,
+    getAccessTokenSilently,
+    getAccessTokenWithPopup,
+  } = useAuth0();
 
   // Track if we've already synced to prevent duplicate syncs
   const hasSyncedRef = useRef(false);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
   // Helper to get the current access token (JWT)
   const getAccessToken = async () => {
@@ -66,6 +87,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       return await getAccessTokenSilently({
         authorizationParams: {
           audience: import.meta.env.VITE_AUTH0_AUDIENCE,
+          scope: 'openid profile email offline_access',
         },
       });
     } catch {
@@ -82,9 +104,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       // 3. We haven't already synced this session
       if (user && !isLoading && !hasSyncedRef.current) {
         try {
-          const token = await getAccessToken();
+          let token = await getAccessToken();
+
+          if (!token) {
+            try {
+              token = await getAccessTokenWithPopup({
+                authorizationParams: {
+                  audience: import.meta.env.VITE_AUTH0_AUDIENCE,
+                  scope: 'openid profile email offline_access',
+                },
+              });
+            } catch (popupError) {
+              console.warn('User denied consent or popup blocked:', popupError);
+              return;
+            }
+          }
+
           if (token) {
-            await userService.syncUser(token);
+            const syncedUser = await userService.syncUser(token);
+            setUserProfile(syncedUser);
             hasSyncedRef.current = true;
           } else {
           }
@@ -101,13 +139,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   // Note: logout() will redirect to the default Auth0 logout page and then back to your app
   const value: AuthContextType = {
     user,
+    userProfile,
     loading: isLoading,
-    login: () => {
-      const returnTo = window.location.pathname;
-      // Save to sessionStorage as backup
+    login: (returnToPath?: string | React.MouseEvent | React.KeyboardEvent) => {
+      const returnTo =
+        typeof returnToPath === 'string' && returnToPath.length > 0
+          ? returnToPath
+          : window.location.pathname;
+
       sessionStorage.setItem('auth_return_to', returnTo);
       loginWithRedirect({
-        appState: { returnTo }
+        appState: { returnTo },
+        authorizationParams: {
+          audience: import.meta.env.VITE_AUTH0_AUDIENCE,
+          scope: 'openid profile email',
+        },
       });
     },
     logout: () => logout({ logoutParams: { returnTo: window.location.origin } }),

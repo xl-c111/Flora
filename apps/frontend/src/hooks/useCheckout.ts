@@ -91,6 +91,9 @@ export const useCheckout = (): UseCheckoutReturn => {
 
       // Get user token if logged in
       const token = await getAccessToken();
+      console.log('🔐 Token retrieved:', token ? `${token.substring(0, 50)}...` : 'NO TOKEN');
+      console.log('🔐 Token length:', token?.length || 0);
+      console.log('👤 User:', user?.sub || 'NOT LOGGED IN');
 
       // Build billing address based on checkbox
       console.log('💳 Billing Address Logic:', {
@@ -198,10 +201,19 @@ export const useCheckout = (): UseCheckoutReturn => {
           };
 
           console.log(`🔄 Creating subscription record for future deliveries: ${item.product.name}`);
+          console.log('🔄 Subscription data:', JSON.stringify(subscriptionData, null, 2));
+          console.log('🔄 Sending token:', token ? 'YES' : 'NO');
 
-          // Create subscription record for future recurring deliveries
-          const subscription = await subscriptionService.createSubscription(subscriptionData, token);
-          console.log(`Subscription created for ${item.product.name}:`, subscription);
+          try {
+            // Create subscription record for future recurring deliveries
+            const subscription = await subscriptionService.createSubscription(subscriptionData, token);
+            console.log(`✅ Subscription created for ${item.product.name}:`, subscription);
+          } catch (subError: any) {
+            console.error('❌ Subscription creation failed:', subError);
+            console.error('❌ Error message:', subError.message);
+            console.error('❌ Error response:', subError.response);
+            throw subError; // Re-throw to be caught by outer catch
+          }
         }
       }
 

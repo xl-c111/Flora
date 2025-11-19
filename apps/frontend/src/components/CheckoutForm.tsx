@@ -61,12 +61,12 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
   onDeliveryTypeChange,
   isProcessing = false,
 }) => {
-  const { login, user } = useAuth();
+  const { login, user, userProfile } = useAuth();
   const { state: cartState, setGiftMessage } = useCart();
   const [isEditingMessage, setIsEditingMessage] = useState(false);
   const [savedMessage, setSavedMessage] = useState({ to: "", from: "", message: "" });
   const [formData, setFormData] = useState<CheckoutFormData>({
-    guestEmail: "",
+    guestEmail: userProfile?.email || user?.email || "",
     giftMessageTo: "",
     giftMessageFrom: "",
     giftMessage: "",
@@ -95,14 +95,14 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
 
   // Prefill email from authenticated user when available
   useEffect(() => {
-    if (user?.email) {
-      setFormData((prev) => (
-        prev.guestEmail && prev.guestEmail.length > 0
-          ? prev
-          : { ...prev, guestEmail: user.email as string }
-      ));
-    }
-  }, [user?.email]);
+    const authenticatedEmail = userProfile?.email || user?.email;
+    if (!authenticatedEmail) return;
+    setFormData((prev) => (
+      prev.guestEmail && prev.guestEmail.length > 0
+        ? prev
+        : { ...prev, guestEmail: authenticatedEmail }
+    ));
+  }, [userProfile?.email, user?.email]);
 
   // Load gift message from cart on mount and when cart changes
   useEffect(() => {
@@ -281,7 +281,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
       <section className="checkout-section email-section">
         <div className="section-header-with-link">
           <h2 className="section-title">Email</h2>
-          {!user && (
+          {!userProfile && !user && (
             <button type="button" onClick={login} className="sign-in-link">
               Sign In
             </button>
