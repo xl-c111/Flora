@@ -65,8 +65,20 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
   const { state: cartState, setGiftMessage } = useCart();
   const [isEditingMessage, setIsEditingMessage] = useState(false);
   const [savedMessage, setSavedMessage] = useState({ to: "", from: "", message: "" });
+
+  // Helper to get real email (not placeholder)
+  const getRealEmail = () => {
+    const userEmail = user?.email;
+    const profileEmail = userProfile?.email;
+
+    // Prioritize Auth0 user email, and filter out placeholder emails
+    if (userEmail && !userEmail.includes('@auth0.user')) return userEmail;
+    if (profileEmail && !profileEmail.includes('@auth0.user')) return profileEmail;
+    return "";
+  };
+
   const [formData, setFormData] = useState<CheckoutFormData>({
-    guestEmail: userProfile?.email || user?.email || "",
+    guestEmail: getRealEmail(),
     giftMessageTo: "",
     giftMessageFrom: "",
     giftMessage: "",
@@ -95,7 +107,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
 
   // Prefill email from authenticated user when available
   useEffect(() => {
-    const authenticatedEmail = userProfile?.email || user?.email;
+    const authenticatedEmail = getRealEmail();
     if (!authenticatedEmail) return;
     setFormData((prev) => (
       prev.guestEmail && prev.guestEmail.length > 0
