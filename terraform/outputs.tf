@@ -43,20 +43,29 @@ output "vpc_id" {
   value       = module.networking.vpc_id
 }
 
-# Database outputs
-output "rds_endpoint" {
-  description = "RDS database endpoint (hostname:port)"
-  value       = module.database.db_endpoint
-}
+# Database outputs - REMOVED (PostgreSQL now runs on EC2)
+# output "rds_endpoint" {
+#   description = "RDS database endpoint (hostname:port)"
+#   value       = module.database.db_endpoint
+# }
+#
+# output "rds_endpoint_hostname" {
+#   description = "RDS database hostname (without port)"
+#   value       = module.database.db_endpoint_hostname
+# }
+#
+# output "db_name" {
+#   description = "Database name"
+#   value       = module.database.db_name
+# }
 
-output "rds_endpoint_hostname" {
-  description = "RDS database hostname (without port)"
-  value       = module.database.db_endpoint_hostname
-}
-
-output "db_name" {
-  description = "Database name"
-  value       = module.database.db_name
+output "db_info" {
+  description = "Database information (PostgreSQL on EC2)"
+  value = {
+    type     = "PostgreSQL 15 (Docker on EC2)"
+    location = "localhost:5432"
+    database = "flora_db"
+  }
 }
 
 # Compute outputs
@@ -87,7 +96,7 @@ output "deployment_summary" {
     frontend_url  = module.cdn.cloudfront_url
     backend_url   = module.compute.backend_url
     ec2_public_ip = module.compute.instance_public_ip
-    rds_endpoint  = module.database.db_endpoint
+    database      = "PostgreSQL 15 on EC2 (localhost:5432)"
     ssh_command   = module.compute.ssh_command
   }
 }

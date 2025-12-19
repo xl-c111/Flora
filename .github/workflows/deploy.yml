@@ -134,7 +134,7 @@ jobs:
             NODE_ENV=production
             PORT=3001
 
-            DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${{ secrets.RDS_ENDPOINT }}:5432/flora_db
+            DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@localhost:5432/flora_db
 
             AUTH0_DOMAIN=${AUTH0_DOMAIN}
             AUTH0_CLIENT_ID=${AUTH0_CLIENT_ID}
@@ -171,6 +171,12 @@ jobs:
             ENVFILE
 
             echo "✅ Generated apps/backend/.env with fresh secrets from SSM"
+
+            echo ""
+            echo "🐘 Ensuring PostgreSQL Docker container is running..."
+            docker compose -f docker-compose.ec2.yml up -d postgres
+            sleep 5
+            docker exec flora-postgres pg_isready -U flora_user -d flora_db
 
             echo ""
             echo "🧱 Regenerating Prisma client..."

@@ -11,9 +11,9 @@ export interface SubscriptionOption {
 export const SUBSCRIPTION_OPTIONS: SubscriptionOption[] = [
   {
     frequency: 'weekly',
-    discountPercentage: 15,
+    discountPercentage: 20,
     label: 'Weekly Delivery',
-    description: 'Save 15% with weekly deliveries'
+    description: 'Save 20% with weekly deliveries'
   },
   {
     frequency: 'fortnightly',
@@ -23,9 +23,9 @@ export const SUBSCRIPTION_OPTIONS: SubscriptionOption[] = [
   },
   {
     frequency: 'monthly',
-    discountPercentage: 20,
+    discountPercentage: 15,
     label: 'Monthly Delivery',
-    description: 'Save 20% with monthly deliveries'
+    description: 'Save 15% with monthly deliveries'
   }
 ];
 

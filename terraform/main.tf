@@ -133,27 +133,39 @@ module "iam" {
   aws_region   = var.aws_region
 }
 
-# Database module - RDS PostgreSQL
-module "database" {
-  source = "./modules/database"
+# ============================================================================
+# DATABASE MODULE - REMOVED (Cost Optimization)
+# ============================================================================
+# RDS PostgreSQL has been replaced with PostgreSQL running in Docker on EC2
+# to optimize for AWS Free Tier. Database now runs via docker-compose.ec2.yml
+#
+# Migration completed: 2025-12-19
+# Backup saved: flora-db-production-final-snapshot-20251219-232141
+# Cost savings: ~$20-25/month
+#
+# If you need to restore RDS, use the snapshot or contact your team.
+# ============================================================================
 
-  project_name = var.project_name
-  environment  = var.environment
-
-  db_name     = "flora_db"
-  db_username = data.aws_ssm_parameter.db_username.value
-  db_password = data.aws_ssm_parameter.db_password.value
-
-  db_subnet_group_name       = module.networking.db_subnet_group_name
-  database_security_group_id = module.networking.database_security_group_id
-
-  # Free Tier settings
-  db_instance_class = "db.t3.micro"
-  allocated_storage = 20
-  postgres_version  = "15.4"
-
-  skip_final_snapshot = true
-}
+# module "database" {
+#   source = "./modules/database"
+#
+#   project_name = var.project_name
+#   environment  = var.environment
+#
+#   db_name     = "flora_db"
+#   db_username = data.aws_ssm_parameter.db_username.value
+#   db_password = data.aws_ssm_parameter.db_password.value
+#
+#   db_subnet_group_name       = module.networking.db_subnet_group_name
+#   database_security_group_id = module.networking.database_security_group_id
+#
+#   # Free Tier settings
+#   db_instance_class = "db.t3.micro"
+#   allocated_storage = 20
+#   postgres_version  = "15.4"
+#
+#   skip_final_snapshot = true
+# }
 
 # Compute module - EC2 instance for backend
 module "compute" {
@@ -171,7 +183,7 @@ module "compute" {
   security_group_ids = [module.networking.backend_security_group_id]
 
   instance_profile_name = module.iam.instance_profile_name
-  rds_endpoint          = module.database.db_endpoint_hostname
+  rds_endpoint          = "localhost"  # PostgreSQL runs locally in Docker
 
-  depends_on = [module.database, module.iam]
+  depends_on = [module.iam]
 }

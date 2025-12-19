@@ -6,12 +6,14 @@ Flora is a full‑stack ecommerce experience dedicated to bouquets and floral su
 
 ## Live Demo
 
-Experience the production deployment on AWS (CloudFront + S3 + EC2):
+Experience the production deployment on **AWS Free Tier** (CloudFront + S3 + EC2):
 
 - 🌐 **Frontend**: [Browse Flora on AWS](https://dzmu16crq41il.cloudfront.net)
 - ✅ **API Health**: [Check API status](https://dzmu16crq41il.cloudfront.net/api/health)
 
 Use the live site to browse the catalog, run through checkout, and validate deployments without spinning up local services.
+
+**💰 Cost-Optimized:** Running on AWS Free Tier with PostgreSQL in Docker on EC2 (no RDS costs!).
 
 <div align="center">
   <img src="./apps/frontend/src/assets/live-demo.png" alt="Flora Live Demo" width="900" />
@@ -40,7 +42,7 @@ Use the live site to browse the catalog, run through checkout, and validate depl
 
 **Backend**
 - Node.js + Express (TypeScript)
-- Prisma ORM + PostgreSQL
+- Prisma ORM + PostgreSQL 15 (Docker on EC2)
 - Stripe, Nodemailer, Google Generative AI, Auth0 JWT validation
 - Jest unit & integration testing
 
@@ -83,8 +85,9 @@ Use the live site to browse the catalog, run through checkout, and validate depl
 │       └── scripts/                   # maintenance scripts (e.g., order cleanup)
 ├── docs/                              # runbooks (testing, subscriptions, deployment)
 ├── scripts/                           # deployment helpers (deploy-frontend.sh, deploy-backend.sh)
-├── terraform/                         # infrastructure as code (VPC, EC2, RDS, S3, CloudFront)
+├── terraform/                         # infrastructure as code (VPC, EC2, S3, CloudFront)
 ├── docker-compose*.yml                # local/prod docker orchestration
+├── docker-compose.ec2.yml             # PostgreSQL for EC2 production (replaces RDS)
 ├── package.json / pnpm-workspace.yaml # workspace scripts and project metadata
 └── README.md
 ```
@@ -141,13 +144,13 @@ Logs: `pnpm docker:logs --tail 20`
 
 ## Deployment
 
-Deploy to AWS with simple one-line commands. All scripts auto-detect your AWS infrastructure (no manual configuration needed):
+Deploy to AWS Free Tier with simple one-line commands. All scripts auto-detect your AWS infrastructure (no manual configuration needed):
 
 ```bash
 # Deploy frontend to S3/CloudFront
 ./scripts/deploy-frontend.sh invalidate
 
-# Deploy backend to EC2 (auto-detects IP, SSH key, RDS endpoint)
+# Deploy backend to EC2 (auto-detects IP, SSH key, starts PostgreSQL)
 ./scripts/deploy-backend.sh
 
 # Update backend environment variables
@@ -159,8 +162,14 @@ Deploy to AWS with simple one-line commands. All scripts auto-detect your AWS in
 - ✅ Auto-detects EC2 IP address
 - ✅ Auto-detects SSH key from ~/.ssh/
 - ✅ Auto-detects S3 bucket and CloudFront distribution
-- ✅ Auto-detects RDS endpoint
+- ✅ Manages PostgreSQL Docker container on EC2
 - ✅ Creates GitHub PRs automatically
+
+**💰 AWS Free Tier Architecture:**
+- **EC2 t2.micro**: 750 hours/month free (12 months)
+- **PostgreSQL**: Runs in Docker on EC2 (no RDS costs!)
+- **S3 + CloudFront**: Free tier eligible
+- **Total Cost**: $0/month for 12 months, then ~$10-15/month
 
 📚 **Detailed Guides:**
 - [Deployment Reference](terraform/docs/DEPLOYMENT_REFERENCE.md) – Step-by-step deployment guide

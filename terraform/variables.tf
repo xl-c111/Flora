@@ -20,7 +20,7 @@ variable "project_name" {
 variable "instance_type" {
   description = "EC2 instance type"
   type        = string
-  default     = "t3.micro"
+  default     = "t2.micro"  # Free Tier eligible (750 hours/month for 12 months)
 }
 
 variable "key_pair_name" {
