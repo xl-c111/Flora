@@ -1,7 +1,6 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import "./App.css";
-import { useAuth } from "./contexts/AuthContext";
 import { useAuth0 } from "@auth0/auth0-react";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -19,22 +18,11 @@ const OrderConfirmationPage = lazy(() => import("./pages/OrderConfirmationPage")
 function App() {
   const [loading, setLoading] = useState(true);
   const [useAPI, setUseAPI] = useState(false);
-  const { user, getAccessToken } = useAuth();
 
   useEffect(() => {
     // Check if API is available
     checkAPIStatus();
   }, []);
-
-  useEffect(() => {
-    if (user) {
-      getAccessToken().then((token) => {
-        if (token) {
-        } else {
-        }
-      });
-    }
-  }, [user, getAccessToken]);
 
   const checkAPIStatus = async () => {
     try {

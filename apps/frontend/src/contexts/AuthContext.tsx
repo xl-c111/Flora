@@ -74,11 +74,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     loginWithRedirect,
     logout,
     getAccessTokenSilently,
-    getAccessTokenWithPopup,
   } = useAuth0();
 
   // Track if we've already synced to prevent duplicate syncs
   const hasSyncedRef = useRef(false);
+  const redirectInProgressRef = useRef(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
   // Helper to get the current access token (JWT)
@@ -90,7 +90,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           scope: 'openid profile email offline_access',
         },
       });
-    } catch {
+    } catch (error: any) {
+      // If silent auth fails (e.g. first visit on a new origin, missing consent, expired session),
+      // fall back to a redirect-based login. Avoid popup-based flows which are often blocked.
+      const errorCode = error?.error ?? error?.code;
+      const shouldRedirect =
+        errorCode === 'login_required' ||
+        errorCode === 'consent_required' ||
+        errorCode === 'interaction_required';
+
+      if (shouldRedirect && !redirectInProgressRef.current) {
+        redirectInProgressRef.current = true;
+
+        const returnTo = window.location.pathname || '/';
+        sessionStorage.setItem('auth_return_to', returnTo);
+
+        const authorizationParams: Record<string, string> = {
+          audience: import.meta.env.VITE_AUTH0_AUDIENCE,
+          scope: 'openid profile email offline_access',
+        };
+        if (errorCode === 'consent_required') authorizationParams.prompt = 'consent';
+
+        loginWithRedirect({
+          appState: { returnTo },
+          authorizationParams,
+        });
+      } else {
+        console.warn('Failed to get access token silently:', error);
+      }
       return undefined;
     }
   };
@@ -104,21 +131,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // 3. We haven't already synced this session
       if (user && !isLoading && !hasSyncedRef.current) {
         try {
-          let token = await getAccessToken();
-
-          if (!token) {
-            try {
-              token = await getAccessTokenWithPopup({
-                authorizationParams: {
-                  audience: import.meta.env.VITE_AUTH0_AUDIENCE,
-                  scope: 'openid profile email offline_access',
-                },
-              });
-            } catch (popupError) {
-              console.warn('User denied consent or popup blocked:', popupError);
-              return;
-            }
-          }
+          const token = await getAccessToken();
 
           if (token) {
             const syncedUser = await userService.syncUser(token);
@@ -127,7 +140,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           } else {
           }
         } catch (error) {
-          // Don't block login on sync failure - user can still use the app
+        // Don't block login on sync failure - user can still use the app
         }
       }
     };
