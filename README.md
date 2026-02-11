@@ -2,22 +2,57 @@
 
 Flora is a full‑stack ecommerce experience dedicated to bouquets and floral subscriptions. The project pairs a React 19 TypeScript storefront with an Express/Prisma API, augmented by curated discovery filters, Stripe billing, Auth0 authentication, AI-powered gift message suggestions.
 
+[![CI](https://github.com/xl-c111/Flora/actions/workflows/ci.yml/badge.svg)](https://github.com/xl-c111/Flora/actions/workflows/ci.yml)
+[![Deploy](https://github.com/xl-c111/Flora/actions/workflows/deploy.yml/badge.svg)](https://github.com/xl-c111/Flora/actions/workflows/deploy.yml)
+[![Security](https://github.com/xl-c111/Flora/actions/workflows/security.yml/badge.svg)](https://github.com/xl-c111/Flora/actions/workflows/security.yml)
+
 ---
 
 ## Live Demo
 
-Experience the production deployment on **AWS Free Tier** (CloudFront + S3 + EC2):
+Experience the production deployment on **AWS** (CloudFront + S3 + EC2):
 
 - 🌐 **Frontend**: [Browse Flora on AWS](https://dzmu16crq41il.cloudfront.net)
 - ✅ **API Health**: [Check API status](https://dzmu16crq41il.cloudfront.net/api/health)
 
 Use the live site to browse the catalog, run through checkout, and validate deployments without spinning up local services.
 
-**💰 Cost-Optimized:** Running on AWS Free Tier with PostgreSQL in Docker on EC2 (no RDS costs!).
-
 <div align="center">
   <img src="./apps/frontend/src/assets/live-demo.png" alt="Flora Live Demo" width="900" />
 </div>
+
+---
+
+## Architecture
+
+### High-level diagram
+
+```
+Browser
+  |
+  | HTTPS
+  v
+CloudFront (single domain)
+  |                |
+  | static assets  | /api/*
+  v                v
+S3 (React build)   EC2 (Express + PM2, :3001)
+                     |
+                     v
+                Postgres (Docker) + Prisma
+```
+
+### Key pieces
+- **CloudFront**: serves the SPA over HTTPS and forwards `/api/*` to the backend origin.
+- **S3**: hosts the built frontend (`apps/frontend/dist`).
+- **EC2**: runs the Node/Express API on port `3001` (managed by PM2).
+- **Postgres**: runs in Docker on the EC2 instance; Prisma is the ORM used by the backend.
+- **Secrets**: production secrets are stored in **AWS SSM Parameter Store** and pulled during deployment to generate `apps/backend/.env`.
+
+### Request flows (what to say in an interview)
+- **Frontend page load**: Browser → CloudFront → S3 (cached static assets).
+- **API call**: Browser → CloudFront `/api/*` → EC2 Express → Prisma → Postgres → response.
+- **Stripe webhook (prod)**: Stripe → CloudFront → EC2 webhook handler → DB update + email.
 
 ---
 
@@ -113,6 +148,11 @@ cd Flora
 pnpm install
 ```
 
+Fastest way (runs both frontend + backend):
+```bash
+pnpm dev
+```
+
 ### Option A – pnpm (local runtimes)
 Run backend and frontend in separate terminals:
 ```bash
@@ -127,9 +167,6 @@ pnpm --filter frontend dev
 - Storefront: http://localhost:5173
 
 ---
-
-
-
 ### Option B – Docker Compose
 ```bash
 pnpm docker:dev:build   # build/rebuild containers
@@ -144,7 +181,13 @@ Logs: `pnpm docker:logs --tail 20`
 
 ## Deployment
 
-Deploy to AWS Free Tier with simple one-line commands. All scripts auto-detect your AWS infrastructure (no manual configuration needed):
+Deploy to AWS with simple one-line commands. All scripts auto-detect your AWS infrastructure (no manual configuration needed):
+
+**Prereqs (for deployment scripts):**
+- AWS CLI configured (credentials + correct region)
+- Terraform installed (optional but recommended for outputs)
+- GitHub CLI (`gh`) installed if you use `scripts/update-env-simple.sh`
+- SSH key available under `~/.ssh/` for EC2 access (the script auto-detects common key names)
 
 ```bash
 # Deploy frontend to S3/CloudFront
@@ -164,12 +207,6 @@ Deploy to AWS Free Tier with simple one-line commands. All scripts auto-detect y
 - ✅ Auto-detects S3 bucket and CloudFront distribution
 - ✅ Manages PostgreSQL Docker container on EC2
 - ✅ Creates GitHub PRs automatically
-
-**💰 AWS Free Tier Architecture:**
-- **EC2 t2.micro**: 750 hours/month free (12 months)
-- **PostgreSQL**: Runs in Docker on EC2 (no RDS costs!)
-- **S3 + CloudFront**: Free tier eligible
-- **Total Cost**: $0/month for 12 months, then ~$10-15/month
 
 📚 **Detailed Guides:**
 - [Deployment Reference](terraform/docs/DEPLOYMENT_REFERENCE.md) – Step-by-step deployment guide
@@ -216,7 +253,7 @@ If you prefer different demo accounts, update `prisma/seed.ts` or change the ema
 | `pnpm docker:dev:bg` | Start full stack via Docker |
 | `pnpm docker:restart-backend` / `docker:restart-frontend` | Restart individual services |
 | `pnpm --filter backend test` | Run backend tests against real Prisma client (requires generated client & DB) |
-| `pnpm --filter backend run test:mock` | Run backend tests with mocked Prisma client (no DB required; for sandbox use) |
+| `pnpm --filter backend test:mock` | Run backend tests with mocked Prisma client (no DB required; for sandbox use) |
 
 > Use the mock variant only when Prisma engines cannot be generated (e.g., sandbox or no network access). For local development and CI, prefer the real client test command above.
 
@@ -238,7 +275,7 @@ Stripe webhook and AI scenarios have dedicated guides in `docs/`.
 - **Dependency changes** – rerun `pnpm install` (local) or `pnpm docker:dev:build` (containers).
 - **Database drift** – `pnpm --filter backend db:migrate` or `pnpm docker:setup`.
 - **Old data** – reseed with `pnpm --filter backend db:seed`.
-- **Auth/Stripe issues** – confirm `.env` secrets and webhook tunnels (ngrok) are configured.
+- **Auth/Stripe issues** – confirm `.env` secrets are correct. For local webhook testing, use Stripe CLI (see `docs/Stripe-cli_Testing_Guide.md`).
 - **CI failures** – review GitHub Actions logs; ensure tests and linting pass locally.
 
 ---
