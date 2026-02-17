@@ -1,10 +1,23 @@
 import { Router } from 'express';
+import rateLimit from 'express-rate-limit';
 import { SubscriptionController } from '../controllers/SubscriptionController';
 import { authMiddleware } from '../middleware/auth';
 import { validateSubscription } from '../middleware/validation/subscriptionValidation';
 
 const router: Router = Router();
 const subscriptionController = new SubscriptionController();
+
+// Rate limiting: 100 requests per 15 minutes per IP
+const subscriptionLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Apply rate limiting to all subscription routes
+router.use(subscriptionLimiter);
 
 // All subscription routes require authentication
 router.use(authMiddleware);
