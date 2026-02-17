@@ -129,6 +129,26 @@ Body:
 }
 ```
 
+### 🔒 Security Regression Quick Checks
+
+```bash
+# 1) Product search suggestions should work for normal string input (expect 200 + suggestions array)
+curl -i "http://localhost:3001/api/products/search/suggestions?q=rose"
+
+# 2) Type-confusion probe: array-style q should NOT crash (expect 200 + empty suggestions)
+curl -i "http://localhost:3001/api/products/search/suggestions?q[]=rose"
+
+# 3) Rate-limit probe on payments routes (expect 429 after enough requests within 15 minutes)
+for i in $(seq 1 120); do
+  curl -s -o /dev/null -w "%{http_code}\n" "http://localhost:3001/api/payments/test-payment-id";
+done
+```
+
+Expected:
+- Check 1: `200`
+- Check 2: `200` (no 500 crash)
+- Check 3: first calls `404`/`200` depending on data, then `429`
+
 ## 🎯 Test Scenarios for Demo Day
 
 ### Scenario 1: Melbourne Customer Weekly Flowers

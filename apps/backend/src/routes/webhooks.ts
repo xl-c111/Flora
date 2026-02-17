@@ -21,7 +21,10 @@ router.post("/stripe", express.raw({ type: "application/json" }), async (req, re
     res.json({ received: true });
   } catch (err: any) {
     console.error("❌ Webhook error:", err.message);
-    res.status(400).send(`Webhook Error: ${err.message}`);
+    res.status(400).json({
+      error: "Webhook Error",
+      message: "Invalid webhook payload or signature",
+    });
   }
 });
 

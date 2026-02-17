@@ -15,7 +15,7 @@ async function getTokenForTesting() {
   console.log(`🌐 Auth0 Domain: ${auth0Domain}`);
   console.log(`🔑 Client ID: ${clientId}`);
   console.log(`🎯 Audience: ${audience}`);
-  console.log(`🔒 Client Secret: ${clientSecret ? '***' + clientSecret.slice(-4) : 'NOT SET'}`);
+  console.log(`🔒 Client Secret configured: ${clientSecret ? 'YES' : 'NO'}`);
 
   if (!auth0Domain || !clientId || !clientSecret || !audience) {
     console.error('❌ Missing required Auth0 environment variables:');
@@ -51,17 +51,18 @@ async function getTokenForTesting() {
 
     console.log('\n✅ Token generated successfully!');
     console.log('=====================================');
-    console.log('🎟️  ACCESS TOKEN:');
-    console.log(data.access_token);
+    const maskedToken = data.access_token.length > 16
+      ? `${data.access_token.slice(0, 8)}...${data.access_token.slice(-8)}`
+      : '[redacted]';
+    console.log('🎟️  ACCESS TOKEN (masked):');
+    console.log(maskedToken);
     console.log('\n📝 Token Info:');
     console.log(`   Type: ${data.token_type}`);
     console.log(`   Expires in: ${data.expires_in} seconds (${Math.round(data.expires_in / 60)} minutes)`);
 
     console.log('\n🧪 Test with curl:');
-    console.log(`curl -H "Authorization: Bearer ${data.access_token}" http://localhost:3001/api/auth-test/protected`);
-
-    console.log('\n📋 Or copy this token to use in your tests:');
-    console.log(`Bearer ${data.access_token}`);
+    console.log('curl -H "Authorization: Bearer <ACCESS_TOKEN>" http://localhost:3001/api/auth-test/protected');
+    console.log('\n📋 Use the returned value from getTokenForTesting() in code, not console logs.');
 
     return data.access_token;
 
