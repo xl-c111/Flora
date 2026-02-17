@@ -61,7 +61,8 @@ export class ProductController {
    */
   static async getSearchSuggestions(req: Request, res: Response) {
     try {
-      const query = req.query.q as string;
+      const rawQuery = req.query.q;
+      const query = typeof rawQuery === 'string' ? rawQuery.trim() : '';
 
       if (!query || query.length < 2) {
         return res.json({ suggestions: [] });
