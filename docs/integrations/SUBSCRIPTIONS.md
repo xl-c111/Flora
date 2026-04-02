@@ -113,7 +113,7 @@ This document explains Flora's subscription system architecture, workflow, and t
 
 ## 🧪 Testing
 
-For comprehensive testing instructions, see: **[TESTING_GUIDE.md](./TESTING_GUIDE.md)**
+For comprehensive testing instructions, see: **[TESTING_GUIDE.md](../testing/TESTING_GUIDE.md)**
 
 Quick test commands:
 ```bash

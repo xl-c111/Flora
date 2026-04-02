@@ -1,0 +1,76 @@
+@startuml FloraHighLevelArchitecture
+title Flora High-Level Architecture
+
+top to bottom direction
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+skinparam ArrowColor #5F6B5A
+skinparam ArrowThickness 1.1
+skinparam packageBorderColor #8B9683
+skinparam packageBackgroundColor #F7F9F4
+skinparam rectangleBorderColor #8B9683
+skinparam rectangleBackgroundColor #FCFDFB
+skinparam cloudBorderColor #8B9683
+skinparam cloudBackgroundColor #F2F5EE
+skinparam databaseBorderColor #8B9683
+skinparam databaseBackgroundColor #FCFDFB
+
+actor "Customer" as customer
+
+package "Client Access" {
+  cloud "CloudFront" as cloudfront
+  component "React Frontend\nVite + TypeScript\napps/frontend" as frontend
+}
+
+package "Application" {
+  component "Express Backend API\napps/backend" as backend
+  database "PostgreSQL 15\nDocker on EC2" as postgres
+}
+
+package "External Services" {
+  component "Auth0\nAuthentication" as auth0
+  component "Stripe\nPayments + Webhooks" as stripe
+  component "Google Gemini\nAI Message Generation" as gemini
+  component "SMTP / Gmail\nTransactional Email" as email
+}
+
+customer --> cloudfront : HTTPS
+cloudfront --> frontend : Serve SPA assets
+frontend --> backend : REST API
+backend --> postgres : Prisma / SQL
+
+frontend --> auth0 : Login / access token
+backend --> auth0 : Verify JWT
+
+backend --> stripe : Payment flows
+stripe --> backend : Webhooks
+
+backend --> gemini : Generate messages
+backend --> email : Send emails
+
+note right of frontend
+Single-page storefront:
+- browse products
+- manage cart
+- checkout
+- account actions
+end note
+
+note right of backend
+Core business API:
+- products
+- orders
+- subscriptions
+- users
+- AI features
+end note
+
+note bottom of cloudfront
+CloudFront is the public entry point.
+It serves frontend assets and forwards API traffic to the backend.
+end note
+
+@enduml
