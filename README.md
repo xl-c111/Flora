@@ -42,6 +42,12 @@ S3 (React build)   EC2 (Express + PM2, :3001)
                 Postgres (Docker) + Prisma
 ```
 
+For a fuller system view, see the architecture diagram below.
+
+<div align="center">
+  <img src="./docs/architecture/FloraHighLevelArchitecture.svg" alt="Flora high-level architecture diagram" width="900" />
+</div>
+
 ### Key pieces
 - **CloudFront**: serves the SPA over HTTPS and forwards `/api/*` to the backend origin.
 - **S3**: hosts the built frontend (`apps/frontend/dist`).
