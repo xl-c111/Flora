@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+
 interface GenerateMessageRequest {
   to?: string;
   from?: string;
@@ -61,7 +62,7 @@ export class AIService {
       const lengthSpec = "2-3 sentences";
       const maxTokens = 80;
 
-      // Step 1: Build cache key and return cached result if valid
+      // Step 1: Build cache key based on input parameters, and if a recent result exists, return it immediately.
       const cacheKey = JSON.stringify({
         to,
         from,
@@ -78,12 +79,12 @@ export class AIService {
         return cached.message;
       }
 
-      // Step 2: Normalize tone input into richer prompt guidance
+      // Step 2: Map user-provided tone into a more descriptive style
       const mappedTone = tone
         ? this.TONE_MAPPING[tone.toLowerCase()] || tone
         : "warm and heartfelt";
 
-      // Step 3: Build structured prompt context
+      // Step 3: Build a structured prompt context using sender, recipient, occasion, and keywords -> ensures model always receives consistent and structured input.
       const contextParts: string[] = [];
 
       if (from || to) {
@@ -103,12 +104,12 @@ export class AIService {
         ? `User request: "${sanitizedUserPrompt}".\n`
         : "";
 
-      // Step 4: Construct constrained prompt
+      // Step 4: Construct a constrained prompt, define rules -> consistency
       const prompt = `Write a ${mappedTone} gift card message for flowers.
 ${context}${context ? "\n" : ""}${userPromptLine}Rules: ${lengthSpec} only, no names/greetings/signoffs, gift card style. Respond in a warm, natural tone that feels personal from the sender to the recipient.
 Message:`;
 
-      // Step 5: Call model with controlled generation settings
+      // Step 5: Call model with controlled generation settings, including temperature and token limits.
       let text = (
         await this.generateText(prompt, {
           temperature: 0.9,
@@ -118,10 +119,10 @@ Message:`;
         })
       ).trim();
 
-      // Step 6: Post-process output
+      // Step 6: After receiving the response, apply post-process output -> ensures output follows the expected format.
       text = this.cleanupGeneratedText(text);
 
-      // Step 7: Store in cache and clean up old entries
+      // Step 7: Store the result in cache and clean up old entries
       this.cache.set(cacheKey, {
         message: text,
         timestamp: Date.now(),
