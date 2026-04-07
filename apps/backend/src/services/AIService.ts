@@ -119,10 +119,10 @@ Message:`;
         })
       ).trim();
 
-      // Step 6: After receiving the response, apply post-process output -> ensures output follows the expected format.
+      // Step 6: After receiving the response, apply post-processing to remove unwanted greetings or sign-offs -> ensures the output follows the expected format.
       text = this.cleanupGeneratedText(text);
 
-      // Step 7: Store the result in cache and clean up old entries
+      // Step 7: Store the result in cache and clean up old entries -> repeated requests can be served faster
       this.cache.set(cacheKey, {
         message: text,
         timestamp: Date.now(),
