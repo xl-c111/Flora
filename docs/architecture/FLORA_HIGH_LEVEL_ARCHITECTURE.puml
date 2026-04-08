@@ -1,0 +1,97 @@
+@startuml FloraHighLevelArchitecture
+title Flora High-Level Architecture
+
+top to bottom direction
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+skinparam linetype ortho
+skinparam nodesep 30
+skinparam ranksep 40
+skinparam ArrowColor #5F6B5A
+skinparam ArrowThickness 1.1
+skinparam ArrowFontSize 12
+skinparam packageBorderColor #8B9683
+skinparam packageBackgroundColor #F7F9F4
+skinparam rectangleBorderColor #8B9683
+skinparam rectangleBackgroundColor #FCFDFB
+skinparam cloudBorderColor #8B9683
+skinparam cloudBackgroundColor #F2F5EE
+skinparam databaseBorderColor #8B9683
+skinparam databaseBackgroundColor #FCFDFB
+
+actor "Customer" as customer
+
+package "Client Access" {
+  together {
+    cloud "CloudFront" as cloudfront
+    component "React Frontend\nVite + TypeScript\napps/frontend" as frontend
+  }
+}
+
+package "Application" {
+  together {
+    component "Express Backend API\napps/backend" as backend
+    database "PostgreSQL 15\nDocker on EC2" as postgres
+  }
+}
+
+rectangle " " as spacer #transparent
+
+package "External Services" {
+  together {
+    component "Auth0\nAuthentication" as auth0
+    component "Stripe\nPayments + Webhooks" as stripe
+    component "Google Gemini\nAI Message Generation" as gemini
+    component "SMTP / Gmail\nTransactional Email" as email
+  }
+}
+
+customer -down-> cloudfront : HTTPS
+cloudfront -down-> frontend : Serve\nSPA assets
+frontend -down-> backend : REST\nAPI
+backend -down-> postgres : Prisma\n/ SQL
+
+frontend -right-> auth0 : Login /\naccess token
+backend -right-> auth0 : Verify\nJWT
+
+backend -right-> stripe : Payment\nflows
+stripe -left-> backend : Webhooks
+
+backend -right-> gemini : Generate\nmessages
+backend -right-> email : Send\nemails
+
+cloudfront -[hidden]down-> frontend
+frontend -[hidden]down-> backend
+backend -[hidden]down-> postgres
+auth0 -[hidden]down-> stripe
+stripe -[hidden]down-> gemini
+gemini -[hidden]down-> email
+backend -[hidden]right-> spacer
+spacer -[hidden]right-> auth0
+
+note right of frontend
+Single-page storefront:
+- browse products
+- manage cart
+- checkout
+- account actions
+end note
+
+note right of backend
+Core business API:
+- products
+- orders
+- subscriptions
+- users
+- AI features
+end note
+
+note bottom of cloudfront
+CloudFront is the public entry point.
+It serves frontend assets and forwards API traffic to the backend.
+end note
+
+@enduml

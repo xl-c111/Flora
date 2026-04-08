@@ -42,6 +42,12 @@ S3 (React build)   EC2 (Express + PM2, :3001)
                 Postgres (Docker) + Prisma
 ```
 
+For a fuller system view, see the architecture diagram below.
+
+<div align="center">
+  <img src="./docs/architecture/FloraHighLevelArchitecture.svg" alt="Flora high-level architecture diagram" width="900" />
+</div>
+
 ### Key pieces
 - **CloudFront**: serves the SPA over HTTPS and forwards `/api/*` to the backend origin.
 - **S3**: hosts the built frontend (`apps/frontend/dist`).
@@ -97,32 +103,46 @@ S3 (React build)   EC2 (Express + PM2, :3001)
 .
 ├── apps
 │   ├── frontend/
-│   │   ├── public/                    # static assets served by Vite (logos, images)
+│   │   ├── public/                    # static assets served by Vite (logos, catalog images)
 │   │   └── src/
 │   │       ├── assets/                # shared imagery, icons, hero banners
-│   │       ├── components/            # reusable React components (Header, Footer, etc.)
+│   │       ├── components/            # reusable React components
+│   │       ├── config/                # frontend runtime configuration
 │   │       ├── contexts/              # React context providers (Auth, Cart)
-│   │       ├── hooks/                 # custom hooks (checkout, delivery info)
-│   │       ├── pages/                 # route-level pages (Landing, Products, Checkout)
-│   │       ├── services/              # API helpers (orderService, deliveryService, Auth0)
-│   │       ├── styles/                # global CSS
-│   │       └── main.tsx               # Vite entry point + Auth0 provider
+│   │       ├── hooks/                 # custom hooks for products and checkout flows
+│   │       ├── pages/                 # route-level pages
+│   │       ├── services/              # API clients and domain service wrappers
+│   │       ├── styles/                # shared responsive utility styles
+│   │       ├── types/                 # frontend API and UI type definitions
+│   │       ├── utils/                 # UI formatting helpers
+│   │       └── main.tsx               # Vite entry point
 │   └── backend/
-│       ├── prisma/                    # schema.prisma + migrations + seed
-│       ├── src/
-│       │   ├── config/                # database + env config
-│       │   ├── controllers/           # Express controllers (products, orders, auth)
-│       │   ├── middleware/            # auth, validation, error handling
-│       │   ├── routes/                # Express routers
-│       │   ├── services/              # domain logic (EmailService, ProductService, etc.)
-│       │   ├── utils/                 # helpers (logging, formatters)
-│       │   └── index.ts               # Express bootstrap + PM2 entry
-│       └── scripts/                   # maintenance scripts (e.g., order cleanup)
-├── docs/                              # runbooks (testing, subscriptions, deployment)
-├── scripts/                           # deployment helpers (deploy-frontend.sh, deploy-backend.sh)
-├── terraform/                         # infrastructure as code (VPC, EC2, S3, CloudFront)
-├── docker-compose*.yml                # local/prod docker orchestration
-├── docker-compose.ec2.yml             # PostgreSQL for EC2 production (replaces RDS)
+│       ├── images/                    # product imagery used by backend flows
+│       ├── prisma/                    # schema.prisma, migrations, and seed
+│       └── src/
+│           ├── config/                # database and delivery config
+│           ├── controllers/           # Express controllers
+│           ├── middleware/            # auth, validation, and error handling
+│           ├── routes/                # API route definitions
+│           ├── services/              # business logic and integrations
+│           ├── test/                  # Jest tests and test helpers
+│           ├── types/                 # API, Express, and Prisma type declarations
+│           ├── utils/                 # ecommerce helpers
+│           └── index.ts               # Express bootstrap
+├── docs/
+│   ├── architecture/                 # system diagrams, frontend flow, and production flows
+│   ├── deployment/                   # deployment runbooks, migration notes, validation artifacts
+│   ├── infrastructure/               # AWS module and infra deep-dive notes
+│   ├── integrations/                 # Auth0, Stripe, Gemini, and subscription guides
+│   ├── testing/                      # test runbooks and demo scenarios
+│   └── README.md                     # docs index and reading guide
+├── scripts/                           # deployment, environment, and utility scripts
+├── terraform/
+│   ├── docs/                          # Terraform deployment references
+│   ├── environments/                  # environment entrypoints (dev, prod)
+│   └── modules/                       # reusable AWS infrastructure modules
+├── docker-compose*.yml                # local and production compose files
+├── docker-compose.ec2.yml             # PostgreSQL compose file used on EC2
 ├── package.json / pnpm-workspace.yaml # workspace scripts and project metadata
 └── README.md
 ```
@@ -237,7 +257,7 @@ Running the backend seed (`db:seed` or `db:setup`) loads:
 - Placeholder customer records (`test@flora.com`, `demo@flora.com`) that you can map to Auth0 users
 - Subscription plans and Stripe price placeholders
 
-If you prefer different demo accounts, update `prisma/seed.ts` or change the emails in your Auth0 tenant to match. See `docs/TESTING_GUIDE.md` for additional workflows.
+If you prefer different demo accounts, update `prisma/seed.ts` or change the emails in your Auth0 tenant to match. See `docs/testing/TESTING_GUIDE.md` for additional workflows.
 
 ---
 
@@ -275,17 +295,19 @@ Stripe webhook and AI scenarios have dedicated guides in `docs/`.
 - **Dependency changes** – rerun `pnpm install` (local) or `pnpm docker:dev:build` (containers).
 - **Database drift** – `pnpm --filter backend db:migrate` or `pnpm docker:setup`.
 - **Old data** – reseed with `pnpm --filter backend db:seed`.
-- **Auth/Stripe issues** – confirm `.env` secrets are correct. For local webhook testing, use Stripe CLI (see `docs/Stripe-cli_Testing_Guide.md`).
+- **Auth/Stripe issues** – confirm `.env` secrets are correct. For local webhook testing, use Stripe CLI (see `docs/integrations/Stripe-cli_Testing_Guide.md`).
 - **CI failures** – review GitHub Actions logs; ensure tests and linting pass locally.
 
 ---
 
 ## Documentation
-- `docs/TESTING_GUIDE.md` – End‑to‑end testing checklist
-- `docs/SUBSCRIPTIONS.md` – Subscription flows and Stripe setup
-- `docs/AI_Message_Guide.md` – Gemini integration notes
-- `docs/Stripe-cli_Testing_Guide.md` – Webhook testing via Stripe CLI
-- `docs/stripe_payment_webhook_flow.md` – Payment lifecycle reference
+- `docs/README.md` – Documentation index and reading path
+- `docs/architecture/FLORA_HIGH_LEVEL_ARCHITECTURE.puml` – High-level system diagram
+- `docs/testing/TESTING_GUIDE.md` – End‑to‑end testing checklist
+- `docs/integrations/SUBSCRIPTIONS.md` – Subscription flows and Stripe setup
+- `docs/integrations/AI_Message_Guide.md` – Gemini integration notes
+- `docs/integrations/Stripe-cli_Testing_Guide.md` – Webhook testing via Stripe CLI
+- `docs/integrations/stripe_payment_webhook_flow.md` – Payment lifecycle reference
 
 ---
 

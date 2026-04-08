@@ -343,9 +343,10 @@ docker restart flora-postgres
 
 ## Related Documentation
 
-- [Deployment Reference](./DEPLOYMENT_REFERENCE.md)
-- [Free Tier Migration Guide](./AWS_FREE_TIER_MIGRATION.md)
-- [Environment Variables Guide](./ENVIRONMENT_VARIABLES_GUIDE.md)
+- [Documentation Index](../README.md)
+- [Free Tier Migration Guide](../deployment/AWS_FREE_TIER_MIGRATION.md)
+- [Deployment Reference](../../terraform/docs/DEPLOYMENT_REFERENCE.md)
+- [Environment Variables Guide](../../terraform/docs/ENVIRONMENT_VARIABLES_GUIDE.md)
 
 ---
 

@@ -184,7 +184,7 @@ Flora/
 │   └── validate-deployment.sh  # Post-deployment health checks
 │
 └── docs/
-    └── deployment-validation/  # Terraform outputs, screenshots, videos
+    └── deployment/validation/  # Terraform outputs, screenshots, videos
         ├── terraform-plan.txt
         ├── terraform-output.txt
         └── deployment-walkthrough.mp4
@@ -399,7 +399,7 @@ cd Flora
 mkdir -p terraform/modules/{state-backend,networking,iam,database,compute,storage,cdn,monitoring}
 mkdir -p terraform/environments/{dev,prod}
 mkdir -p scripts
-mkdir -p docs/deployment-validation
+mkdir -p docs/deployment/validation
 
 # Create root configuration files
 touch terraform/{main.tf,variables.tf,outputs.tf,versions.tf,backend.tf}
@@ -535,7 +535,7 @@ terraform plan -out=tfplan
 # - Proper security group rules
 
 # Save plan output for documentation
-terraform show tfplan > ../docs/deployment-validation/terraform-plan.txt
+terraform show tfplan > ../docs/deployment/validation/terraform-plan.txt
 ```
 
 ### Phase 2: Deploy Infrastructure (Zero-Touch Automation)
@@ -548,8 +548,8 @@ terraform apply tfplan
 terraform apply
 
 # Save outputs for validation
-terraform output > ../docs/deployment-validation/terraform-output.txt
-terraform output -json > ../docs/deployment-validation/terraform-output.json
+terraform output > ../docs/deployment/validation/terraform-output.txt
+terraform output -json > ../docs/deployment/validation/terraform-output.json
 ```
 
 **What gets provisioned:**
@@ -907,7 +907,7 @@ chmod +x scripts/validate-deployment.sh
 cd terraform
 
 # Save all outputs
-terraform output | tee ../docs/deployment-validation/terraform-output.txt
+terraform output | tee ../docs/deployment/validation/terraform-output.txt
 
 # Key outputs to highlight:
 # - EC2 public IP
@@ -946,10 +946,10 @@ aws rds describe-db-instances \
 ```bash
 # Save health check responses
 EC2_IP=$(cd terraform && terraform output -raw ec2_public_ip)
-curl -v http://$EC2_IP:3001/api/health | jq . > docs/deployment-validation/health-check.json
+curl -v http://$EC2_IP:3001/api/health | jq . > docs/deployment/validation/health-check.json
 
 # Test a sample API endpoint
-curl http://$EC2_IP:3001/api/products | jq . > docs/deployment-validation/sample-api-response.json
+curl http://$EC2_IP:3001/api/products | jq . > docs/deployment/validation/sample-api-response.json
 ```
 
 ### 4. CloudWatch Logs Sample
@@ -959,14 +959,14 @@ curl http://$EC2_IP:3001/api/products | jq . > docs/deployment-validation/sample
 aws logs tail /aws/ec2/flora-backend \
   --follow \
   --since 10m \
-  > docs/deployment-validation/cloudwatch-logs-sample.txt
+  > docs/deployment/validation/cloudwatch-logs-sample.txt
 ```
 
 ### 5. Terraform Plan (No Changes)
 
 ```bash
 # Run plan again to show infrastructure is stable
-terraform plan -detailed-exitcode > docs/deployment-validation/terraform-plan-nochanges.txt
+terraform plan -detailed-exitcode > docs/deployment/validation/terraform-plan-nochanges.txt
 
 # Exit code 0 = no changes (perfect!)
 # Exit code 2 = changes detected (investigate)
@@ -981,11 +981,11 @@ Record a 2-3 minute Loom video showing:
 4. Application working in browser
 5. CloudWatch logs in real-time
 
-Save as `docs/deployment-validation/deployment-walkthrough.mp4`
+Save as `docs/deployment/validation/deployment-walkthrough.mp4`
 
 ### 7. Interview Talking Points
 
-Create `docs/deployment-validation/INTERVIEW_NOTES.md`:
+Create `docs/deployment/validation/INTERVIEW_NOTES.md`:
 
 ```markdown
 # Flora AWS Deployment - Interview Talking Points
